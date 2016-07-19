@@ -1,0 +1,485 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Installation Instructions</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Opal Server Installation"
+HREF="serversetup.html"><LINK
+REL="PREVIOUS"
+TITLE="Prerequisites"
+HREF="serverprerequisites.html"><LINK
+REL="NEXT"
+TITLE="Application Deployment"
+HREF="deploy.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="serverprerequisites.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 2. Opal Server Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="deploy.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="SERVERINSTALL"
+>2.2. Installation Instructions</A
+></H1
+><P
+>The Opal source distribution is available for download  from
+<A
+HREF="http://sourceforge.net/project/showfiles.php?group_id=211778&#38;package_id=297015"
+TARGET="_top"
+>source forge</A
+> and can be used to install a server and a
+command-line client on Unix and Windows platforms. </P
+><P
+>Extract the source from the downloaded tarball using the GNU tar (or other
+similar utilities for Windows):
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    tar zxvf opal-ws-2.5.tar.gz</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+><P
+>This should create a new directory called opal-ws-2.5/ where
+all the sources are expanded. Henceforth, we refer to this directory as
+<EM
+>OPAL_HOME</EM
+>.</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>Edit <STRONG
+>$OPAL_HOME/etc/opal.properties</STRONG
+> to configure the static container
+properties correctly. The template file looks similar to the following:</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    # the base URL for the tomcat installation 
+    # this is required since Java can't figure out the IP 
+    # address if there are multiple network interfaces.
+    tomcat.url=http://localhost:8080
+
+    # the path relative to $CATALINA_HOME (or absolute) 
+    # where opal will look for the xml file to authomatically 
+    # deploy 
+    opal.deploy.path=deploy
+
+    # parallel parameters
+    num.procs=1
+    mpi.run=/path/to/your/mpi
+
+    # zip up input/output files, if set to true
+    # data.archive=true
+
+    # location of working directory relative to $CATALINA_HOME/webapps.
+    # this could be a symbolic link to another location (which should be
+    # NFS mounted if this is on a cluster). if this is a symlink, copy
+    # etc/opal.xml to $CATALINA_HOME/conf/Catalina/localhost/opal.xml. if
+    # the name of the symlink is changed to something other than "opal-jobs", 
+    # modify the opal.xml accordingly
+    # working.dir=opal-jobs
+
+    # by default, opal doesn't allow the use of absolute paths in the command-line
+    # set the following parameter to allow some exceptions
+    # allowed.path.prefixes=/db/, /whatever/dir/, /another/one/
+
+    # use this key to display how long to save user data on server
+    opal.datalifetime=4 days
+
+    # specify in seconds the hard limit for how long a job can run
+    # only applicable if either DRMAA or Globus is being used, and if
+    # the scheduler supports it (some SGE versions ignore this parameter)
+    # Please be aware that your application will be killed by the scheduler 
+    # once it reaches the specified limit (in same cases without any log)
+    opal.hard_limit=3600
+
+    # full qualified class name (FQCN) of the job manager being used
+    opal.jobmanager=edu.sdsc.nbcr.opal.manager.ForkJobManager
+    # opal.jobmanager=edu.sdsc.nbcr.opal.manager.DRMAAJobManager
+    # opal.jobmanager=edu.sdsc.nbcr.opal.manager.CondorJobManager
+    ...</PRE
+></FONT
+></TD
+></TR
+></TABLE
+><P
+></P
+><UL
+><LI
+><P
+>    Set the IP adress and port in <STRONG
+>tomcat.url</STRONG
+> to the correct
+    values <TT
+CLASS="FILENAME"
+>http://your.ip.address:yourport</TT
+> of your server. 
+  </P
+></LI
+><LI
+><P
+>    If the Opal installation needs to support parallel applications, set the
+    <STRONG
+>num.procs</STRONG
+> to the number of processors available, and
+    the <STRONG
+>mpi.run</STRONG
+> to the location of the mpirun on your host. 
+  </P
+></LI
+><LI
+><P
+>    By default, all new working directories for job executions are created
+    inside the <EM
+>$CATALINA_HOME/webapps/ROOT</EM
+> directory. If this needs to change
+    to another location on your system (when installing on a cluster, should be NFS mounted)
+    uncomment the property <STRONG
+>working.dir and set it accordingly</STRONG
+>. 
+  </P
+></LI
+></UL
+><P
+>Once done with customizing, run the following commands:
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    cp $OPAL_HOME/etc/opal.xml $CATALINA_HOME/conf/Catalina/localhost/ 
+    cd $CATALINA_HOME/webapps 
+    ln -s /path/to/working_dir/on/nfs opal-jobs</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+><P
+>Note that the above use of symbolic links will only work on Unix systems. </P
+></LI
+><LI
+><P
+>If you would like to install a database for persistent service state, please refer
+to <A
+HREF="database.html"
+>Opal State Database Installation</A
+> chapter. </P
+></LI
+><LI
+><P
+>If you would like to setup scheduler support, refer to <A
+HREF="scheduler.html"
+>Scheduler Support Using Job Managers</A
+> chapter.</P
+></LI
+><LI
+><P
+>You can optionally set up secure access to your services by consulting
+<A
+HREF="security.html"
+>Configuring GSI-based Security</A
+> section.</P
+></LI
+><LI
+><P
+>Edit the <STRONG
+>$OPAL_HOME/build.properties</STRONG
+> file to ensure that the build
+properties are set correctly.
+<P
+></P
+><UL
+><LI
+><P
+>Set <TT
+CLASS="FILENAME"
+>catalina.home</TT
+> to point to the
+location of your Tomcat installation (i.e. $CATALINA_HOME)</P
+></LI
+><LI
+><P
+>Set <STRONG
+>tomcat.port</STRONG
+> to the port number that the Tomcat server is running on.</P
+></LI
+></UL
+>&#13;</P
+></LI
+><LI
+><P
+>Install the Opal toolkit into the Tomcat installation, by executing:
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    ant install</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+></LI
+><LI
+><P
+>If you are using Tomcat 5.5.X, you have to enable directory listing to 
+display jobs outputs properly. Find the definition of the main servlet
+in the file <EM
+>$CATALINA_HOME/conf/web.xml</EM
+>:
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>&#13;    &#60;servlet&#62;
+        &#60;servlet-name&#62;default&#60;/servlet-name&#62;
+        &#60;servlet-class&#62;
+          org.apache.catalina.servlets.DefaultServlet
+        &#60;/servlet-class&#62;
+        &#60;init-param&#62;
+            &#60;param-name&#62;debug&#60;/param-name&#62;
+            &#60;param-value&#62;0&#60;/param-value&#62;
+        &#60;/init-param&#62;
+        &#60;init-param&#62;
+            &#60;param-name&#62;listings&#60;/param-name&#62;
+            &#60;param-value&#62;false&#60;/param-value&#62;
+        &#60;/init-param&#62;
+        &#60;load-on-startup&#62;1&#60;/load-on-startup&#62;
+    &#60;/servlet&#62;&#13;</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+><P
+>And make sure that the &#60;param-name&#62; <EM
+>listings</EM
+> is set to true:
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>            &#60;param-name&#62;listings&#60;/param-name&#62; 
+            &#60;param-value&#62;true&#60;/param-value&#62;</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+></LI
+><LI
+><P
+>Set your JAVA_OPTS to "-Djava.awt.headless=true" to enable
+Tomcat to run in headless mode. Run the Tomcat server by changing to the
+$CATALINA_HOME/bin directory, and running the appropriate command:
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    ./startup.sh (on Unix)
+    ./startup.bat (on Windows)</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+></LI
+><LI
+><P
+>Validate that the Opal has been installed correctly by following
+ <A
+HREF="http://yourhost:8080/opal2/happyaxis.jsp"
+TARGET="_top"
+>http://yourhost:8080/opal2/happyaxis.jsp</A
+>. If you deployed
+Tomcat on another port, you will have to change the port number above. If
+all the <STRONG
+>Needed Components</STRONG
+> are found, Axis
+has been deployed fine. You can ignore the warnings about the <STRONG
+>Optional Components</STRONG
+>.</P
+></LI
+><LI
+><P
+>If the above steps have been executed successfully, the
+Opal server is ready for deployment of applications as Web
+services.</P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="serverprerequisites.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="deploy.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Prerequisites</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="serversetup.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Application Deployment</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

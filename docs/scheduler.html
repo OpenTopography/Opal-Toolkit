@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Scheduler Support Using Job Managers</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Using DB2"
+HREF="db2.html"><LINK
+REL="NEXT"
+TITLE="Using DRMAA"
+HREF="drmaa-scheduler.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="db2.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="drmaa-scheduler.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="SCHEDULER"
+></A
+>Chapter 5. Scheduler Support Using Job Managers</H1
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+>5.1. <A
+HREF="drmaa-scheduler.html"
+>Using DRMAA</A
+></DT
+><DT
+>5.2. <A
+HREF="condor-scheduler.html"
+>Using Condor</A
+></DT
+><DT
+>5.3. <A
+HREF="pbs-scheduler.html"
+>Using TORQUE/PBS</A
+></DT
+><DT
+>5.4. <A
+HREF="meta-service-scheduler.html"
+>Using Meta Service</A
+></DT
+><DT
+>5.5. <A
+HREF="jobmanager-howto.html"
+>Writing Your Own Job Manager</A
+></DT
+></DL
+></DIV
+><P
+>In this chapter, we describe how to configure Opal to
+submit jobs to a batch job scheduler using the provided job managers. 
+We also give a brief introduction how to write your own job
+manager.</P
+><P
+><STRONG
+>Prerequisite:</STRONG
+> a scheduler such as Condor, PBS or SGE installed on 
+your compute cluster.  Please consult the appropriate documentation for the installation.</P
+><P
+>Access to schedulers is
+provided in a number of ways - in particular, via the DRMAA API, and via 
+the various scheduler plugins. Starting with release 2.1, we support Condor 
+natively without using DRMAA or Globus. In release 2.3, we introduced 
+direct support for TORQUE/PBS. </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="db2.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="drmaa-scheduler.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Using DB2</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Using DRMAA</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

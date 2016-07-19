@@ -1,0 +1,390 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Prerequisites</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Opal Server Installation"
+HREF="serversetup.html"><LINK
+REL="PREVIOUS"
+TITLE="Opal Server Installation"
+HREF="serversetup.html"><LINK
+REL="NEXT"
+TITLE="Installation Instructions"
+HREF="serverinstall.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="serversetup.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 2. Opal Server Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="serverinstall.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="SERVERPREREQUISITES"
+>2.1. Prerequisites</A
+></H1
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="SERVER-CLIENT-PRE"
+>2.1.1. Common Prerequisites for Server and Client</A
+></H2
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>    <STRONG
+>Java 1.6.x or higher</STRONG
+> 
+    <P
+></P
+><UL
+COMPACT="COMPACT"
+><LI
+><P
+> 
+        Download and install J2SE from <A
+HREF="http://www.oracle.com/technetwork/java/javase/downloads"
+TARGET="_top"
+>        http://www.oracle.com/technetwork/java/javase/downloads</A
+>
+      </P
+></LI
+><LI
+><P
+> 
+        Add the installation bin directory to
+        the environment variable <EM
+>PATH</EM
+>. 
+      </P
+></LI
+><LI
+><P
+> 
+        Set the environment variable <EM
+>JAVA_HOME</EM
+>
+        to point to the top level directory of the java installation.
+      </P
+></LI
+></UL
+> 
+
+  </P
+></LI
+><LI
+><P
+>    <STRONG
+>Ant 1.7.1 or higher</STRONG
+>
+    <P
+></P
+><UL
+COMPACT="COMPACT"
+><LI
+><P
+> 
+        Download and install ant from <A
+HREF="http://ant.apache.org/"
+TARGET="_top"
+>        http://ant.apache.org</A
+>
+      </P
+></LI
+><LI
+><P
+> 
+        Set the environment variable <EM
+>ANT_HOME</EM
+>
+        to point to your ant installation.
+      </P
+></LI
+></UL
+> 
+
+  </P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="SERVER-PRE"
+>2.1.2. Additional Prerequisites for Server</A
+></H2
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+><STRONG
+>Tomcat 6.0 or 7.0</STRONG
+>. Tomcat is a servlet container that 
+   hosts Opal Web services. You can download the source distribution or the binary version of 
+   Tomcat 6.0 or 7.0 from <A
+HREF="http://tomcat.apache.org/"
+TARGET="_top"
+>http://tomcat.apache.org/</A
+>.
+   In this reference guide we will refer to the location of the Tomcat
+   installation as <EM
+>CATALINA_HOME</EM
+>.
+   </P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="OPTIONAL-PRE"
+>2.1.3. Optional Prerequisites for Server</A
+></H2
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>   <STRONG
+>MPI</STRONG
+>: If you plan to run your application in parallel, you will need
+   a version of MPI. We have run  parallale applications using <A
+HREF="http://www.open-mpi.org"
+TARGET="_top"
+>   OpenMPI</A
+>. Make sure that the SSH keys (for the account that runs tomcat) are
+   set up correctly in order to be able to run MPI jobs without being prompted for a password.
+   </P
+></LI
+><LI
+><P
+>   <STRONG
+>Relational Database</STRONG
+>: By
+   default, we use a java-based in-memory and disk-based <A
+HREF="http://hsqldb.org/"
+TARGET="_top"
+>HSQLDB</A
+> database for persistent services states. 
+   For production use we recommend using a real database such as:
+   <P
+></P
+><UL
+><LI
+><P
+>       <A
+HREF="http://www.postgresql.org/"
+TARGET="_top"
+>Postgres</A
+> (v.8.2.4 or higher), 
+     </P
+></LI
+><LI
+><P
+>       <A
+HREF="http://dev.mysql.com/downloads/"
+TARGET="_top"
+>MySQL</A
+> (tested with v.5.1.61), or
+     </P
+></LI
+><LI
+><P
+>       <A
+HREF="http://www-01.ibm.com/software/data/db2/"
+TARGET="_top"
+>DB2</A
+> (tested with v.8.2).
+     </P
+></LI
+></UL
+>
+   </P
+></LI
+><LI
+><P
+>   <STRONG
+>Batch Job Scheduler Tools</STRONG
+>. 
+   Opal can be set up to submit jobs directly to schedulers such as 
+   Condor or TORQUE/PBS simply by writing a shell script.
+   Another alternative is to access schedulers via the <A
+HREF="http://drmaa.org/"
+TARGET="_top"
+>DRMAA</A
+> API. The Opal services
+   can submit jobs to schedulers as long as they support the DRMAA API. 
+   </P
+><P
+>We have tested:
+     <P
+></P
+><UL
+><LI
+><P
+>         <A
+HREF="http://research.cs.wisc.edu/htcondor"
+TARGET="_top"
+>Condor</A
+> (serial jobs)
+       </P
+></LI
+><LI
+><P
+>         <A
+HREF="http://www.oracle.com/us/products/tools/oracle-grid-engine-075549.html"
+TARGET="_top"
+>         SGE via DRMAA API</A
+> (serial and parallel jobs)
+       </P
+></LI
+><LI
+><P
+>         <A
+HREF="http://www.clusterresources.com/products/torque-resource-manager.php"
+TARGET="_top"
+>TORQUE/PBS</A
+> (serial jobs)
+       </P
+></LI
+></UL
+>
+    </P
+></LI
+></OL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="serversetup.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="serverinstall.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Opal Server Installation</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="serversetup.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Installation Instructions</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

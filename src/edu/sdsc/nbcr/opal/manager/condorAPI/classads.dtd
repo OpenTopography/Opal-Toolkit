@@ -1,0 +1,37 @@
+<!-- Document Type Definition for ClassAds (Classified Advertisements, as used
+     in Condor.  See http://www.cs.wisc.edu/condor for more information. -->
+
+<!-- Root element: a sequence of ClassAd elements -->
+<!ELEMENT classads (i | r | s | e | b | at | rt | un | er | l | c)*>
+
+<!-- A ClassAd (Classified Advertisement):  A set of "attributes". -->
+<!ELEMENT c     (a)* >
+
+<!-- An "attribute" contains a named element -->
+<!ELEMENT a     (i | r | s | e | b | at | rt | un | er | l | c)>
+<!ATTLIST a n   CDATA #REQUIRED>
+
+<!-- Numbers -->
+<!ELEMENT i     (#PCDATA)> <!-- An integer (sequence of digits) -->
+<!ELEMENT r     (#PCDATA)> <!-- A real number in "scientific" notation -->
+
+<!-- Strings -->
+<!ELEMENT s     (#PCDATA)>
+
+<!-- Sub-expressions in native syntax -->
+<!ELEMENT e     (#PCDATA)>
+
+<!-- Booleans: no content, but one mandatory attribute v=t or v=f -->
+<!ELEMENT b     EMPTY>
+<!ATTLIST b v   (t | f) #REQUIRED >
+
+<!-- Timestamps -->
+<!ELEMENT at    (#PCDATA)> <!-- Absoute time, e.g. 2003-01-25T09:00:00-06:00 -->
+<!ELEMENT rt    (#PCDATA)> <!-- Relative time, e.g. P1H15M13.257S -->
+
+<!-- Undefined and error -->
+<!ELEMENT un    (#PCDATA)> <!-- Undefined; content, if any, is "annotation" -->
+<!ELEMENT er    (#PCDATA)> <!-- Error; content, if any, is "annotation" -->
+
+<!-- A List: a sequence of ClassAd elements -->
+<!ELEMENT l     (i | r | s | e | b | at | rt | un | er | l | c)*>

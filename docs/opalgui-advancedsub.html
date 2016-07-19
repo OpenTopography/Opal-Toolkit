@@ -1,0 +1,565 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Advanced Submission Form</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Opal Dashboard"
+HREF="opalgui.html"><LINK
+REL="PREVIOUS"
+TITLE="Simple Submission Form"
+HREF="opalgui-simplesub.html"><LINK
+REL="NEXT"
+TITLE="Feedback and Acknowledgements"
+HREF="feedbackack.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="opalgui-simplesub.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 6. Opal Dashboard</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="feedbackack.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="OPALGUI-ADVANCEDSUB"
+>6.3. Advanced Submission Form</A
+></H1
+><P
+>One can add an optional element <EM
+>types</EM
+> in the 
+application configuration file described at <A
+HREF="deploy.html"
+>Application Deployment</A
+>.
+This element contains a description of the command line input arguments 
+accepted by the application.  The Opal dashboard will render an advanced 
+submission form with the customized inputs arguments.</P
+><DIV
+CLASS="SECTION"
+><H2
+CLASS="SECTION"
+><A
+NAME="OPALGUI-TYPESEC"
+>6.3.1. The &#60;types&#62; section</A
+></H2
+><P
+>The &#60;types&#62; section of the application configuration file can be composed of four optional elements.
+Each element, when present, has one or more nested elements.</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>      <STRONG
+>&#60;flags&#62;</STRONG
+>: optional, contain a set of &#60;flag&#62; elements. The flags are not ordered.
+      <P
+></P
+><UL
+><LI
+><P
+>        <STRONG
+>&#60;flag&#62;</STRONG
+>: is used to define an input argument (or a flag) for the application. 
+        These arguments are passed using one or more characters prefixed with one 
+        or more dashes.  Usually they are used to activate or deactivate some application functionality,
+        for example  <EM
+>--verbose</EM
+>.
+        The following elements can be nested inside &#60;flag&#62;:
+        <P
+></P
+><UL
+><LI
+><P
+>          <STRONG
+>&#60;id&#62;</STRONG
+>: required element, contains an internal unique identifier which
+          represents this flag.
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;tag&#62;</STRONG
+>: required element, contains a string that is used as a tag for this
+          argument.</P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;default&#62;</STRONG
+>: optional element, 
+          specifies if this flag should be automatically selected or not.
+          Can be only <EM
+>true</EM
+> or <EM
+>false</EM
+>. 
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;textDesc&#62;</STRONG
+>: optional element, contain an explanation of the flag's
+          functionality.</P
+></LI
+></UL
+>
+        </P
+></LI
+></UL
+>
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>        &#60;types&#62; 
+              &#60;!-- list of flags --&#62; 
+              &#60;flags&#62; 
+                  &#60;flag&#62; 
+                      &#60;id&#62;verbose&#60;/id&#62; 
+                      &#60;tag&#62;--verbose&#60;/tag&#62; 
+                      &#60;textDesc&#62;Provide verbose output&#60;/textDesc&#62; 
+                      &#60;default&#62;true&#60;/default&#62; 
+                  &#60;/flag&#62; 
+                  
+                  ... 
+              &#60;/flags&#62;
+      </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+    </P
+></LI
+><LI
+><P
+>      <STRONG
+>&#60;taggedParams&#62;</STRONG
+>: optional, contains a set of &#60;parameter&#62; elements.
+      They can appear in any order on the command line. 
+
+      <P
+></P
+><UL
+><LI
+><P
+>        <STRONG
+>&#60;param&#62;</STRONG
+>: these elements are usually formed by a prefix (tag), 
+        a separator, and an input value.  The 'separator' is a character used to separate the tag from the 
+        input value.  For example, for <EM
+>-input=&#60;FileName1&#62;</EM
+> the separator is '=', for
+        <EM
+>-input &#60;FileName2&#62;</EM
+> the separator is ' '. 
+        The following elements can be nested inside  &#60;param&#62;:</P
+><P
+></P
+><UL
+><LI
+><P
+>          <STRONG
+>&#60;id&#62;</STRONG
+>: required, contains an internal unique identifier which
+          represents this parameter
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;tag&#62;</STRONG
+>: required, contains the string that is used as 
+          a tag for this argument. NOTE: do not use this element if a parent element &#60;param&#62; is inside &#60;untaggedParams&#62;
+          element.
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;default&#62;</STRONG
+>: optional element, contains
+          the default value for a given parameter. When present, the default value is copied into the corresponding input box
+          on the application form. 
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;paramType&#62;</STRONG
+>: required,  specifies the type for this
+          parameter. Its values can be: INT, BOOL, FLOAT, STRING, FILE and URL.
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;ioType&#62;</STRONG
+>: required to be present when the
+          paramType tag is FILE; specifies if the file is an input or an output. Possible values
+          are: INPUT, OUTPUT and INOUT
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;required&#62;</STRONG
+>: optional, specifies if a parameter is mandatory. 
+          When not present, the default is false.  Can contain values <EM
+>true</EM
+> or <EM
+>false</EM
+>.
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;value&#62;</STRONG
+>: optional, can be repeated multiple times. 
+          If present it means that this parameter can assume only the values enumerated in these tags.
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;textDesc&#62;</STRONG
+>: optional, contains
+          an explanation of the argument functionality.
+          </P
+></LI
+></UL
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>              &#60;!-- list of tagged parameters --&#62; 
+              &#60;taggedParams&#62; 
+                  &#60;separator&#62;=&#60;/separator&#62; 
+                  &#60;param&#62; 
+                      &#60;id&#62;forcefield&#60;/id&#62; 
+                      &#60;tag&#62;--ff&#60;/tag&#62; 
+                      &#60;paramType&#62;STRING&#60;/paramType&#62; 
+                      &#60;required&#62;true&#60;/required&#62; 
+                      &#60;value&#62;AMBER&#60;/value&#62; 
+                      &#60;value&#62;CHARMM&#60;/value&#62; 
+                      &#60;value&#62;PARSE&#60;/value&#62; 
+                      &#60;value&#62;TYL06&#60;/value&#62; 
+                      &#60;default&#62;AMBER&#60;/default&#62; 
+                      &#60;textDesc&#62;The forcefield to use -- 
+		                      currently AMBER, CHARMM, PARSE, and TYL06 are supported.
+                      &#60;/textDesc&#62; 
+                  &#60;/param&#62; 
+                        ...
+              &#60;/taggedParams&#62; 
+        </PRE
+></FONT
+></TD
+></TR
+></TABLE
+></LI
+></UL
+>
+
+    </P
+></LI
+><LI
+><P
+>    <STRONG
+>&#60;untaggedParams&#62;</STRONG
+>: optional, contains a set of &#60;parameter&#62; elements.
+    Each  &#60;parameter&#62; element defines an input argument when its order on the command line is
+    relevant. Hence, the oder of specified parameters  in the application configuration file must follow the order
+    of the arguments expected by the application. 
+    Each &#60;parameter&#62; element has the same set of nested elements as the &#60;parameter&#62; for &#60;taggedParams&#62;
+    element, accept &#60;tag&#62;, see NOTE above.
+    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>              &#60;!-- list of untagged parameters, in order --&#62; 
+              &#60;untaggedParams&#62; 
+                  &#60;param&#62; 
+                      &#60;id&#62;inFile&#60;/id&#62; 
+                      &#60;paramType&#62;FILE&#60;/paramType&#62; 
+                      &#60;ioType&#62;INPUT&#60;/ioType&#62; 
+                      &#60;!--  &#60;required&#62;true&#60;/required&#62;   --&#62; 
+                      &#60;textDesc&#62;The PDB input file.&#60;/textDesc&#62; 
+                  &#60;/param&#62; 
+                        ...
+              &#60;/untaggedParams&#62; 
+    </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+    </P
+></LI
+><LI
+><P
+>      <STRONG
+>&#60;groups&#62;</STRONG
+>: optional, contains a set of &#60;group&#62; elements. 
+      <P
+></P
+><UL
+><LI
+><P
+>      <STRONG
+>&#60;group&#62;</STRONG
+>: optional, defines groups of
+        several parameters that have a similar functionality.  Each defined group will be displayed 
+        together on the submission form.  It contains the following nested elements:</P
+><P
+></P
+><UL
+><LI
+><P
+>          <STRONG
+>&#60;name&#62;</STRONG
+>: required, contains the internal name for this group
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;elements&#62;</STRONG
+>: required, 
+          contains the list of parameters and flags that are part of this group
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;required&#62;</STRONG
+>: optional. 
+          Can be only <EM
+>true</EM
+> or <EM
+>false</EM
+>. 
+          If this element is true, it means that all the elements 
+          within this group are mandatory. When absent, the default is false.
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;exclusive&#62;</STRONG
+>: optional, specifies that
+          parameters in this group are mutually exclusive. Default is false. 
+          Can be only <EM
+>true</EM
+> or <EM
+>false</EM
+>. 
+          </P
+></LI
+><LI
+><P
+>          <STRONG
+>&#60;textDesc&#62;</STRONG
+>: olptional,
+          contains a description that will be rendered on the submission form
+          as a header for this group of parameters.
+          </P
+></LI
+></UL
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>              &#60;groups&#62; 
+                &#60;group&#62; 
+                  &#60;name&#62;inputParam&#60;/name&#62; 
+                  &#60;elements&#62;inFile inId&#60;/elements&#62; 
+                   &#60;required&#62;true&#60;/required&#62; 
+                   &#60;exclusive&#62;true&#60;/exclusive&#62; 
+                   &#60;textDesc&#62;Input file to be used (choose one of the two options)&#60;/textDesc&#62; 
+                &#60;/group&#62; 
+                       ...
+              &#60;/groups&#62; 
+      </PRE
+></FONT
+></TD
+></TR
+></TABLE
+></LI
+></UL
+>
+
+    </P
+></LI
+></OL
+><P
+>For the Opal application configuration described in <A
+HREF="sample-appconfig.html"
+>Sample Application Configuration File</A
+>,
+the following advanced submission form is generated:</P
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/advanced_sub1.png"></P
+></DIV
+><DIV
+CLASS="MEDIAOBJECT"
+><P
+><IMG
+SRC="images/advanced_sub2.png"></P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="opalgui-simplesub.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="feedbackack.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Simple Submission Form</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="opalgui.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Feedback and Acknowledgements</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

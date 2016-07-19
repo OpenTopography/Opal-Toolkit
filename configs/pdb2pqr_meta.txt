@@ -1,0 +1,2 @@
+http://kryptonite.nbcr.net/opal2/services/pdb2pqr_1.7 1
+http://ws.nbcr.net/opal2/services/Pdb2pqrOpalService 1

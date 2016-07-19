@@ -1,0 +1,633 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Sample Application Configuration File</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Appendix"
+HREF="appendix.html"><LINK
+REL="PREVIOUS"
+TITLE="Configuring Email Notifications"
+HREF="email-notifications.html"><LINK
+REL="NEXT"
+TITLE="Sample Script for Generating Proxy"
+HREF="proxy-script.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="email-notifications.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 8. Appendix</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="proxy-script.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="SAMPLE-APPCONFIG"
+>8.6. Sample Application Configuration File</A
+></H1
+><P
+>This example shows how to write the Opal job submission configuration file for
+the <A
+HREF="http://pdb2pqr.sourceforge.net/"
+TARGET="_top"
+>PDB2PQR</A
+>
+program. PDB2PQR is designed to automate many of the common tasks of
+preparing structures for continuum electrostatics calculations, by
+providing a platform-independent utility for converting protein files in
+PDB format to PQR format. An example file $OPAL_HOME/configs/pdb2pqr_config.xml
+includes advanced features such as specification of a complex set
+of the command-line arguments.
+
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>&#60;appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"&#62;
+  &#60;metadata appName="PDB2PQR 1.8"&#62;
+    &#60;usage&#62;&#60;![CDATA[PDB2PQR is a Python software package that automates many of 
+              the common tasks of preparing structures for continuum electrostatics 
+              calculations, providing a platform-independent utility for converting 
+              protein files in PDB format to PQR format. Version 1.8.
+              &#60;BR&#62;&#60;A HREF=http://www.nbcr.net/ws_help/PDB2PQR/&#62;
+              Tutorial: http://www.nbcr.net/ws_help/PDB2PQR/&#60;/A&#62; 
+            ]]&#62;
+    &#60;/usage&#62;
+
+    &#60;info xsd:type="xsd:string"&#62;
+    &#60;![CDATA[
+pdb2pqr  (Version 1.8)
+Usage: pdb2pqr.py [options] PDB_PATH PQR_OUTPUT_PATH
+
+This module takes a PDB file as input and performs optimizations before
+yielding a new PQR-style file in PQR_OUTPUT_PATH. If PDB_PATH is an ID it will
+automatically be obtained from the PDB archive.
+
+Options:
+  --version             show program's version number and exit
+  -h, --help            show this help message and exit
+
+  Mandatory options:
+    One of the following options must be used.
+
+    --ff=FIELD_NAME     The forcefield to use - currently AMBER, CHARMM,
+                        PARSE, TYL06, PEOEPB and SWANSON are supported.
+    --userff=USER_FIELD_FILE
+                        The user created forcefield file to use. Requires
+                        --usernames overrides --ff
+    --clean             Do no optimization, atom addition, or parameter
+                        assignment, just return the original PDB file in
+                        aligned format. Overrides --ff and --userff
+
+  General options:
+    --nodebump          Do not perform the debumping operation
+    --noopt             Do not perform hydrogen optimization
+    --chain             Keep the chain ID in the output PQR file
+    --assign-only       Only assign charges and radii - do not add atoms,
+                        debump, or optimize.
+    --ffout=FIELD_NAME  Instead of using the standard canonical naming scheme
+                        for residue and atom names, use the names from the
+                        given forcefield - currently AMBER, CHARMM, PARSE,
+                        TYL06, PEOEPB and SWANSON are supported.
+    --usernames=USER_NAME_FILE
+                        The user created names file to use. Required if using
+                        --userff
+    --apbs-input        Create a template APBS input file based on the
+                        generated PQR file.  Also creates a Python pickle for
+                        using these parameters in other programs.
+    --ligand=PATH       Calculate the parameters for the ligand in mol2 format
+                        at the given path. Pdb2pka must be compiled.
+    --whitespace        Insert whitespaces between atom name and residue name,
+                        between x and y, and between y and z.
+    --typemap           Create Typemap output.
+    --neutraln          Make the N-terminus of this protein neutral (default
+                        is charged). Requires PARSE force field.
+    --neutralc          Make the C-terminus of this protein neutral (default
+                        is charged). Requires PARSE force field.
+    -v, --verbose       Print information to stdout.
+
+  Propka options:
+    --with-ph=PH        Use propka to calculate pKas and apply them to the
+                        molecule given the pH value. Actual PropKa results
+                        will be output to &#60;output-path&#62;.propka.
+    --reference=REFERENCE
+                        setting which reference to use for stability
+                        calculations [neutral/low-pH]
+
+  Extension options:
+    --chi               Print the per-residue backbone chi angle to {output-
+                        path}.chi
+    --summary           Print protein summary information to {output-
+                        path}.summary.
+    --contact           Print a list of contacts to {output-path}.con
+    --salt              Print a list of salt bridges to {output-path}.salt
+
+  Hbond extension options:
+    --hbond             Print a list of hydrogen bonds to {output-path}.hbond
+    --whatif            Change hbond output to WHAT-IF format.
+    --angle_cutoff=ANGLE_CUTOFF
+                        Angle cutoff to use when creating hbond data (default
+                        30.0)
+    --distance_cutoff=DISTANCE_CUTOFF
+                        Distance cutoff to use when creating hbond data
+                        (default 3.4)
+    --old_distance_method
+                        Use distance from donor hydrogen to acceptor to
+                        calculate distance used with --distance_cutoff.
+
+  Resinter extension options:
+    --resinter          Print interaction energy between each residue pair in
+                        the protein to {output-path}.resinter.
+    --residue_combinations
+                        Remap residues to different titration states and rerun
+                        resinter appending output. Consider only the minimum
+                        number of whole protein titration combinations needed
+                        to test each possible pairing of residue titration
+                        states. Normally used with --noopt. If a protein
+                        titration state combination results in a pair of
+                        residue being  re-tested in the same individual
+                        titration states a warning will be generated if the
+                        re-tested result is different. This warning should not
+                        be possible if used with --noopt.
+    --all_residue_combinations
+                        Remap residues to ALL possible titration state
+                        combinations and rerun resinter appending output.
+                        Results with --noopt should be the same as
+                        --residue_combinations. Runs considerably slower than
+                        --residue_combinations and generates the same type of
+                        warnings.  Use without --noopt to discover how
+                        hydrogen optimization affects residue  interaction
+                        energies via the warnings in the output.
+
+  Rama extension options:
+    --rama              Print the per-residue phi and psi angles to {output-
+                        path}.rama for Ramachandran plots
+    --phi_only          Only include phi angles in output. Rename output file
+                        {output-path}.phi
+    --psi_only          Only include psi angles in output. Rename output file
+                        {output-path}.psi
+    ]]&#62;
+    &#60;/info&#62;
+
+    &#60;types&#62; 
+        &#60;!-- list of flags --&#62;
+        &#60;flags&#62;
+            &#60;flag&#62;
+                &#60;id&#62;verbose&#60;/id&#62;
+                &#60;tag&#62;--verbose&#60;/tag&#62;
+                &#60;textDesc&#62;Print information to stdout&#60;/textDesc&#62;
+                &#60;default&#62;true&#60;/default&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;nodebump&#60;/id&#62;
+                &#60;tag&#62;--nodebump&#60;/tag&#62;
+                &#60;textDesc&#62;Do not perform the debumping operation&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;noopt&#60;/id&#62;
+                &#60;tag&#62;--noopt&#60;/tag&#62;
+                &#60;textDesc&#62;Do not perform hydrogen optimization&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;chain&#60;/id&#62;
+                &#60;tag&#62;--chain&#60;/tag&#62;
+                &#60;textDesc&#62;Keep the chain ID in the output PQR file&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;assign-only&#60;/id&#62;
+                &#60;tag&#62;--assign-only&#60;/tag&#62;
+                &#60;textDesc&#62;Only assign charges and radii - do not add atoms, debump, or optimize&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;clean&#60;/id&#62;
+                &#60;tag&#62;--clean&#60;/tag&#62;
+                &#60;textDesc&#62;Do no optimization, atom addition, or parameter assignment, 
+                    just return the original PDB file in aligned format. Overwrites chosen forcefield.
+                &#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;apbs-input&#60;/id&#62;
+                &#60;tag&#62;--apbs-input&#60;/tag&#62;
+                &#60;textDesc&#62;Create a template APBS input file based on the generated PQR file.
+                          Also creates a Python pickle for using these parameters in other programs.
+                &#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;whitespace&#60;/id&#62;
+                &#60;tag&#62;--whitespace&#60;/tag&#62;
+                &#60;textDesc&#62;Insert whitespaces between atom name and residue name,
+                           between x and y, and between y and z &#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;typemap&#60;/id&#62;
+                &#60;tag&#62;--typemap&#60;/tag&#62;
+                &#60;textDesc&#62;Create Typemap output &#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;neutraln&#60;/id&#62;
+                &#60;tag&#62;--neutraln&#60;/tag&#62;
+                &#60;textDesc&#62;Make the N-terminus of this protein neutral (default is charged)&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;neutralc&#60;/id&#62;
+                &#60;tag&#62;--neutralc&#60;/tag&#62;
+                &#60;textDesc&#62;Make the C-terminus of this protein neutral (default is charged)&#60;/textDesc&#62;
+            &#60;/flag&#62;
+    
+            &#60;flag&#62;
+                &#60;id&#62;chi&#60;/id&#62;
+                &#60;tag&#62;--chi&#60;/tag&#62;
+                &#60;textDesc&#62;Print the per-residue backbone chi angle to {output-path}.chi&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;rama&#60;/id&#62;
+                &#60;tag&#62;--rama&#60;/tag&#62;
+                &#60;textDesc&#62;Print the per-residue phi and psi angles to {output-path}.rama 
+                     for Ramachandran plots&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+`               &#60;id&#62;psi_only&#60;/id&#62;
+                &#60;tag&#62;--psi_only&#60;/tag&#62;
+                &#60;textDesc&#62;Only include phi angles in Rama output. Rename output file {output-path}.psi&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;phi_only&#60;/id&#62;
+                &#60;tag&#62;--phi_only&#60;/tag&#62;
+                &#60;textDesc&#62;Only include phi angles in Rama output. Rename output file {output-path}.phi&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+`               &#60;id&#62;contact&#60;/id&#62;
+                &#60;tag&#62;--contact&#60;/tag&#62;
+                &#60;textDesc&#62;Print a list of contacts to {output-path}.con&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+`               &#60;id&#62;salt&#60;/id&#62;
+                &#60;tag&#62;--salt&#60;/tag&#62;
+                &#60;textDesc&#62;Print a list of salt bridges to {output-path}.salt &#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+`               &#60;id&#62;summary&#60;/id&#62;
+                &#60;tag&#62;--summary&#60;/tag&#62;
+                &#60;textDesc&#62;Print protein summary information to {output-path}.summary.&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;hbond&#60;/id&#62;
+                &#60;tag&#62;--hbond&#60;/tag&#62;
+                &#60;textDesc&#62;Print a list of hydrogen bonds to {output-path}.hbond&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;whatif&#60;/id&#62;
+                &#60;tag&#62;--whatif&#60;/tag&#62;
+                &#60;textDesc&#62;Change hbond output to WHAT-IF format.&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;old_distance_method&#60;/id&#62;
+                &#60;tag&#62;--old_distance_method&#60;/tag&#62;
+                &#60;textDesc&#62;Use distance from donor hydrogen to acceptor to calculate distance 
+                     used with --distance_cutoff.
+                &#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;resinter&#60;/id&#62;
+                &#60;tag&#62;--resinter&#60;/tag&#62;
+                &#60;textDesc&#62;Print interaction energy between each residue pair in
+                      the protein to {output-path}.resinter.&#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;residue_combinations&#60;/id&#62;
+                &#60;tag&#62;--residue_combinations&#60;/tag&#62;
+                &#60;textDesc&#62;Remap residues to different titration states and rerun
+                          resinter appending output. Consider only the minimum
+                          number of whole protein titration combinations needed
+                          to test each possible pairing of residue titration
+                          states. Normally used with --noopt. If a protein
+                          titration state combination results in a pair of
+                          residue being  re-tested in the same individual
+                          titration states a warning will be generated if the
+                          re-tested result is different. This warning should not
+                          be possible if used with --noopt.
+                &#60;/textDesc&#62;
+            &#60;/flag&#62;
+            &#60;flag&#62;
+                &#60;id&#62;all_residue_combinations&#60;/id&#62;
+                &#60;tag&#62;--all_residue_combinations&#60;/tag&#62;
+                &#60;textDesc&#62;Remap residues to ALL possible titration state
+                          combinations and rerun resinter appending output.
+                          Results with --noopt should be the same as
+                          --residue_combinations. Runs considerably slower than
+                          --residue_combinations and generates the same type of
+                          warnings.  Use without --noopt to discover how
+                          hydrogen optimization affects residue  interaction
+                          energies via the warnings in the output.
+                &#60;/textDesc&#62;
+            &#60;/flag&#62;
+
+        &#60;/flags&#62;
+    
+        &#60;!-- list of tagged parameters --&#62;
+        &#60;taggedParams&#62;
+            &#60;separator&#62;=&#60;/separator&#62;
+            &#60;param&#62;
+                &#60;id&#62;forcefield&#60;/id&#62;
+                &#60;tag&#62;--ff&#60;/tag&#62;
+                &#60;paramType&#62;STRING&#60;/paramType&#62;
+                &#60;required&#62;true&#60;/required&#62;
+                &#60;value&#62;AMBER&#60;/value&#62;
+                &#60;value&#62;CHARMM&#60;/value&#62;
+                &#60;value&#62;PARSE&#60;/value&#62;
+                &#60;value&#62;PEOEPB&#60;/value&#62;
+                &#60;value&#62;SWANSON&#60;/value&#62;
+                &#60;value&#62;TYL06&#60;/value&#62;
+                &#60;default&#62;PARSE&#60;/default&#62;
+                &#60;textDesc&#62;Currently supported&#60;/textDesc&#62;
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;user-forcefield&#60;/id&#62;
+                &#60;tag&#62;--userff&#60;/tag&#62;
+                &#60;paramType&#62;FILE&#60;/paramType&#62;
+                &#60;ioType&#62;INPUT&#60;/ioType&#62;
+                &#60;required&#62;false&#60;/required&#62;  
+                &#60;textDesc&#62;User-defined forcefield &#60;/textDesc&#62;
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;usernames&#60;/id&#62;
+                &#60;tag&#62;--usernames&#60;/tag&#62;
+                &#60;paramType&#62;FILE&#60;/paramType&#62;
+                &#60;ioType&#62;INPUT&#60;/ioType&#62;
+                &#60;required&#62;false&#60;/required&#62;  
+                &#60;textDesc&#62;The user-created names file to use. Required if using user defined forcefield &#60;/textDesc&#62;
+
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;ffout&#60;/id&#62;
+                &#60;tag&#62;--ffout&#60;/tag&#62;
+                &#60;paramType&#62;STRING&#60;/paramType&#62;
+                &#60;value&#62;AMBER&#60;/value&#62;
+                &#60;value&#62;CHARMM&#60;/value&#62;
+                &#60;value&#62;PARSE&#60;/value&#62;
+                &#60;value&#62;PEOEPB&#60;/value&#62;
+                &#60;value&#62;SWANSON&#60;/value&#62;
+                &#60;value&#62;TYL06&#60;/value&#62;                
+                &#60;textDesc&#62;Instead of using the standard canonical naming scheme for residue and atom, 
+                          use names from the given forcefield:
+                &#60;/textDesc&#62;
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;with-ph&#60;/id&#62;
+                &#60;tag&#62;--with-ph&#60;/tag&#62;
+                &#60;paramType&#62;FLOAT&#60;/paramType&#62;
+                &#60;textDesc&#62;Use PROPKA to calculate pKas and apply them to the molecule given the pH value [0.0-14.0]
+                          Actual PropKa results will be output to {output-path}.propka
+                &#60;/textDesc&#62;
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;ligand&#60;/id&#62;
+                &#60;tag&#62;--ligand&#60;/tag&#62;
+                &#60;paramType&#62;FILE&#60;/paramType&#62;
+                &#60;ioType&#62;OUTPUT&#60;/ioType&#62;
+                &#60;textDesc&#62;Calculate the parameters for the ligand in mol2 format at the given path. 
+                          Pdb2pka must be compiled.
+                &#60;/textDesc&#62; 
+
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;angle_cutoff&#60;/id&#62;
+                &#60;tag&#62;--angle_cutoff&#60;/tag&#62;
+                &#60;paramType&#62;FLOAT&#60;/paramType&#62;
+                &#60;textDesc&#62;Angle cutoff to use when creating hbond data (default 30.0)&#60;/textDesc&#62;
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;distance_cutoff&#60;/id&#62;
+                &#60;tag&#62;--distance_cutoff&#60;/tag&#62;
+                &#60;paramType&#62;FLOAT&#60;/paramType&#62;
+                &#60;textDesc&#62;Distance cutoff to use when creating hbond data (default 3.4)&#60;/textDesc&#62;
+            &#60;/param&#62;
+        &#60;/taggedParams&#62;
+    
+        &#60;!-- list of untagged parameters, in order --&#62;
+        &#60;untaggedParams&#62;
+            &#60;param&#62;
+                &#60;id&#62;inId&#60;/id&#62;
+                &#60;paramType&#62;STRING&#60;/paramType&#62;
+                &#60;ioType&#62;INPUT&#60;/ioType&#62;
+                &#60;!--  &#60;required&#62;true&#60;/required&#62;   --&#62;
+                &#60;textDesc&#62;a PDB ID (fetch input file from PDB archive; for test use 1a1p)&#60;/textDesc&#62;
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;inFile&#60;/id&#62;
+                &#60;paramType&#62;FILE&#60;/paramType&#62;
+                &#60;ioType&#62;INPUT&#60;/ioType&#62;
+                &#60;!--  &#60;required&#62;true&#60;/required&#62;   --&#62;
+                &#60;textDesc&#62;&#60;![CDATA[ upload a PDB input file (test file 
+                          &#60;a href="http://www.rcsb.org/pdb/files/1a1p.pdb"&#62;http://www.rcsb.org/pdb/files/1a1p.pdb&#60;/a&#62;)]]&#62;
+                &#60;/textDesc&#62;
+            &#60;/param&#62;
+            &#60;param&#62;
+                &#60;id&#62;output-file&#60;/id&#62;
+                &#60;paramType&#62;FILE&#60;/paramType&#62;
+                &#60;ioType&#62;OUTPUT&#60;/ioType&#62;
+                &#60;required&#62;true&#60;/required&#62;
+                &#60;default&#62;output.pqr&#60;/default&#62;
+                &#60;textDesc&#62;The desired output name of the PQR file to be generated&#60;/textDesc&#62;
+            &#60;/param&#62;
+        &#60;/untaggedParams&#62;
+        &#60;groups&#62;
+          &#60;group&#62;
+            &#60;name&#62;inputParam&#60;/name&#62;
+            &#60;elements&#62;inId inFile&#60;/elements&#62;
+            &#60;required&#62;true&#60;/required&#62;
+            &#60;exclusive&#62;true&#60;/exclusive&#62;
+            &#60;textDesc&#62;Please enter either:&#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;ForceFieldGroup&#60;/name&#62;
+            &#60;elements&#62;forcefield &#60;/elements&#62;
+            &#60;required&#62;true&#60;/required&#62;
+            &#60;textDesc&#62;Pick a forcefield to use:&#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;UserForceFieldGroup&#60;/name&#62;
+            &#60;elements&#62;user-forcefield usernames&#60;/elements&#62;
+            &#60;required&#62;true&#60;/required&#62;
+            &#60;textDesc&#62;User forcefield to use (overwrites previous forcefield):&#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;outputFile&#60;/name&#62;
+            &#60;elements&#62;output-file&#60;/elements&#62;
+            &#60;required&#62;true&#60;/required&#62;
+            &#60;textDesc&#62;Output file name&#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;ffoutGroup&#60;/name&#62;
+            &#60;elements&#62;ffout&#60;/elements&#62;
+            &#60;required&#62;false&#60;/required&#62;
+            &#60;textDesc&#62;Pick an output naming scheme to use&#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;AvailableOptionsGroup&#60;/name&#62;
+            &#60;elements&#62;clean nodebump noopt chain assign-only with-ph apbs-input 
+                      ligand whitespace typemap neutraln neutralc verbose &#60;/elements&#62;
+            &#60;required&#62;false&#60;/required&#62;
+            &#60;textDesc&#62;Available options &#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;ExtensionOptionsGroup&#60;/name&#62;
+            &#60;elements&#62;chi contact salt summary &#60;/elements&#62;
+            &#60;textDesc&#62;Extensions options:&#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;HbondExtensionOptionsGroup&#60;/name&#62;
+            &#60;elements&#62;hbond whatif angle_cutoff distance_cutoff old_distance_method &#60;/elements&#62;
+            &#60;textDesc&#62; Hbond Extensions options:&#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;ResinterExtensionOptionsGroup&#60;/name&#62;
+            &#60;elements&#62;resinter residue_combinations all_residue_combinations &#60;/elements&#62;
+            &#60;textDesc&#62;Resinter Extensions options:&#60;/textDesc&#62;
+          &#60;/group&#62;
+          &#60;group&#62;
+            &#60;name&#62;RamaExtensionOptionsGroup&#60;/name&#62;
+            &#60;elements&#62;rama phi_only psi_only &#60;/elements&#62;
+            &#60;textDesc&#62;Rama Extensions options:&#60;/textDesc&#62;
+          &#60;/group&#62;
+        &#60;/groups&#62;
+    &#60;/types&#62;
+
+  &#60;/metadata&#62;
+
+  &#60;binaryLocation&#62;/opt/pdb2pqr_1.8/pdb2pqr.py&#60;/binaryLocation&#62;
+   &#60;parallel&#62;false&#60;/parallel&#62;
+&#60;/appConfig&#62;</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="email-notifications.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="proxy-script.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Configuring Email Notifications</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="appendix.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Sample Script for Generating Proxy</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Using Meta Service</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Scheduler Support Using Job Managers"
+HREF="scheduler.html"><LINK
+REL="PREVIOUS"
+TITLE="Using TORQUE/PBS"
+HREF="pbs-scheduler.html"><LINK
+REL="NEXT"
+TITLE="Writing Your Own Job Manager"
+HREF="jobmanager-howto.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="pbs-scheduler.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 5. Scheduler Support Using Job Managers</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="jobmanager-howto.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="META-SERVICE-SCHEDULER"
+>5.4. Using Meta Service</A
+></H1
+><P
+>The Opal meta service plugin can be used to send jobs to remote 
+Opal services.  You can define several remote hosts for a particular
+web service, and the web service will run on a random host chosen from this 
+set of remote hosts.  In a future Opal release, we may enhance the 
+meta scheduling algorithm.</P
+><P
+>The <EM
+>&#60;metaServiceConfig&#62;</EM
+> tag in the application configuration file
+is used to define the location of the meta service configuration file
+for the particular service.  For example, </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>&#60;metaServiceConfig&#62;/home/opaluser/meta/pdb2pqr.txt&#60;/metaServiceConfig&#62;</PRE
+></FONT
+></TD
+></TR
+></TABLE
+><P
+>The meta service configuration file contains one or more lines, where each
+line lists a remote Opal service URL followed by the number of processors on 
+that remote Opal service (separated by a space).  Please use 1 as the 
+number of processors for serial services.  The sample file below defines
+the remote hosts for the Pdb2pqr meta service.</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>http://kryptonite.nbcr.net/opal2/services/pdb2pqr_1.7 1
+http://ws.nbcr.net/opal2/services/Pdb2pqrOpalService 1</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="pbs-scheduler.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="jobmanager-howto.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Using TORQUE/PBS</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="scheduler.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Writing Your Own Job Manager</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

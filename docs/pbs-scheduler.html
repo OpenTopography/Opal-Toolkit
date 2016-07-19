@@ -1,0 +1,282 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Using TORQUE/PBS</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Scheduler Support Using Job Managers"
+HREF="scheduler.html"><LINK
+REL="PREVIOUS"
+TITLE="Using Condor"
+HREF="condor-scheduler.html"><LINK
+REL="NEXT"
+TITLE="Using Meta Service"
+HREF="meta-service-scheduler.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="condor-scheduler.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 5. Scheduler Support Using Job Managers</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="meta-service-scheduler.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="PBS-SCHEDULER"
+>5.3. Using TORQUE/PBS</A
+></H1
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>Ensure that you have a working TORQUE/PBS installation, 
+    by following the instructions on the 
+    <A
+HREF="http://www.clusterresources.com/products/torque-resource-manager.php"
+TARGET="_top"
+>TORQUE website</A
+>. 
+    In particular, verify that you can submit and monitor jobs from the command-line with commands such as 
+    <EM
+>qsub</EM
+> and <EM
+>qstat</EM
+>. Note that we have only tested with TORQUE v.2.3.0
+    and PBS v.PBSPro_11.3.0.121723.</P
+></LI
+><LI
+><P
+>Set the following properties inside the opal.properties file:</P
+><P
+></P
+><UL
+><LI
+><P
+>      Set job manager to PBS.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>opal.jobmanager=edu.sdsc.nbcr.opal.manager.PBSJobManager</PRE
+></FONT
+></TD
+></TR
+></TABLE
+> 
+    </P
+></LI
+><LI
+><P
+>      To enable server-specific PBS 
+      expressions put them in a file (use regular PBS submit syntax in a file).
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>pbs.expr.file=/opt/opal/etc/pbs.expr</PRE
+></FONT
+></TD
+></TR
+></TABLE
+> 
+    </P
+></LI
+><LI
+><P
+>Limit jobName length:</P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>pbs.name.limit=15</PRE
+></FONT
+></TD
+></TR
+></TABLE
+><P
+>      Opal creates long jobs names (longer than 15 characters).
+      As a result, need to set default job name limit per your server configuration.
+      Job submit files will have <EM
+>#PBS -N jobName</EM
+> line and the 
+      jobName will have a specified by limit length. 
+    </P
+></LI
+></UL
+></LI
+><LI
+><P
+>Reinstall Opal by running the following command:
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    ant install</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+></LI
+><LI
+><P
+>Make sure that all the PBS binaries such as
+<EM
+>qsub</EM
+> and <EM
+>qstat</EM
+> are in your
+PATH.</P
+></LI
+><LI
+><P
+>Restart Tomcat for the changes to take effect.</P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="condor-scheduler.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="meta-service-scheduler.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Using Condor</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="scheduler.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Using Meta Service</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,9 @@
+Opal Toolkit
+----------------
+Opal is a toolkit for wrapping scientific applications as Web services on Cluster, Grid and Cloud resources with ease. Users may access these software as a service using simple Web service APIs from their custom application and workflow environment.
+
+This is the OpenTopography fork of the Opal toolkit originally developed by Sriram Krishnan at the San Diego Supercomputer Center (www.sdsc.edu) at UC San Diego.
+
+In this directory you will find the core Opal package implemented in Java, which includes both client and server sides.
+
+Documentation is in the "docs" directory.

@@ -1,0 +1,452 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Application Deployment</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Opal Server Installation"
+HREF="serversetup.html"><LINK
+REL="PREVIOUS"
+TITLE="Installation Instructions"
+HREF="serverinstall.html"><LINK
+REL="NEXT"
+TITLE="Command-line Client Installation"
+HREF="clientsetup.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="serverinstall.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 2. Opal Server Installation</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="clientsetup.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="DEPLOY"
+>2.3. Application Deployment</A
+></H1
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>Every application that is deployed as an Opal service requires
+an Opal configuration file. A sample configuration file
+<TT
+CLASS="FILENAME"
+>$OPAL_HOME/configs/date.xml</TT
+>
+for the command <EM
+>/bin/date</EM
+> is shown below:</P
+><P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>&#60;appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"&#62;
+  &#60;metadata appName=date&#62;
+    &#60;usage&#62;&#60;![CDATA[date [-u] mmddhhmm[[cc]yy]]]&#62;&#60;/usage&#62;
+    &#60;info xsd:type="xsd:string"&#62;
+        &#60;CDATA[
+             NAME
+                date - print or set the system date and time
+             SYNOPSIS
+                date [OPTION]... [+FORMAT]
+                date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]
+             DESCRIPTION
+                Display the current time in the given FORMAT, or set the system date.
+           ]]&#62;
+    &#60;/info&#62;
+    &#60;types&#62; &#60;/types&#62;
+  &#60;/metadata&#62;
+  &#60;binaryLocation&#62;/bin/date&#60;/binaryLocation&#62;
+  &#60;defaultArgs&#62;&#60;/defaultArgs&#62;
+  &#60;validateArgs&#62;false&#60;/validateArgs&#62;
+  &#60;jobManagerFQCN&#62;edu.sdsc.nbcr.opal.manager.ForkJobManager&#60;/jobManagerFQCN&#62;
+  &#60;parallel&#62;false&#60;/parallel&#62;
+&#60;/appConfig&#62;</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+><P
+>The configuration consists of:
+<P
+></P
+><UL
+><LI
+><P
+>    <EM
+>appConfig</EM
+>, a top level element  which contains all other elements.
+  </P
+></LI
+><LI
+><P
+>    <EM
+>metadata</EM
+>, consists of:
+      <P
+></P
+><UL
+><LI
+><P
+>          <EM
+>usage</EM
+>, a string specifying how
+          the application is invoked.
+        </P
+></LI
+><LI
+><P
+>          <EM
+>info</EM
+>, a string specifying 
+          an array of optional application information.
+        </P
+></LI
+><LI
+><P
+>          <EM
+>types</EM
+>, an optional  element. 
+          More information about this element can be 
+          found from the <A
+HREF="opalgui-advancedsub.html"
+>Advanced Submission Form</A
+> section). 
+        </P
+></LI
+></UL
+>
+  </P
+></LI
+><LI
+><P
+>    <EM
+>binaryLocation</EM
+>,  specifies the location of the 
+    application's binary. Note, this is a full path of an executable, and no arguments 
+    are allowed here. 
+  </P
+></LI
+><LI
+><P
+>    <EM
+>defaultArgs</EM
+>, specifies the default arguments that need to be used for every run.
+  </P
+></LI
+><LI
+><P
+>    <EM
+>parallel</EM
+>, specifies if an application is parallel or not.
+  </P
+></LI
+><LI
+><P
+>    <EM
+>validateArgs</EM
+> is optional. If set to true, it instructs
+    Opal to use the optional command-line specification (within types) to validate arguments prior to execution. 
+  </P
+></LI
+><LI
+><P
+>    <EM
+>jobManagerFQCN</EM
+> is optional.  It overwrites the default 
+    job manager, and can be set to the fully qualified classname of an Opal job manager. 
+    The default FQCNs for job managers provided by Opal are:
+
+  <P
+></P
+><UL
+><LI
+><P
+>      <TT
+CLASS="FILENAME"
+>edu.sdsc.nbcr.opal.manager.ForkJobManager</TT
+>  - for fork  job
+    </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="FILENAME"
+>edu.sdsc.nbcr.opal.manager.DRMAAJobManager</TT
+> - SGE job
+    </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="FILENAME"
+>edu.sdsc.nbcr.opal.manager.GlobusJobManager</TT
+> - Globus job on a local cluster
+    </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="FILENAME"
+>edu.sdsc.nbcr.opal.manager.RemoteGlobusJobManager</TT
+> - Globus job on a remote cluster
+    </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="FILENAME"
+>edu.sdsc.nbcr.opal.manager.CondorJobManager</TT
+> - Condor job
+    </P
+></LI
+><LI
+><P
+>      <TT
+CLASS="FILENAME"
+>edu.sdsc.nbcr.opal.manager.CSFJobManager</TT
+> - Community Scheduler Framework job
+    </P
+></LI
+></UL
+>
+  </P
+></LI
+></UL
+>&#13;</P
+><P
+>Use the <EM
+>$OPAL_HOME/configs/pdb2pqr_config.xml</EM
+> as a guideline to write configurations 
+for your applications.  For a more detailed application configuration, including specification of
+the command-line arguments, please see <A
+HREF="sample-appconfig.html"
+>Sample Application Configuration File</A
+> section.</P
+></LI
+><LI
+><P
+>Deploy the services inside Tomcat, by copying the <EM
+>date.xml</EM
+> file inside the 
+directory specified in <EM
+>$OPAL_HOME/etc/opal.properties</EM
+> with the keyword 
+<EM
+>opal.deploy.path</EM
+>. 
+If you have not changed this property the default directory is <EM
+>$CATALINA_HOME/deploy</EM
+>.
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    cp configs/date.xml $CATALINA_HOME/deploy</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+><P
+>If the service is deployed successfully, it can be accessed by the following methods:</P
+><P
+></P
+><UL
+><LI
+><P
+>    programmatically at URL <EM
+>http://host:port/opal2/services/serviceName</EM
+>
+  </P
+></LI
+><LI
+><P
+>    via the Opal Dashboard at URL: <EM
+>http://FQDN:port/opal2/dashboard</EM
+>
+  </P
+></LI
+></UL
+></LI
+><LI
+><P
+>You can undeploy your service at any time simply by deleting the file:
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    rm $CATALINA_HOME/deploy/date.xml</PRE
+></FONT
+></TD
+></TR
+></TABLE
+></P
+></LI
+></OL
+><P
+>If you plan on using the service with large inputs and outputs, it is a
+good idea to increase the heap size being used by the JVM. This can be done
+by setting the <EM
+>JAVA_OPTS</EM
+> environment variable to <EM
+>-Xmx1024m</EM
+>,
+and restarting Tomcat. This increases the heap size to 1GB. If all went
+well until this step, the services are running and ready to be used. Test
+them by running the client, described in the following section.</P
+><P
+>The service creates a new working directory for every execution. These
+working directories are not deleted automatically, so they must be
+periodically removed. You may use the script
+<EM
+>$OPAL_HOME/etc/cleanup.sh</EM
+> as a template. You will have to modify it to point
+to your Tomcat installation and (optionally) modify the number of days to
+retain working directories.</P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="serverinstall.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="clientsetup.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Installation Instructions</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="serversetup.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Command-line Client Installation</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

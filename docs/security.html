@@ -1,0 +1,440 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Configuring up GSI-based Security </TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="		Opal Toolkit Reference Guide
+	"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Appendix"
+HREF="appendix.html"><LINK
+REL="PREVIOUS"
+TITLE="Appendix"
+HREF="appendix.html"><LINK
+REL="NEXT"
+TITLE="Automatic WSDL Generation"
+HREF="wsdl-gen.html"><LINK
+REL="STYLESHEET"
+TYPE="text/css"
+HREF="rocks.css"></HEAD
+><BODY
+CLASS="SECTION"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>Opal Toolkit Reference Guide:          </TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="appendix.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 8. Appendix</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="wsdl-gen.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECTION"
+><H1
+CLASS="SECTION"
+><A
+NAME="SECURITY"
+>8.1. Configuring up GSI-based Security</A
+></H1
+><P
+>This section explains how to configure Opal to use GSI to autheticate clients.</P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>Create a globus-based PEM server certificate and
+  unencrypted private key for the tomcat server (consult the documentation
+  of your CA software). </P
+></LI
+><LI
+><P
+>Make sure that Opal has been installed successfully. If not, do so by
+  running the following command:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    ant install </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+  </P
+></LI
+><LI
+><P
+>To enable GSI HTTPS in Tomcat there are two different procedures 
+  depending on your version of Tomcat. 
+  If you are using 5.0.X, you can start from the sample etc/server.xml provided
+  (works for version 5.0.30). The following snippets are responsible for
+  enabling https:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>&#13;   &#60;Service name="Catalina"&#62;
+    ...
+    &#60;Connector className="org.globus.tomcat.coyote.net.HTTPSConnector"
+               port="8443" maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	       enableLookups="false" disableUploadTimeout="true" 
+	       acceptCount="100" clientAuth="true"
+	       debug="3" scheme="https"
+               autoFlush="true" encryption="true"
+               cert="/path/to/certificate/file"
+               key="/path/to/private/key/file"
+               cacertdir="/path/to/ca/certificates/directory" /&#62;
+    ...
+    &#60;Engine name="Catalina" defaultHost="localhost" debug="0"&#62;
+      ....
+      &#60;Valve className="org.globus.tomcat.coyote.valves.HTTPSValve"/&#62;
+      ....
+    &#60;/Engine&#62;
+   &#60;/Service&#62;
+  </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+  </P
+><P
+>Make sure that the cert and key points correctly to the server
+  certificate and key generated in Step 1, and that the cacertdir points to
+  your list of trusted CAs.
+  </P
+><P
+>If you are using Tomcat 5.5.X you should modify the server.xml in 
+  the following way:
+
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>&#13;   &#60;Service name="Catalina"&#62;
+    ...
+
+     &#60;Connector
+         className="org.globus.tomcat.coyote.net.HTTPSConnector"
+         port="8443" maxThreads="150"
+         minSpareThreads="25" maxSpareThreads="75"
+         autoFlush="true" disableUploadTimeout="true"
+         scheme="https" enableLookups="true"
+         acceptCount="10" debug="0"
+         protocolHandlerClassName="org.apache.coyote.http11.Http11Protocol"
+         socketFactory="org.globus.tomcat.catalina.net.BaseHTTPSServerSocketFactory"
+         proxy="/path/to/proxy/file" cert="/path/to/certificate/file"
+         key="/path/to/private/key/file"
+         cacertdir="/path/to/ca/certificates/directory"
+         encryption="true"/&#62;
+
+     ...
+     &#60;Engine name="Catalina" defaultHost="localhost" debug="0"&#62;
+      ....
+      &#60;Valve className="org.globus.tomcat.coyote.valves.HTTPSValve55"/&#62;
+      ....
+     &#60;/Engine&#62; 
+   </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+   </P
+><P
+>The parameters proxy, cert, key and cacertdir should point to your
+    local files. Furthermore, if you are using a proxy, do not use the
+    cert/key combination - in other words, they are mutually exclusive. The
+    encryption attribute is also optional (defaults to true if not set).
+    </P
+></LI
+><LI
+><P
+>To enable grid-map authorization of clients, add the following XML
+  fragment inside the <TT
+CLASS="FILENAME"
+>&#60;requestFlow/&#62;</TT
+> element of the
+  <TT
+CLASS="FILENAME"
+>&#60;globalConfiguration/&#62;</TT
+> in
+  $CATALINA_HOME/webapps/opal2/WEB-INF/server-config.wsdd.
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>   &#60;handler type="java:edu.sdsc.nbcr.common.GridMapAuthHandler"&#62;
+    &#60;parameter name="gridmap" value="/path/to/grid-mapfile"/&#62;
+   &#60;/handler&#62; </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+  </P
+><P
+>Make sure that the value points to a valid grid-map file. To authorize a
+  client to use the service, add an entry into the grid-map file with a
+  mapping between the client's DN and a local user. Since all jobs are being
+  launched as the app_user, map all client DN's to the generic app_user, e.g
+  the following is an entry in a grid-map file:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>   "/C=US/O=nbcr/OU=sdsc/CN=app_user" app_user </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+  </P
+><P
+>Instead, if you would like to authorize based on a list of acceptable
+  CAs, then you must enable the ca-map authorization of clients. To do so,
+  add the following XML fragment inside the <TT
+CLASS="FILENAME"
+>&#60;requestFlow/&#62;</TT
+>
+  element of the <TT
+CLASS="FILENAME"
+>&#60;globalConfiguration/&#62;</TT
+> in
+  $CATALINA_HOME/webapps/opal/WEB-INF/server-config.wsdd.
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>   &#60;handler type="java:edu.sdsc.nbcr.common.CAAuthHandler"&#62;
+    &#60;parameter name="ca-map" value="/path/to/ca-mapfile"/&#62;
+   &#60;/handler&#62; </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+  </P
+><P
+>Make sure that the value points to a valid ca-map file. To authorize a
+  client to use the service, add an entry into the ca-map file with the DN
+  for the client's CA, e.g. the following is an entry in a ca-map file:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>   "C=US,O=nbcr,OU=sdsc,CN=Certificate Manager" NBCR </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+  </P
+></LI
+><LI
+><P
+>Restart the Tomcat server for the configurations to take effect.</P
+></LI
+><LI
+><P
+>Create a globus-based PEM certificate for the client, and create a
+  limited-lifetime proxy by performing a "grid-proxy-init". Before invoking
+  the client, make sure that the X509_USER_PROXY system property is set
+  correctly to the location of the generated proxy. You may launch a job
+  using GSI HTTPS as follows:
+
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="90%"
+><TR
+><TD
+><FONT
+COLOR="#000000"
+><PRE
+CLASS="SCREEN"
+>    java -DX509_USER_PROXY=$X509_USER_PROXY edu.sdsc.nbcr.opal.GenericServiceClient \
+                 -l https://localhost:8443/opal2/services/Pdb2pqrServicePort \
+                 -r launchJob \
+                 -a "--ff=amber sample.pdb output.pqr" \
+                 -f samples/sample.pdb
+  </PRE
+></FONT
+></TD
+></TR
+></TABLE
+>
+  </P
+><P
+>You may need to ensure that both the client and the server trust
+  each others' CA's (by adding entries into the .globus/certificates and
+  /etc/grid-security/certificates directories respectively, if need be).
+  The GenericServiceClient class shows how the user credentials can be set
+  programmatically inside a client stub in order to enable GSI HTTPS.
+  </P
+></LI
+><LI
+><P
+>Note that the Opal dashboard will not function out of the
+  box when GSI-based mutual authentication is being used. This is because
+  the Opal server will reject clients that are not authenticated. You will
+  need to import your client certificate or proxy into your Web browser to
+  be able to authenticate to the Opal server. The procedure for this varies
+  from one browser to another. Please follow the documentation for your own
+  specific Web browsers.</P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="appendix.html"
+ACCESSKEY="P"
+>Prev</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="wsdl-gen.html"
+ACCESSKEY="N"
+>Next</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Appendix</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="appendix.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Automatic WSDL Generation</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
