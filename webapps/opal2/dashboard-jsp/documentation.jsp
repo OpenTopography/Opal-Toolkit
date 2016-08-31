@@ -76,8 +76,8 @@
         <td class="boxBodyRight colColor infoTitle">Websites: </td>
         <td class="boxBody colColor"><a href="<%= opalWebsite %>">
        <span class="PubTitle">Opal Web Site</span></a>
-                  <a href="http://sourceforge.net/projects/opaltoolkit/">
-				  <span class="PubTitle">Opal at SourceForge</span></a></td>
+                  <a href="https://github.com/OpenTopography/Opal-Toolkit">
+				  <span class="PubTitle">Opal at OpenTopography GitHub</span></a></td>
       </tr>
 
       <tr>
@@ -88,17 +88,9 @@
       </tr>
 
       <tr>
-        <td class="boxBodyRight colColor infoTitle">Support: </td>
-        <td class="boxBody colColor">
-            <a href="mailto:support@nbcr.net"> <span class="PubTitle">NBCR Support Mailing List</span></a>
-            <a href="http://sourceforge.net/mail/?group_id=211778"> <span class="PubTitle">Opal Mailing List</span></a>
-        </td>
-      </tr>
-      <tr>
         <td class="boxBodyRight colColor infoTitle">Opal Use Cases:</td>
-        <td class="boxBody colColor"><a href="http://meme.nbcr.net/">
-		          <span class="PubTitle">MEME</span></a>
-                  <a href="http://www.nbcr.net/pdb2pqr"><span class="PubTitle">PDB2PQR</span></a>
+        <td class="boxBody colColor">
+                  <a href="http://nbcr-222.ucsd.edu/pdb2pqr_2.1.1/"><span class="PubTitle">PDB2PQR</span></a>
        <a href="http://www.opentopography.org/"><span class="PubTitle">OpenTopography</span></a>
       </tr>
       <tr>

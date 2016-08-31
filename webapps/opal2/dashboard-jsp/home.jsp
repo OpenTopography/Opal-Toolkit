@@ -72,7 +72,7 @@
        services.  It leverages open standards and toolkits, such as DRMAA, Condor and the Globus toolkit,
        for cluster job management, standards-based Grid security and data management, in an easy to use 
 		and highly configurable manner.  Opal is released under the 
-		<a href="http://www.nbcr.net/data/docs/opal/LICENSE.txt"><span class="PubTitle">BSD License</span></a>
+		<a href="http://opentopo.sdsc.edu/LICENSE.txt"><span class="PubTitle">BSD License</span></a>
 		<br>
 		<hr>
 		</td>
