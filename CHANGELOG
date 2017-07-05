@@ -49,7 +49,7 @@ Version 2.3
   - Support for dynamic addiiton for multiple files upload on simple form
   - Modification of jobID to include service name
   - Refreshed look and feel for Opal dashboard
-    - update navigation bar layout 
+    - update navigation bar layout
     - enable navigation bar round corners without image files
     - add coyuright to all pages
     - move all documentation liks to one page
@@ -61,14 +61,14 @@ Version 2.3
     - enable radio buttons grouping separation. Fixes a bug of not displaying choosen buttons.
     - enable dynamic addiiton for multiple files upload on simple form
     - redirect to "timeout" page on a session tiemout. Increase the session timeout to 30min
-    - enable one accesible option from a selection: 
-      user can type in the field only after making a selection choice and not before. 
+    - enable one accesible option from a selection:
+      user can type in the field only after making a selection choice and not before.
   - Bug fix for destroy() operation, where baseURL was incorrectly
     returned as empty after job destruction
   - Bug fix for IP limits where the query for filtering by IP was incorrect
   - Bug fix for Opal GUI timeout error for simple form
   - Bug fix for SOAP filter to support large files and for empty arguments
-  - Bug fix for radio buttons group separaton: 
+  - Bug fix for radio buttons group separaton:
   - Bug fix for making accessible only a single option from selection
 
 Version 2.2
@@ -94,7 +94,7 @@ Version 2.1
 
 Version 2.0.1
 - Opal Dashboard
-  - Applications are now grouped with their name 
+  - Applications are now grouped with their name
   - The applications list is now alphabetically ordered
 
 
@@ -104,7 +104,7 @@ Version 2.0:
   - upgraded log4j
   - changed the schema of the Database, splitting the Timestamp into two field
     Date and Time
-  
+
 - Opal Dashboard
   - fixed several bugs in the generation of the charts
   - fixed some bugs in the status page of the dashboard
@@ -135,7 +135,7 @@ Version 2.0alpha1
       configuration
     - Optional selection of resource provider on a per application basis
   - Added a set of JUnit tests
-  - The list of Opal service deployed can be also be abtained at 
+  - The list of Opal service deployed can be also be abtained at
     /opal2/opalServices.xml in Atom 1.0 format
 
 - Opal GUI
@@ -145,27 +145,27 @@ Version 1.9.3:
 
 - Opal Dashboard:
 
-   - Fixed a bug in the submission form where input file parameters were not 
+   - Fixed a bug in the submission form where input file parameters were not
      properly handled on the command line
 
    - Fixed a bug in the automatic interface generation where an exception
      was thrown if the number of flags were zero
 
-   - Fixed a bug where the usage information wasn't displayed correctly for 
+   - Fixed a bug where the usage information wasn't displayed correctly for
      the automatically generated interface
 
    - Fixed a locale issue in the formatting of dates used by the statistics
      tab of the dashboard
 
 - Opal Services:
-   
+
    - Fixed a bug where the job status was being retrieved incorrectly
      during a destroy() operation when a database was being used to persist
      state
 
    - Updated command-line argument validation client to now account for groups
 
-   - Improved clean task of the build.xml file, now it deletes also the generated 
+   - Improved clean task of the build.xml file, now it deletes also the generated
      JavaDoc
 
 Version 1.9.2:
@@ -192,7 +192,7 @@ Version 1.9.2:
     order could potentially cause a database connection error
 
 - Opal Services:
-  
+
   - In earlier versions of Opal, the Tomcat server had to be installed on
     an NFS partition visible to all compute nodes. This is no longer
     required as long as a working directory is NFS mounted, and
@@ -205,17 +205,16 @@ Version 1.9.2:
 
   - The code should now compile and run with Java 1.4 and older JSP compilers
 
-
 Version 1.9 alpha:
 
-- Opal Dashboard: it is a web based interface that provide an easy way to check the 
-  status of the opal installation 
+- Opal Dashboard: it is a web based interface that provide an easy way to check the
+  status of the opal installation
 
-- If an external database has been used the Dashboard can also display chart with 
+- If an external database has been used the Dashboard can also display chart with
   access and usage statistics
 
-- Dynamic Interface Generation for Opal: This web based interface allows user to 
-  invoke Opal based service directly from their browser. It is also possible to 
+- Dynamic Interface Generation for Opal: This web based interface allows user to
+  invoke Opal based service directly from their browser. It is also possible to
   create customized submission form based on the command line syntax
 
 - Modified and streamlined the install and upgrade process - now bundling
