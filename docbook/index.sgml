@@ -1,0 +1,117 @@
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+
+<!ENTITY thisyear "2012">
+<!ENTITY version "2.5">
+<!ENTITY mysql "5.1.61">
+<!ENTITY postgres "8.2.4">
+<!ENTITY db2 "8.2">
+<!ENTITY condor "7.6.2">
+<!ENTITY torque "2.3.0">
+<!ENTITY pbs "PBSPro_11.3.0.121723">
+<!ENTITY tomcat "6.0 or 7.0">
+<!ENTITY java "1.6.x">
+<!ENTITY ant "1.7.1">
+
+<!ENTITY overview SYSTEM "overview.sgml">
+<!ENTITY serversetup SYSTEM "serversetup.sgml">
+<!ENTITY clientsetup SYSTEM "clientsetup.sgml">
+<!ENTITY database SYSTEM "database.sgml">
+<!ENTITY scheduler SYSTEM "scheduler.sgml">
+<!ENTITY opalGUI SYSTEM "opalGUI.sgml">
+<!ENTITY feedback SYSTEM "feedback.sgml">
+<!ENTITY faq SYSTEM "faq.sgml">
+<!ENTITY appendix SYSTEM "appendix.sgml">
+]>
+
+<book>
+
+<bookinfo>
+        <title>
+		Opal Toolkit Reference Guide
+	</title>
+
+         <subtitle>
+<!--
+                 <inlinemediaobject> 
+                         <imageobject> 
+                         <imagedata fileref="images/nbcr_logo.png"> 
+                         </imageobject> 
+                 </inlinemediaobject> 
+-->
+         </subtitle>
+
+        <edition> Reference Guide for the Opal Toolkit version &version; </edition>
+
+        <pubdate> &thisyear; </pubdate>
+
+        <copyright id="copyright" xreflabel="copyright">
+                <year> &thisyear; </year>
+
+                <holder> UC Regents </holder>
+        </copyright>
+
+  <releaseinfo>
+    The current release of Opal Toolkit is &version;.
+    <ulink url="./opal-referenceguide.pdf">(PDF version of this
+    documentation)</ulink>
+  </releaseinfo>
+
+  <legalnotice>
+  <para>
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met: 1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following
+disclaimer. 2. Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution. 3. All advertising materials mentioning features or use
+of this software must display the following acknowledgement: This
+product includes software developed by the San Diego Supercomputer
+Center and its contributors. 4. Neither the name of the Center nor the
+names of its contributors may be used to endorse or promote products
+derived from this software without specific prior written permission.
+  </para>
+
+  <para>
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  </para>
+</legalnotice>
+
+</bookinfo>
+
+
+
+<!--
+<chapter id="kickstart-graph" xreflabel="kickstart graph">
+<title>Opal Toolkit Official Guide</title>
+
+<para>
+This is the offical Opal Toolkit Guide. Here you'll find instructions on how
+to install and configure it.
+
+</para>
+-->
+
+&overview;
+&serversetup;
+&clientsetup;
+&database;
+&scheduler;
+&opalGUI;
+&feedback;<!-- 
+&faq; -->
+&appendix;
+
+</book>
+

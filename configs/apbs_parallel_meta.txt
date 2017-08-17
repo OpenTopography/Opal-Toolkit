@@ -1,0 +1,3 @@
+http://magnetite.ucsd.edu/opal2/services/ApbsParallel 4
+http://ws.nbcr.net/opal2/services/ApbsParallelOpalService 16
+http://vm6.ucsd.edu:8080/opal2/services/ApbsParallel 8

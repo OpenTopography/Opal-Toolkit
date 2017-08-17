@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="edu.sdsc.nbcr.opal.state">
+
+    <class name="JobInfo" table="job_info">
+        <id name="jobID" column="job_id" type="string">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="code" type="integer" column="code" not-null="true"/>
+
+        <property name="message" type="string" column="message" not-null="true"/>
+
+        <property name="baseURL" type="string" column="base_url" not-null="true"/>
+
+        <property name="handle" type="string" column="handle"/>
+
+        <property name="startTimeDate" type="date" column="start_time_date"/>
+        <property name="startTimeTime" type="time" column="start_time_time"/>
+
+        <property name="activationTimeDate" type="date" column="activation_time_date"/>
+        <property name="activationTimeTime" type="time" column="activation_time_time"/>
+
+        <property name="completionTimeDate" type="date" column="completion_time_date"/>
+        <property name="completionTimeTime" type="time" column="completion_time_time"/>
+
+        <property name="lastUpdateDate" type="date" column="last_update_date"/>
+        <property name="lastUpdateTime" type="time" column="last_update_time"/>
+
+        <property name="clientDN" type="string" column="client_dn"/>
+
+        <property name="clientIP" type="string" column="client_ip"/>
+
+        <property name="serviceName" type="string" column="service_name"/>
+
+        <property name="userEmail" type="string" column="user_email"/>
+    </class>
+
+    <class name="JobOutput" table="job_output">
+        <id name="id">
+            <generator class="native"/>
+        </id>
+
+        <property name="stdOut" type="string" column="std_out" not-null="true"/>
+ 
+        <property name="stdErr" type="string" column="std_err" not-null="true"/>
+ 
+	<many-to-one name="job" column="job_id" class="JobInfo" unique="true" not-null="true"/>
+    </class>
+
+    <class name="OutputFile" table="output_file">
+        <id name="id">
+            <generator class="native"/>
+        </id>
+
+        <property name="url" type="string" column="url" not-null="true"/>
+
+        <property name="name" type="string" column="name" not-null="true"/>
+
+	<many-to-one name="job" column="job_id" class="JobInfo" not-null="true"/>
+    </class>
+
+    <class name="ServiceStatus" table="service_status">
+        <id name="serviceName" column="service_name" type="string">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="status" type="string" column="status" not-null="true"/>
+    </class>
+
+    <sql-query name="exectime">
+    <![CDATA[ 
+        select jobInfo.start_time_date as date,  
+        avg( datediff('ss', jobInfo.start_time_date, jobInfo.last_update_date) + datediff('ss', jobInfo.start_time_time, jobInfo.last_update_time) ) as average 
+        from job_info jobInfo 
+        where jobInfo.service_name = :service 
+        and jobInfo.start_time_date >= :startDate
+        and jobInfo.start_time_date <= :endDate 
+        and jobInfo.code=8 
+        group by jobInfo.start_time_date 
+        order by jobInfo.start_time_date desc
+    ]]>
+      <return-scalar column="date" type="date"/>
+      <return-scalar column="average" type="double"/>
+    </sql-query>
+</hibernate-mapping>

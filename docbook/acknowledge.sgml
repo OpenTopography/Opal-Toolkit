@@ -1,0 +1,86 @@
+<chapter id="Acknowledgements" xreflabel="Acknowledgements">
+<title>Acknowledgements</title>
+
+<para>
+The organizations involvement in the development of Opal: 
+</para>
+
+<itemizedlist>
+<listitem><para>
+  <ulink url="http://www.nbcr.net">
+  National Biomedical Computation Resource (NBCR)
+  </ulink>
+  <screenshot>
+<mediaobject>
+        <imageobject>
+        <imagedata fileref="images/nbcr_logo.png" scale=50>
+        </imageobject>
+</mediaobject>
+  </screenshot>
+</para></listitem>
+<listitem><para>
+  <ulink url="http://www.sdsc.edu">
+  SDSC Logo San Diego Supercomputer Center (SDSC)
+  </ulink>
+  <screenshot>
+<mediaobject>
+        <imageobject>
+        <imagedata fileref="images/sdsc_logo.png" scale=50>
+        </imageobject>
+</mediaobject>
+  </screenshot>
+</para></listitem>
+<listitem><para>
+  <ulink url="http://www.calit2.net/">
+  California Institute for Telecommunications and Information Technology (Calit2)
+  </ulink>
+  <screenshot>
+<mediaobject>
+        <imageobject>
+        <imagedata fileref="images/logo_calit.png" scale=50>
+        </imageobject>
+</mediaobject>
+  </screenshot>
+</para></listitem>
+</itemizedlist>
+
+<para>
+Opal development has been supported by the following funding agencies:
+</para>
+
+<itemizedlist>
+<listitem><para>
+National Institutes of Health
+</para></listitem>
+<listitem><para>
+National Science Foundation
+</para></listitem>
+<listitem><para>
+Gordon and Betty Moore Foundation
+</para></listitem>
+</itemizedlist>
+
+
+<!--
+I decided not to use a table because it requires a title and 
+outputs necessary things, like Table 8-1. Mouse Mileage
+<table>
+<title>Mouse Mileage</title>
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>row1A</entry>
+<entry>row2A</entry>
+</row>
+<row>
+<entry>row1B</entry>
+<entry>row2B</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+-->
+
+</chapter>
+
+

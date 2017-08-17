@@ -1,0 +1,94 @@
+<chapter id="feedbackack" xreflabel="Feedback and Acknowledgements">
+<title>Feedback and Acknowledgements</title>
+
+<para>
+<emphasis role="strong">Feedback</emphasis>
+</para>
+
+<itemizedlist>
+  <listitem><para>
+  If you need help with Opal or you want to report bugs please Email 
+  <ulink url="https://lists.sourceforge.net/lists/listinfo/opaltoolkit-users">
+  opaltoolkit-users @ lists.sourceforge.net</ulink>
+  </para></listitem>
+</itemizedlist>
+
+<para>
+<emphasis role="strong">Acknowledgements</emphasis>
+</para>
+<para> </para>
+
+<para>
+The organizations involvement in the development of Opal: 
+</para>
+
+<itemizedlist>
+  <listitem><para>
+    <inlinemediaobject><imageobject>
+      <imagedata fileref="images/nbcr_logo.png" width=50>
+    </imageobject></inlinemediaobject>
+    <ulink url="http://nbcr.ucsd.edu">
+    National Biomedical Computation Resource 
+    </ulink>
+  </para></listitem>
+
+  <listitem><para>
+    <inlinemediaobject><imageobject>
+      <imagedata fileref="images/sdsc_logo.png" width=50>
+    </imageobject></inlinemediaobject>
+    <ulink url="http://www.sdsc.edu">
+    San Diego Supercomputer Center 
+    </ulink>
+  </para></listitem>
+
+  <listitem><para>
+    <inlinemediaobject><imageobject>
+      <imagedata fileref="images/logo_calit.png" width=50>
+    </imageobject></inlinemediaobject>
+    <ulink url="http://www.calit2.net/">
+    California Institute for Telecommunications and Information Technology (Calit2)
+    </ulink>
+  </para></listitem>
+  </itemizedlist>
+
+<para>
+Opal development has been supported by the following funding agencies:
+</para>
+
+<itemizedlist>
+  <listitem><para>
+  <ulink url="http://www.nih.gov/">National Institutes of Health</ulink>
+  </para></listitem>
+
+  <listitem><para>
+  <ulink url="http://www.nsf.gov/">National Science Foundation</ulink>
+  </para></listitem>
+
+  <listitem><para>
+  <ulink url="http://www.moore.org/">Gordon and Betty Moore Foundation</ulink>
+  </para></listitem>
+</itemizedlist>
+
+
+<!--
+I decided not to use a table because it requires a title and 
+outputs necessary things, like Table 8-1. Mouse Mileage
+<table>
+<title>Mouse Mileage</title>
+<tgroup cols="2">
+<tbody>
+<row>
+<entry>row1A</entry>
+<entry>row2A</entry>
+</row>
+<row>
+<entry>row1B</entry>
+<entry>row2B</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+-->
+</chapter>
+
+

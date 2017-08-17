@@ -1,0 +1,116 @@
+<chapter id="clientsetup"  xreflabel="Client Set Up Guide">
+<title>Command-line Client Installation</title>
+
+<simplesect>
+<title>Prerequisites</title>
+
+<para>
+The source distribution can be used to install the server and the
+client on Unix and Windows platforms.  See <xref linkend="server-client-pre">.
+</para>
+
+</simplesect>
+
+<simplesect>
+<title>Installation Instructions</title>
+
+<orderedlist>
+<listitem><para>
+ Download the Opal2 source distribution from <ulink type="http"
+ url="http://sourceforge.net/project/showfiles.php?group_id=211778&amp;package_id=297015">source forge</ulink>.
+</para></listitem>
+
+<listitem><para>
+ Extract the downloaded tarball using the GNU tar (or similar utilities for Windows): 
+<screen>
+  tar zxvf opal-ws-&version;.tar.gz
+</screen>
+</para>
+<para>
+ This should create a new directory called opal-ws-&version;/ where
+ all the sources are expanded. Henceforth, we refer to this directory as
+ <emphasis role="italics">OPAL_HOME</emphasis>.
+</para></listitem>
+
+<listitem><para>
+ A generic Java client for Opal services 
+ lets you run any application exposed as an Opal service, and retrieve its status and outputs. 
+ It is implemented by the GenericServiceClient class located in 
+ <emphasis>$OPAL_HOME/src/edu/sdsc/nbcr/opal</emphasis>. 
+ To compile the client, run the following command from inside the 
+ <emphasis>$OPAL_HOME</emphasis> directory:
+<screen>
+  $ANT_HOME/bin/ant jar
+</screen>
+</para></listitem>
+
+</orderedlist>
+
+</simplesect>
+
+<simplesect>
+<title>Using the Command-line Client</title>
+
+<itemizedlist>
+<listitem><para>
+<emphasis role="strong">Set your classpath</emphasis> before running the client using the
+etc/classpath.bat, etc/classpath.csh or etc/classpath.sh script depending on your OS/shell. 
+For example, for tcsh on Unix, set your classpath using the following command:
+<screen>
+    source etc/classpath.csh
+</screen>
+</para></listitem>
+
+<listitem><para>
+<emphasis role="strong">Get the client usage information</emphasis> by using the following command:
+<screen>
+    java edu.sdsc.nbcr.opal.GenericServiceClient
+</screen>
+</para></listitem>
+
+<listitem><para>
+<emphasis role="strong">Launch a job</emphasis> for the Date service mentioned in <xref linkend="deploy"> 
+by using the following command: 
+<screen>
+    java edu.sdsc.nbcr.opal.GenericServiceClient \
+                 -l http://localhost:8080/opal2/services/DateService \
+                 -r launchJob \
+                 -a \""-v1d -v3m -v0y -v-1d -u"\"
+</screen>
+</para>
+<para>
+The command displays the resulting job id, along with the preliminary status.
+</para>
+<para>
+If your arguments contain characters "-", you will have to put your
+whole set of arguments within quotes that are escaped (\"..\"). If your
+arguments don't have special characters you can use regular quotes ("..").
+</para></listitem>
+
+<listitem><para>
+<emphasis role="strong">Retrieve job status</emphasis> by running the following command:
+<screen>
+    java edu.sdsc.nbcr.opal.GenericServiceClient \
+                 -l http://localhost:8080/opal2/services/DateService \
+                 -r queryStatus \
+                 -j &lt;job_id&gt;
+</screen>
+</para></listitem>
+
+<listitem><para>
+<emphasis role="strong">Retrieve output</emphasis> once the job has finished: 
+<screen>
+    java edu.sdsc.nbcr.opal.GenericServiceClient \
+                 -l http://localhost:8080/opal2/services/DateService \
+                 -r getOutputs \
+                 -j &lt;job_id&gt;
+</screen>
+</para>
+<para>
+You may need to change the above URL if you used a different port, or
+are running the client from another machine. 
+</para></listitem>
+</itemizedlist>
+
+</simplesect>
+</chapter>

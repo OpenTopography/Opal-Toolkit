@@ -1,0 +1,906 @@
+<chapter id="appendix"  xreflabel="Appendix">
+<title>Appendix</title>
+
+<section id="security" xreflabel="Configuring GSI-based Security">
+<title>Configuring up GSI-based Security </title>
+
+<para>This section explains how to configure Opal to use GSI to autheticate clients.</para>
+
+<orderedlist>
+  <listitem><para>Create a globus-based PEM server certificate and
+  unencrypted private key for the tomcat server (consult the documentation
+  of your CA software). </para></listitem>
+
+  <listitem><para>Make sure that Opal has been installed successfully. If not, do so by
+  running the following command:
+  <screen>
+    ant install </screen>
+  </para></listitem>
+
+  <listitem><para>To enable GSI HTTPS in Tomcat there are two different procedures 
+  depending on your version of Tomcat. 
+  If you are using 5.0.X, you can start from the sample etc/server.xml provided
+  (works for version 5.0.30). The following snippets are responsible for
+  enabling https:
+  <screen>
+
+   &lt;Service name="Catalina"&gt;
+    ...
+    &lt;Connector className="org.globus.tomcat.coyote.net.HTTPSConnector"
+               port="8443" maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	       enableLookups="false" disableUploadTimeout="true" 
+	       acceptCount="100" clientAuth="true"
+	       debug="3" scheme="https"
+               autoFlush="true" encryption="true"
+               cert="/path/to/certificate/file"
+               key="/path/to/private/key/file"
+               cacertdir="/path/to/ca/certificates/directory" /&gt;
+    ...
+    &lt;Engine name="Catalina" defaultHost="localhost" debug="0"&gt;
+      ....
+      &lt;Valve className="org.globus.tomcat.coyote.valves.HTTPSValve"/&gt;
+      ....
+    &lt;/Engine&gt;
+   &lt;/Service&gt;
+  </screen>
+  </para>
+
+  <para>Make sure that the cert and key points correctly to the server
+  certificate and key generated in Step 1, and that the cacertdir points to
+  your list of trusted CAs.
+  </para>
+
+  <para>If you are using Tomcat 5.5.X you should modify the server.xml in 
+  the following way:
+
+  <screen>
+
+   &lt;Service name="Catalina"&gt;
+    ...
+
+     &lt;Connector
+         className="org.globus.tomcat.coyote.net.HTTPSConnector"
+         port="8443" maxThreads="150"
+         minSpareThreads="25" maxSpareThreads="75"
+         autoFlush="true" disableUploadTimeout="true"
+         scheme="https" enableLookups="true"
+         acceptCount="10" debug="0"
+         protocolHandlerClassName="org.apache.coyote.http11.Http11Protocol"
+         socketFactory="org.globus.tomcat.catalina.net.BaseHTTPSServerSocketFactory"
+         proxy="/path/to/proxy/file" cert="/path/to/certificate/file"
+         key="/path/to/private/key/file"
+         cacertdir="/path/to/ca/certificates/directory"
+         encryption="true"/&gt;
+
+     ...
+     &lt;Engine name="Catalina" defaultHost="localhost" debug="0"&gt;
+      ....
+      &lt;Valve className="org.globus.tomcat.coyote.valves.HTTPSValve55"/&gt;
+      ....
+     &lt;/Engine&gt; 
+   </screen>
+   </para>
+
+    <para>The parameters proxy, cert, key and cacertdir should point to your
+    local files. Furthermore, if you are using a proxy, do not use the
+    cert/key combination - in other words, they are mutually exclusive. The
+    encryption attribute is also optional (defaults to true if not set).
+    </para></listitem>
+
+  <listitem><para>To enable grid-map authorization of clients, add the following XML
+  fragment inside the <filename>&lt;requestFlow/&gt;</filename> element of the
+  <filename>&lt;globalConfiguration/&gt;</filename> in
+  $CATALINA_HOME/webapps/opal2/WEB-INF/server-config.wsdd.
+  <screen>
+   &lt;handler type="java:edu.sdsc.nbcr.common.GridMapAuthHandler"&gt;
+    &lt;parameter name="gridmap" value="/path/to/grid-mapfile"/&gt;
+   &lt;/handler&gt; </screen>
+  </para>
+  
+  <para>Make sure that the value points to a valid grid-map file. To authorize a
+  client to use the service, add an entry into the grid-map file with a
+  mapping between the client's DN and a local user. Since all jobs are being
+  launched as the app_user, map all client DN's to the generic app_user, e.g
+  the following is an entry in a grid-map file:
+  <screen>
+   "/C=US/O=nbcr/OU=sdsc/CN=app_user" app_user </screen>
+  </para>
+  
+  <para>Instead, if you would like to authorize based on a list of acceptable
+  CAs, then you must enable the ca-map authorization of clients. To do so,
+  add the following XML fragment inside the <filename>&lt;requestFlow/&gt;</filename>
+  element of the <filename>&lt;globalConfiguration/&gt;</filename> in
+  $CATALINA_HOME/webapps/opal/WEB-INF/server-config.wsdd.
+  <screen>
+   &lt;handler type="java:edu.sdsc.nbcr.common.CAAuthHandler"&gt;
+    &lt;parameter name="ca-map" value="/path/to/ca-mapfile"/&gt;
+   &lt;/handler&gt; </screen>
+  </para>
+  
+  <para>Make sure that the value points to a valid ca-map file. To authorize a
+  client to use the service, add an entry into the ca-map file with the DN
+  for the client's CA, e.g. the following is an entry in a ca-map file:
+  <screen>
+   "C=US,O=nbcr,OU=sdsc,CN=Certificate Manager" NBCR </screen>
+  </para></listitem>
+  
+  <listitem><para>Restart the Tomcat server for the configurations to take effect.</para></listitem>
+  
+  <listitem><para>Create a globus-based PEM certificate for the client, and create a
+  limited-lifetime proxy by performing a "grid-proxy-init". Before invoking
+  the client, make sure that the X509_USER_PROXY system property is set
+  correctly to the location of the generated proxy. You may launch a job
+  using GSI HTTPS as follows:
+
+  <screen>
+    java -DX509_USER_PROXY=$X509_USER_PROXY edu.sdsc.nbcr.opal.GenericServiceClient \
+                 -l https://localhost:8443/opal2/services/Pdb2pqrServicePort \
+                 -r launchJob \
+                 -a "--ff=amber sample.pdb output.pqr" \
+                 -f samples/sample.pdb
+  </screen>
+  </para>
+
+  <para>You may need to ensure that both the client and the server trust
+  each others' CA's (by adding entries into the .globus/certificates and
+  /etc/grid-security/certificates directories respectively, if need be).
+  The GenericServiceClient class shows how the user credentials can be set
+  programmatically inside a client stub in order to enable GSI HTTPS.
+  </para></listitem>
+
+  <listitem><para>Note that the Opal dashboard will not function out of the
+  box when GSI-based mutual authentication is being used. This is because
+  the Opal server will reject clients that are not authenticated. You will
+  need to import your client certificate or proxy into your Web browser to
+  be able to authenticate to the Opal server. The procedure for this varies
+  from one browser to another. Please follow the documentation for your own
+  specific Web browsers.</para></listitem>
+
+</orderedlist>
+</section>
+
+<section id="wsdl-gen" xreflabel="wsdl-gen">
+<title>Automatic WSDL Generation</title>
+
+<para>Starting with version 2.2, Opal optionally supports automatic WSDL generation
+based on the <filename>&lt;types&gt;</filename> element in the application
+metadata. This code has been contributed to the Opal SVN by Anthony
+Bretaudeau from <ulink url="http://www.irisa.fr" type="http">IRISA</ulink>.
+If automatic WSDL generation is enabled, Opal services can be accesed using their
+regular non-typed standard WSDL or the newly autogenerated strongly-typed
+WSDL. This will enable all legacy clients to continue to use
+the old-style WSDL, while clients that prefer a stronger typed WSDL can use
+the autogenerated version.
+</para>
+
+<para>Similarly to the automatic interface generation using the <filename>&lt;types&gt;</filename>
+element in the application metadata, an updated WSDL is generated using a simple rule-based translation
+during service deployment time using XSLT.  For instance, an argument specified as a
+<filename>flag</filename> below:
+</para>
+<screen>
+            &lt;flag&gt;
+                &lt;id&gt;verbose&lt;/id&gt;
+                &lt;tag&gt;--verbose&lt;/tag&gt;
+                &lt;textDesc&gt;Provide verbose output&lt;/textDesc&gt;
+                &lt;default&gt;true&lt;/default&gt;
+            &lt;/flag&gt;
+</screen>
+
+<para>is translated into a boolean XML element as follows: </para>
+<screen>
+	    &lt;xsd:element maxOccurs="1" minOccurs="0" name="verbose" type="xsd:boolean" default="true"&gt;
+                &lt;xsd:annotation&gt;
+                    &lt;xsd:documentation&gt;Provide verbose output&lt;/xsd:documentation&gt;
+                &lt;/xsd:annotation&gt;
+	    &lt;/xsd:element&gt;
+</screen>
+
+<para>
+Untagged parameters are translated
+into an <filename>xsd:sequence</filename> of appropriately typed elements.
+For example, an untagged parameter element
+<filename>&lt;paramType&gt;</filename>STRING<filename>&lt;/paramType&gt;</filename> 
+will be converted into an XML element of type <filename>xsd:string</filename>. 
+</para>
+
+<para>To enable automatic interface generation, do the following:</para>
+<orderedlist>
+  <listitem><para>
+  Uncomment the <emphasis>typedservices.dir</emphasis> property within the build.properties
+  as follows: 
+  <screen>
+  # location of the typed services directory relative to $CATALINA_HOME/webapps.
+  # uncomment if you want to generate typed WSDL for services
+  typedservices.dir = opal2/typedservices
+  </screen>
+  </para></listitem>
+
+  <listitem><para>
+  Enable the SOAP filter that performs the conversion from the regular untyped Opal WSDL to
+  the new WSDL. Uncomment the following lines in the <emphasis>webapps/opal2/WEB-INF/web.xml</emphasis> 
+  <screen>
+    &lt;filter&gt; 
+      &lt;filter-name&gt;OpalSOAPRequestFilter&lt;/filter-name&gt; 
+      &lt;filter-class&gt;org.inria.genouest.opal.tools.soaprequest.filter.OpalSOAPRequestFilter&lt;/filter-class&gt; 
+    &lt;/filter&gt; 
+    &lt;filter-mapping&gt; 
+      &lt;filter-name&gt;OpalSOAPRequestFilter&lt;/filter-name&gt; 
+      &lt;servlet-name&gt;AxisServlet&lt;/servlet-name&gt; 
+    &lt;/filter-mapping&gt;
+  </screen>
+  </para></listitem>
+
+  <listitem><para>
+  Re-deploy Opal by running: 
+  <screen>ant install</screen> 
+  </para></listitem>
+  
+  <listitem><para>
+  Restart Tomcat. 
+  </para></listitem>
+</orderedlist>
+
+<para>
+Now when  you deploy Opal services using the <emphasis role="strong">ant deploy</emphasis> 
+command, it will print the URL of the autogenerated WSDL that you can share 
+with clients. Note that it makes sense to autogenerate WSDL's only if the application 
+configuration has the correct types specified. If the types have not been specified, 
+continue to use the regular legacy-style non-typed WSDLs.
+</para>
+</section>
+
+<section id="job-limits" xreflabel="job-limits">
+<title>Configuring job limit for Fork Job Manager</title>
+
+<para>Beginning with version 2.3, Opal enables jobs launching 
+using the Fork Job Manager. This feature is particularly useful if the
+jobs are allowed to use a finite amount of memory or processors,
+thus preventing a large number of jobs running at the same time. Note
+that this is not a replacement for a traditional batch scheduler - it is
+simply a way to limit the total number of jobs that are concurrently being
+executed. We have not done any scalability testing of this
+feature because the Fork Job Manager is not supposed to be used for large
+number of concurrent jobs.</para>
+
+<para>
+By default, the job limits are turned off. To turn it on, please set the
+<emphasis role="strong">fork.jobs.limit</emphasis> to the number of jobs 
+that can execute concurrently.  For instance, the specific lines for configuring 
+Fork Job Manager are as follows:</para>
+<screen>
+# full qualified class name (FQCN) of the job manager being used
+opal.jobmanager=edu.sdsc.nbcr.opal.manager.ForkJobManager
+...
+## BEGIN: information for Fork job manager
+## ----------------------------------------------------------
+# number of jobs that can be in execution simultaneously
+fork.jobs.limit=1
+## ----------------------------------------------------------
+## END: information for For job manager
+</screen>
+
+<para>
+For the changes to take effect,
+reinstall Opal using the <emphasis role="strong">ant install</emphasis> command, 
+and restart Tomcat.
+</para>
+</section>
+
+<section id="ip-limits" xreflabel="ip-limits">
+<title>Configuring IP-based Restrictions for Job Submission</title>
+
+<para>Beginning with version 2.2, Opal provides basic support for
+restricting number of job submissions per IP. Appropriate properties for configuring this functionality
+are set in the <emphasis role="strong">etc/opal.properties</emphasis> file: 
+<itemizedlist>
+  <listitem><para>
+  Set <emphasis role="strong">opal.ip.processing</emphasis> to 
+  <emphasis role="strong">true</emphasis>. 
+  By default, the IP-based restrictions are turned off. 
+  </para></listitem>
+
+  <listitem><para>
+  Use <emphasis role="strong">opal.ip.limit</emphasis>
+  to configure the number of jobs that are allowed per IP address per hour. 
+  If the Opal server receives more than these many jobs from any IP address
+  per hour, it will reject job submissions by throwning an appropriate
+  exception. 
+  </para></listitem>
+
+  <listitem><para>
+  Use <emphasis role="strong">opal.ip.blacklist</emphasis> to
+  block all jobs from a particular IP address.
+  Note that the blacklist takes precedence over the whitelist - i.e.
+  if an IP address is present on the blacklist, all jobs from this address
+  will be blocked even if it is present in the whitelist. 
+  </para></listitem>
+
+  <listitem><para>
+  Use <emphasis role="strong">opal.ip.whitelist</emphasis>
+  to allow all jobs from a particular IP address. 
+  Note that you should add localhost (127.0.0.1) to the whitelist, if you want 
+  the Opal Dashboard to be able to submit jobs always.
+  </para></listitem>
+</itemizedlist>
+An example configuration for IP-based restrictions feature:
+</para>
+<screen>
+## BEGIN: information for the per IP limits on job submission
+## ----------------------------------------------------------
+# boolean switch to turn processing on or off
+opal.ip.processing=true
+
+# number of jobs per IP per hour
+opal.ip.limit=10
+
+# block all jobs from this IP - comma separated entries (optional)
+opal.ip.blacklist=66.102.7.104, 137.223.43.127
+
+# always allow jobs from this IP - comma separated entries (optional)
+opal.ip.whitelist=66.102.7.105, 127.0.0.1
+## ----------------------------------------------------------
+## END: information for the per IP limits on job submission
+</screen>
+
+<para>
+After editing <emphasis role="strong">etc/opal.properties</emphasis> reinstall Opal
+using the <emphasis role="strong">ant install</emphasis> command, and restart Tomcat for
+the changes to take effect.
+</para>
+</section>
+
+<section id="email-notifications" xreflabel="email-notifications">
+<title>Configuring Email Notifications</title>
+
+<para>Opal provides an option to notify  users of the job completion status 
+by email. Appropriate properties for configuring this feature are set
+in the <emphasis role="strong">etc/opal.properties</emphasis> file. 
+By default, the email notifications are turned off. To turn it on,
+set the <emphasis role="strong">mail.enable</emphasis> to true and update the rest of the
+properties appropriately:
+</para>
+<screen>
+## BEGIN: email configuration for server
+##        To be used for notifying users
+## -------------------------------------------
+# set to true if email notification is to be turned ON
+mail.enable=true
+# url for smtp server
+mail.smtp.host=smtp.gmail.com
+# whether the server needs authentication
+mail.smtp.auth=true
+# turn debugging on or off
+mail.smtp.debug=false
+# from address in notification email - could be a "no-reply" address
+mail.smtp.from=foo@bar.com
+# credentials for logging into smtp server
+mail.smtp.user=foo@bar.com
+mail.smtp.password=foobar
+## -------------------------------------------
+## END: email configuration for server
+</screen>
+
+<para>
+After editing <emphasis role="strong">etc/opal.properties</emphasis>, reinstall Opal
+using the <emphasis role="strong">ant install</emphasis> command, and restart Tomcat for
+the changes to take effect.
+</para>
+
+<para>Users who want to receive email notifications will need to specify
+their email address via the Dashboard (this field is present on every form), 
+or via the command-line
+client.</para>
+</section>
+
+<section id="sample-appconfig" xreflabel="Sample Application Configuration File">
+<title>Sample Application Configuration File</title>
+
+<para>This example shows how to write the Opal job submission configuration file for
+the <ulink type="http" url="http://pdb2pqr.sourceforge.net/">PDB2PQR</ulink>
+program. PDB2PQR is designed to automate many of the common tasks of
+preparing structures for continuum electrostatics calculations, by
+providing a platform-independent utility for converting protein files in
+PDB format to PQR format. An example file $OPAL_HOME/configs/pdb2pqr_config.xml
+includes advanced features such as specification of a complex set
+of the command-line arguments.
+
+<screen>
+&lt;appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;metadata appName="PDB2PQR 1.8"&gt;
+    &lt;usage&gt;&lt;![CDATA[PDB2PQR is a Python software package that automates many of 
+              the common tasks of preparing structures for continuum electrostatics 
+              calculations, providing a platform-independent utility for converting 
+              protein files in PDB format to PQR format. Version 1.8.
+              &lt;BR&gt;&lt;A HREF=http://www.nbcr.net/ws_help/PDB2PQR/&gt;
+              Tutorial: http://www.nbcr.net/ws_help/PDB2PQR/&lt;/A&gt; 
+            ]]&gt;
+    &lt;/usage&gt;
+
+    &lt;info xsd:type="xsd:string"&gt;
+    &lt;![CDATA[
+pdb2pqr  (Version 1.8)
+Usage: pdb2pqr.py [options] PDB_PATH PQR_OUTPUT_PATH
+
+This module takes a PDB file as input and performs optimizations before
+yielding a new PQR-style file in PQR_OUTPUT_PATH. If PDB_PATH is an ID it will
+automatically be obtained from the PDB archive.
+
+Options:
+  --version             show program's version number and exit
+  -h, --help            show this help message and exit
+
+  Mandatory options:
+    One of the following options must be used.
+
+    --ff=FIELD_NAME     The forcefield to use - currently AMBER, CHARMM,
+                        PARSE, TYL06, PEOEPB and SWANSON are supported.
+    --userff=USER_FIELD_FILE
+                        The user created forcefield file to use. Requires
+                        --usernames overrides --ff
+    --clean             Do no optimization, atom addition, or parameter
+                        assignment, just return the original PDB file in
+                        aligned format. Overrides --ff and --userff
+
+  General options:
+    --nodebump          Do not perform the debumping operation
+    --noopt             Do not perform hydrogen optimization
+    --chain             Keep the chain ID in the output PQR file
+    --assign-only       Only assign charges and radii - do not add atoms,
+                        debump, or optimize.
+    --ffout=FIELD_NAME  Instead of using the standard canonical naming scheme
+                        for residue and atom names, use the names from the
+                        given forcefield - currently AMBER, CHARMM, PARSE,
+                        TYL06, PEOEPB and SWANSON are supported.
+    --usernames=USER_NAME_FILE
+                        The user created names file to use. Required if using
+                        --userff
+    --apbs-input        Create a template APBS input file based on the
+                        generated PQR file.  Also creates a Python pickle for
+                        using these parameters in other programs.
+    --ligand=PATH       Calculate the parameters for the ligand in mol2 format
+                        at the given path. Pdb2pka must be compiled.
+    --whitespace        Insert whitespaces between atom name and residue name,
+                        between x and y, and between y and z.
+    --typemap           Create Typemap output.
+    --neutraln          Make the N-terminus of this protein neutral (default
+                        is charged). Requires PARSE force field.
+    --neutralc          Make the C-terminus of this protein neutral (default
+                        is charged). Requires PARSE force field.
+    -v, --verbose       Print information to stdout.
+
+  Propka options:
+    --with-ph=PH        Use propka to calculate pKas and apply them to the
+                        molecule given the pH value. Actual PropKa results
+                        will be output to &lt;output-path&gt;.propka.
+    --reference=REFERENCE
+                        setting which reference to use for stability
+                        calculations [neutral/low-pH]
+
+  Extension options:
+    --chi               Print the per-residue backbone chi angle to {output-
+                        path}.chi
+    --summary           Print protein summary information to {output-
+                        path}.summary.
+    --contact           Print a list of contacts to {output-path}.con
+    --salt              Print a list of salt bridges to {output-path}.salt
+
+  Hbond extension options:
+    --hbond             Print a list of hydrogen bonds to {output-path}.hbond
+    --whatif            Change hbond output to WHAT-IF format.
+    --angle_cutoff=ANGLE_CUTOFF
+                        Angle cutoff to use when creating hbond data (default
+                        30.0)
+    --distance_cutoff=DISTANCE_CUTOFF
+                        Distance cutoff to use when creating hbond data
+                        (default 3.4)
+    --old_distance_method
+                        Use distance from donor hydrogen to acceptor to
+                        calculate distance used with --distance_cutoff.
+
+  Resinter extension options:
+    --resinter          Print interaction energy between each residue pair in
+                        the protein to {output-path}.resinter.
+    --residue_combinations
+                        Remap residues to different titration states and rerun
+                        resinter appending output. Consider only the minimum
+                        number of whole protein titration combinations needed
+                        to test each possible pairing of residue titration
+                        states. Normally used with --noopt. If a protein
+                        titration state combination results in a pair of
+                        residue being  re-tested in the same individual
+                        titration states a warning will be generated if the
+                        re-tested result is different. This warning should not
+                        be possible if used with --noopt.
+    --all_residue_combinations
+                        Remap residues to ALL possible titration state
+                        combinations and rerun resinter appending output.
+                        Results with --noopt should be the same as
+                        --residue_combinations. Runs considerably slower than
+                        --residue_combinations and generates the same type of
+                        warnings.  Use without --noopt to discover how
+                        hydrogen optimization affects residue  interaction
+                        energies via the warnings in the output.
+
+  Rama extension options:
+    --rama              Print the per-residue phi and psi angles to {output-
+                        path}.rama for Ramachandran plots
+    --phi_only          Only include phi angles in output. Rename output file
+                        {output-path}.phi
+    --psi_only          Only include psi angles in output. Rename output file
+                        {output-path}.psi
+    ]]&gt;
+    &lt;/info&gt;
+
+    &lt;types&gt; 
+        &lt;!-- list of flags --&gt;
+        &lt;flags&gt;
+            &lt;flag&gt;
+                &lt;id&gt;verbose&lt;/id&gt;
+                &lt;tag&gt;--verbose&lt;/tag&gt;
+                &lt;textDesc&gt;Print information to stdout&lt;/textDesc&gt;
+                &lt;default&gt;true&lt;/default&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;nodebump&lt;/id&gt;
+                &lt;tag&gt;--nodebump&lt;/tag&gt;
+                &lt;textDesc&gt;Do not perform the debumping operation&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;noopt&lt;/id&gt;
+                &lt;tag&gt;--noopt&lt;/tag&gt;
+                &lt;textDesc&gt;Do not perform hydrogen optimization&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;chain&lt;/id&gt;
+                &lt;tag&gt;--chain&lt;/tag&gt;
+                &lt;textDesc&gt;Keep the chain ID in the output PQR file&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;assign-only&lt;/id&gt;
+                &lt;tag&gt;--assign-only&lt;/tag&gt;
+                &lt;textDesc&gt;Only assign charges and radii - do not add atoms, debump, or optimize&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;clean&lt;/id&gt;
+                &lt;tag&gt;--clean&lt;/tag&gt;
+                &lt;textDesc&gt;Do no optimization, atom addition, or parameter assignment, 
+                    just return the original PDB file in aligned format. Overwrites chosen forcefield.
+                &lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;apbs-input&lt;/id&gt;
+                &lt;tag&gt;--apbs-input&lt;/tag&gt;
+                &lt;textDesc&gt;Create a template APBS input file based on the generated PQR file.
+                          Also creates a Python pickle for using these parameters in other programs.
+                &lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;whitespace&lt;/id&gt;
+                &lt;tag&gt;--whitespace&lt;/tag&gt;
+                &lt;textDesc&gt;Insert whitespaces between atom name and residue name,
+                           between x and y, and between y and z &lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;typemap&lt;/id&gt;
+                &lt;tag&gt;--typemap&lt;/tag&gt;
+                &lt;textDesc&gt;Create Typemap output &lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;neutraln&lt;/id&gt;
+                &lt;tag&gt;--neutraln&lt;/tag&gt;
+                &lt;textDesc&gt;Make the N-terminus of this protein neutral (default is charged)&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;neutralc&lt;/id&gt;
+                &lt;tag&gt;--neutralc&lt;/tag&gt;
+                &lt;textDesc&gt;Make the C-terminus of this protein neutral (default is charged)&lt;/textDesc&gt;
+            &lt;/flag&gt;
+    
+            &lt;flag&gt;
+                &lt;id&gt;chi&lt;/id&gt;
+                &lt;tag&gt;--chi&lt;/tag&gt;
+                &lt;textDesc&gt;Print the per-residue backbone chi angle to {output-path}.chi&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;rama&lt;/id&gt;
+                &lt;tag&gt;--rama&lt;/tag&gt;
+                &lt;textDesc&gt;Print the per-residue phi and psi angles to {output-path}.rama 
+                     for Ramachandran plots&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+`               &lt;id&gt;psi_only&lt;/id&gt;
+                &lt;tag&gt;--psi_only&lt;/tag&gt;
+                &lt;textDesc&gt;Only include phi angles in Rama output. Rename output file {output-path}.psi&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;phi_only&lt;/id&gt;
+                &lt;tag&gt;--phi_only&lt;/tag&gt;
+                &lt;textDesc&gt;Only include phi angles in Rama output. Rename output file {output-path}.phi&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+`               &lt;id&gt;contact&lt;/id&gt;
+                &lt;tag&gt;--contact&lt;/tag&gt;
+                &lt;textDesc&gt;Print a list of contacts to {output-path}.con&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+`               &lt;id&gt;salt&lt;/id&gt;
+                &lt;tag&gt;--salt&lt;/tag&gt;
+                &lt;textDesc&gt;Print a list of salt bridges to {output-path}.salt &lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+`               &lt;id&gt;summary&lt;/id&gt;
+                &lt;tag&gt;--summary&lt;/tag&gt;
+                &lt;textDesc&gt;Print protein summary information to {output-path}.summary.&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;hbond&lt;/id&gt;
+                &lt;tag&gt;--hbond&lt;/tag&gt;
+                &lt;textDesc&gt;Print a list of hydrogen bonds to {output-path}.hbond&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;whatif&lt;/id&gt;
+                &lt;tag&gt;--whatif&lt;/tag&gt;
+                &lt;textDesc&gt;Change hbond output to WHAT-IF format.&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;old_distance_method&lt;/id&gt;
+                &lt;tag&gt;--old_distance_method&lt;/tag&gt;
+                &lt;textDesc&gt;Use distance from donor hydrogen to acceptor to calculate distance 
+                     used with --distance_cutoff.
+                &lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;resinter&lt;/id&gt;
+                &lt;tag&gt;--resinter&lt;/tag&gt;
+                &lt;textDesc&gt;Print interaction energy between each residue pair in
+                      the protein to {output-path}.resinter.&lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;residue_combinations&lt;/id&gt;
+                &lt;tag&gt;--residue_combinations&lt;/tag&gt;
+                &lt;textDesc&gt;Remap residues to different titration states and rerun
+                          resinter appending output. Consider only the minimum
+                          number of whole protein titration combinations needed
+                          to test each possible pairing of residue titration
+                          states. Normally used with --noopt. If a protein
+                          titration state combination results in a pair of
+                          residue being  re-tested in the same individual
+                          titration states a warning will be generated if the
+                          re-tested result is different. This warning should not
+                          be possible if used with --noopt.
+                &lt;/textDesc&gt;
+            &lt;/flag&gt;
+            &lt;flag&gt;
+                &lt;id&gt;all_residue_combinations&lt;/id&gt;
+                &lt;tag&gt;--all_residue_combinations&lt;/tag&gt;
+                &lt;textDesc&gt;Remap residues to ALL possible titration state
+                          combinations and rerun resinter appending output.
+                          Results with --noopt should be the same as
+                          --residue_combinations. Runs considerably slower than
+                          --residue_combinations and generates the same type of
+                          warnings.  Use without --noopt to discover how
+                          hydrogen optimization affects residue  interaction
+                          energies via the warnings in the output.
+                &lt;/textDesc&gt;
+            &lt;/flag&gt;
+
+        &lt;/flags&gt;
+    
+        &lt;!-- list of tagged parameters --&gt;
+        &lt;taggedParams&gt;
+            &lt;separator&gt;=&lt;/separator&gt;
+            &lt;param&gt;
+                &lt;id&gt;forcefield&lt;/id&gt;
+                &lt;tag&gt;--ff&lt;/tag&gt;
+                &lt;paramType&gt;STRING&lt;/paramType&gt;
+                &lt;required&gt;true&lt;/required&gt;
+                &lt;value&gt;AMBER&lt;/value&gt;
+                &lt;value&gt;CHARMM&lt;/value&gt;
+                &lt;value&gt;PARSE&lt;/value&gt;
+                &lt;value&gt;PEOEPB&lt;/value&gt;
+                &lt;value&gt;SWANSON&lt;/value&gt;
+                &lt;value&gt;TYL06&lt;/value&gt;
+                &lt;default&gt;PARSE&lt;/default&gt;
+                &lt;textDesc&gt;Currently supported&lt;/textDesc&gt;
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;user-forcefield&lt;/id&gt;
+                &lt;tag&gt;--userff&lt;/tag&gt;
+                &lt;paramType&gt;FILE&lt;/paramType&gt;
+                &lt;ioType&gt;INPUT&lt;/ioType&gt;
+                &lt;required&gt;false&lt;/required&gt;  
+                &lt;textDesc&gt;User-defined forcefield &lt;/textDesc&gt;
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;usernames&lt;/id&gt;
+                &lt;tag&gt;--usernames&lt;/tag&gt;
+                &lt;paramType&gt;FILE&lt;/paramType&gt;
+                &lt;ioType&gt;INPUT&lt;/ioType&gt;
+                &lt;required&gt;false&lt;/required&gt;  
+                &lt;textDesc&gt;The user-created names file to use. Required if using user defined forcefield &lt;/textDesc&gt;
+
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;ffout&lt;/id&gt;
+                &lt;tag&gt;--ffout&lt;/tag&gt;
+                &lt;paramType&gt;STRING&lt;/paramType&gt;
+                &lt;value&gt;AMBER&lt;/value&gt;
+                &lt;value&gt;CHARMM&lt;/value&gt;
+                &lt;value&gt;PARSE&lt;/value&gt;
+                &lt;value&gt;PEOEPB&lt;/value&gt;
+                &lt;value&gt;SWANSON&lt;/value&gt;
+                &lt;value&gt;TYL06&lt;/value&gt;                
+                &lt;textDesc&gt;Instead of using the standard canonical naming scheme for residue and atom, 
+                          use names from the given forcefield:
+                &lt;/textDesc&gt;
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;with-ph&lt;/id&gt;
+                &lt;tag&gt;--with-ph&lt;/tag&gt;
+                &lt;paramType&gt;FLOAT&lt;/paramType&gt;
+                &lt;textDesc&gt;Use PROPKA to calculate pKas and apply them to the molecule given the pH value [0.0-14.0]
+                          Actual PropKa results will be output to {output-path}.propka
+                &lt;/textDesc&gt;
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;ligand&lt;/id&gt;
+                &lt;tag&gt;--ligand&lt;/tag&gt;
+                &lt;paramType&gt;FILE&lt;/paramType&gt;
+                &lt;ioType&gt;OUTPUT&lt;/ioType&gt;
+                &lt;textDesc&gt;Calculate the parameters for the ligand in mol2 format at the given path. 
+                          Pdb2pka must be compiled.
+                &lt;/textDesc&gt; 
+
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;angle_cutoff&lt;/id&gt;
+                &lt;tag&gt;--angle_cutoff&lt;/tag&gt;
+                &lt;paramType&gt;FLOAT&lt;/paramType&gt;
+                &lt;textDesc&gt;Angle cutoff to use when creating hbond data (default 30.0)&lt;/textDesc&gt;
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;distance_cutoff&lt;/id&gt;
+                &lt;tag&gt;--distance_cutoff&lt;/tag&gt;
+                &lt;paramType&gt;FLOAT&lt;/paramType&gt;
+                &lt;textDesc&gt;Distance cutoff to use when creating hbond data (default 3.4)&lt;/textDesc&gt;
+            &lt;/param&gt;
+        &lt;/taggedParams&gt;
+    
+        &lt;!-- list of untagged parameters, in order --&gt;
+        &lt;untaggedParams&gt;
+            &lt;param&gt;
+                &lt;id&gt;inId&lt;/id&gt;
+                &lt;paramType&gt;STRING&lt;/paramType&gt;
+                &lt;ioType&gt;INPUT&lt;/ioType&gt;
+                &lt;!--  &lt;required&gt;true&lt;/required&gt;   --&gt;
+                &lt;textDesc&gt;a PDB ID (fetch input file from PDB archive; for test use 1a1p)&lt;/textDesc&gt;
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;inFile&lt;/id&gt;
+                &lt;paramType&gt;FILE&lt;/paramType&gt;
+                &lt;ioType&gt;INPUT&lt;/ioType&gt;
+                &lt;!--  &lt;required&gt;true&lt;/required&gt;   --&gt;
+                &lt;textDesc&gt;&lt;![CDATA[ upload a PDB input file (test file 
+                          &lt;a href="http://www.rcsb.org/pdb/files/1a1p.pdb"&gt;http://www.rcsb.org/pdb/files/1a1p.pdb&lt;/a&gt;)]]&gt;
+                &lt;/textDesc&gt;
+            &lt;/param&gt;
+            &lt;param&gt;
+                &lt;id&gt;output-file&lt;/id&gt;
+                &lt;paramType&gt;FILE&lt;/paramType&gt;
+                &lt;ioType&gt;OUTPUT&lt;/ioType&gt;
+                &lt;required&gt;true&lt;/required&gt;
+                &lt;default&gt;output.pqr&lt;/default&gt;
+                &lt;textDesc&gt;The desired output name of the PQR file to be generated&lt;/textDesc&gt;
+            &lt;/param&gt;
+        &lt;/untaggedParams&gt;
+        &lt;groups&gt;
+          &lt;group&gt;
+            &lt;name&gt;inputParam&lt;/name&gt;
+            &lt;elements&gt;inId inFile&lt;/elements&gt;
+            &lt;required&gt;true&lt;/required&gt;
+            &lt;exclusive&gt;true&lt;/exclusive&gt;
+            &lt;textDesc&gt;Please enter either:&lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;ForceFieldGroup&lt;/name&gt;
+            &lt;elements&gt;forcefield &lt;/elements&gt;
+            &lt;required&gt;true&lt;/required&gt;
+            &lt;textDesc&gt;Pick a forcefield to use:&lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;UserForceFieldGroup&lt;/name&gt;
+            &lt;elements&gt;user-forcefield usernames&lt;/elements&gt;
+            &lt;required&gt;true&lt;/required&gt;
+            &lt;textDesc&gt;User forcefield to use (overwrites previous forcefield):&lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;outputFile&lt;/name&gt;
+            &lt;elements&gt;output-file&lt;/elements&gt;
+            &lt;required&gt;true&lt;/required&gt;
+            &lt;textDesc&gt;Output file name&lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;ffoutGroup&lt;/name&gt;
+            &lt;elements&gt;ffout&lt;/elements&gt;
+            &lt;required&gt;false&lt;/required&gt;
+            &lt;textDesc&gt;Pick an output naming scheme to use&lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;AvailableOptionsGroup&lt;/name&gt;
+            &lt;elements&gt;clean nodebump noopt chain assign-only with-ph apbs-input 
+                      ligand whitespace typemap neutraln neutralc verbose &lt;/elements&gt;
+            &lt;required&gt;false&lt;/required&gt;
+            &lt;textDesc&gt;Available options &lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;ExtensionOptionsGroup&lt;/name&gt;
+            &lt;elements&gt;chi contact salt summary &lt;/elements&gt;
+            &lt;textDesc&gt;Extensions options:&lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;HbondExtensionOptionsGroup&lt;/name&gt;
+            &lt;elements&gt;hbond whatif angle_cutoff distance_cutoff old_distance_method &lt;/elements&gt;
+            &lt;textDesc&gt; Hbond Extensions options:&lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;ResinterExtensionOptionsGroup&lt;/name&gt;
+            &lt;elements&gt;resinter residue_combinations all_residue_combinations &lt;/elements&gt;
+            &lt;textDesc&gt;Resinter Extensions options:&lt;/textDesc&gt;
+          &lt;/group&gt;
+          &lt;group&gt;
+            &lt;name&gt;RamaExtensionOptionsGroup&lt;/name&gt;
+            &lt;elements&gt;rama phi_only psi_only &lt;/elements&gt;
+            &lt;textDesc&gt;Rama Extensions options:&lt;/textDesc&gt;
+          &lt;/group&gt;
+        &lt;/groups&gt;
+    &lt;/types&gt;
+
+  &lt;/metadata&gt;
+
+  &lt;binaryLocation&gt;/opt/pdb2pqr_1.8/pdb2pqr.py&lt;/binaryLocation&gt;
+   &lt;parallel&gt;false&lt;/parallel&gt;
+&lt;/appConfig&gt;
+</screen>
+</para>
+
+</section>
+
+<section id="proxy-script" xreflabel="proxy-script">
+<title>Sample Script for Generating Proxy</title>
+
+<para>
+This sample script <filename>newcert.sh</filename> gets the 
+certificate from the proxy. This is useful if the Opal job managers are
+configured to use a proxy to submit jobs on behalf of the user.  Note
+that the <command>-t 168</command> means that the certificate will be 
+valid for 168 hours or 7 days.  The default certificate life time is
+only 12 hours.
+<screen>
+#!/bin/bash
+
+export GLOBUS_LOCATION=/opt/gt4
+. $GLOBUS_LOCATION/etc/globus-user-env.sh
+. $GLOBUS_LOCATION/globus-devel-env.sh
+
+echo $password | $GLOBUS_LOCATION/bin/myproxy-logon -t 168 -s myproxy.teragrid.org 
+     -S &amp;&gt; logfile.log
+echo running `date`&gt;&gt;logfile.log
+
+cat logfile.log &gt;&gt; get_cert.log
+</screen>
+</para>
+
+<para>
+You can add the above script to crontab to run 
+<filename>newcert.sh</filename> at the beginning
+of every hour.
+<screen>
+0 * * * * $path_to_newcert_sh
+</screen>
+</para>
+
+</section>
+
+</chapter>

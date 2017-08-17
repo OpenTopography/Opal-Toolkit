@@ -1,0 +1,104 @@
+# tomcat installation base URL, required
+tomcat.url=http://localhost:8080
+
+# directory used for your appConfig files in order to be deployed
+# if you use a relative path it is relative to your catalina.home
+opal.deploy.path=deploy
+
+# parallel parameters
+num.procs=1
+mpi.run=/path/to/your/mpi
+
+# zip input/output files, if set to true
+# data.archive=true
+
+# location of working directory relative to $CATALINA_HOME/webapps.
+# this could be a symbolic link to another location (which should be
+# NFS mounted if this is on a cluster). if this is a symlink, copy
+# etc/opal.xml to $CATALINA_HOME/conf/Catalina/localhost/opal.xml. if
+# the name of the symlink is changed to something other than "opal-jobs", 
+# modify the opal.xml accordingly
+# working.dir=opal-jobs
+
+# by default, opal doesn't allow the use of absolute paths in the command-line
+# set the following parameter to allow some exceptions
+# allowed.path.prefixes=/db/, /whatever/dir/, /another/one/
+
+## --- email configuration for server ---
+# set to true if email notification is to be turned ON
+mail.enable=false
+# url for smtp server
+mail.smtp.host=smtp.gmail.com
+# whether the server needs authentication
+mail.smtp.auth=true
+# turn debugging on or off
+mail.smtp.debug=false
+# from address in notification email - could be a "no-reply" address
+mail.smtp.from=foo@bar.com
+# credentials for logging into smtp server
+mail.smtp.user=foo@bar.com
+mail.smtp.password=foobar
+
+# use this key to display how long to save user data on server
+opal.datalifetime=4 days
+# specify in seconds the hard limit for how long a job can run
+# only applicable if either DRMAA or Globus is used, and if the scheduler supports it 
+# your application will be killed by the scheduler once it reaches the specified limit 
+opal.hard_limit=3600
+
+# full qualified class name (FQCN) of the job manager being used
+opal.jobmanager=edu.sdsc.nbcr.opal.manager.ForkJobManager
+# opal.jobmanager=edu.sdsc.nbcr.opal.manager.DRMAAJobManager
+# opal.jobmanager=edu.sdsc.nbcr.opal.manager.GlobusJobManager
+# opal.jobmanager=edu.sdsc.nbcr.opal.manager.PBSJobManager
+# opal.jobmanager=edu.sdsc.nbcr.opal.manager.CSFJobManager
+# opal.jobmanager=edu.sdsc.nbcr.opal.manager.CondorJobManager
+# opal.jobmanager=edu.sdsc.nbcr.opal.manager.RemoteGlobusJobManager
+# opal.jobmanager=edu.sdsc.nbcr.opal.manager.MetaServiceJobManager
+
+## --- information for the DRMAA job manager ---
+# the parallel environment (PE) being used by DRMAA
+drmaa.pe=mpich
+# change the default DRMAA queue 
+# drmaa.queue=foo
+
+## --- information for the Globus job managers ---
+# url for the globus gatekeeper
+globus.gatekeeper=host:2119/jobmanager-sge
+# gsi information 
+globus.service_cert=/path/to/your/globus/cert
+globus.service_privkey=/path/to/your/globus/key
+# base url for gridftp server, used by remote Globus job manager, must exist on a remote server
+# use "//" to indicate absolute path, else it is interpreted as relative to home directory
+globus.gridftp_base=gsiftp://host:2811/working_dir
+
+## --- information for the CSF job manager ---
+# CSF working directory, is the remote directory under the remote user's home directory
+csf4.workingDir=opal_runs
+
+## --- information for the per IP limits on job submission ---
+# boolean switch to turn processing on or off
+opal.ip.processing=false
+# number of jobs per IP per hour
+opal.ip.limit=10
+# block all jobs from this IP - comma separated entries (optional)
+opal.ip.blacklist=66.102.7.104
+# always allow jobs from this IP - comma separated entries (optional)
+opal.ip.whitelist=66.102.7.105, 127.0.0.1
+
+## --- information for Fork job manager ---
+# number of jobs that can be in execution simultaneously
+#fork.jobs.limit=1
+
+## --- information for Condor job manager ---
+# the script used by Condor to launch MPI jobs
+mpi.script=/opt/condor/etc/examples/mp1script
+# Enable if there are server-specific condor expressions. Put expressions in the file
+#condor.expr.file=/opt/opal/etc/condor.expr
+
+## --- information for PBS job manager ----
+# Enable if there are server-specific pbs expressions. Put expressions in the file
+#pbs.expr.file=/opt/opal/etc/pbs.expr
+# default job name limit
+#pbs.name.limit=15
+

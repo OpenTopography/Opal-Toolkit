@@ -1,0 +1,351 @@
+<chapter id="opalGUI" xreflabel="Opal Dynamic Interface Generation"> 
+<title>Opal Dashboard</title>
+
+<section id="opalGUI-overview" xreflabel="Overview">
+<title>Overview</title>
+
+<para>The Opal Dashboard is a Web-based graphical user interface that
+allows a user to monitor an Opal service, to view statistics regarding its usage
+and to execute deployed applications from within a standard Web browser.
+It provides for dynamic creation of customized applications forms for job submission.
+The dashboard is automatically deployed along with Opal, and it can be accessed at <ulink type="http"
+url="http://localhost:8080/opal2/dashboard">http://servername:8080/opal2/dashboard</ulink>.</para>
+
+<para>
+The Opal dashboard has the following tabs:</para>
+<itemizedlist>
+	<listitem><para><command>Home</command>: provides
+	general information about Opal, and an overview of the rest of the
+	functionality of the Dashboard.</para></listitem>
+
+        <listitem><para><command>Server Info</command>: 
+        provides general information about the Opal installation, such as
+        server configuration, versions, etc.</para>
+	<mediaobject>
+        <imageobject>
+                <imagedata fileref="images/server_info.png"  scale="50" align="center">
+        </imageobject>
+        </mediaobject>
+	</listitem>
+
+        <listitem><para><command>Usage Statistics</command>: provides
+        charts with usage statistics, errors and average execution times.
+        The charts are created dynamically based on user choice of 
+        timeframe and a list of services.  If HSQL database is used, then all
+        services that have ever been deployed will be displayed. For other databases
+        the charts will include only services that are currently active (services 
+        that have been undeployed will not be displayed). 
+        </para>
+
+	<para>The following screenshot displays the number of
+	jobs executed per day over a specified timeframe. </para>
+        <mediaobject>
+        <imageobject>
+                <imagedata fileref="images/plotchart.jpg" scale=50 align="center">
+        </imageobject>
+        </mediaobject>
+
+	</listitem>
+
+        <listitem><para><command>List of Applications</command>: 
+        provides a list of all installed applications and an atom feed 
+	<inlinemediaobject><imageobject>
+        <imagedata fileref="images/feed-icon.png">
+        </imageobject></inlinemediaobject>
+        for the list of applications. 
+        Users can search for applications based on specified metadata, and click on the
+        applications to access submission forms. 
+        </para></listitem>
+
+	<listitem><para><command>Documentation</command>: provides
+        links to Opal documentation, websites, tutorials, publications, etc.</para></listitem>
+</itemizedlist>
+
+<para> The list of installed applications is generated dynamically by
+fetching real time data from the Apache Axis engine. When the user clicks
+on one of the available services, the Opal dashboard displays a submisison form.
+The submission form type depends on the configuration of the specific application:</para>
+
+<itemizedlist> 
+<listitem><para><xref linkend="opalGUI-simplesub"></para></listitem>
+<listitem><para><xref linkend="opalGUI-advancedsub"></para></listitem>
+</itemizedlist>
+</section>
+
+
+<section id="opalGUI-simplesub"  xreflabel="Simple Submission Form">
+<title>Simple Submission Form</title>
+
+<para >When an application has been deployed using a basic application
+configuration, such as the one used by the <command>/bin/date</command>
+example shown in <xref linkend="deploy">, the Opal Dashboard will
+display a simple form with an input text field and an input file box. 
+In this case, the application configuration file does not present any metadata 
+describing the format of the application input arguments.
+</para>
+<para>The user should type the desired command-line arguments into the input text box and,
+optionally, upload an input file. When a user specifies one file to upload, a form
+presents an <emphasis>Attach another File</emphasis> link which enables a
+button to upload more files. The user can indicate via a check button if
+the files should be uncompressed on the server.
+</para>
+
+<para>
+</para>
+        <mediaobject>
+        <imageobject>
+                <imagedata fileref="images/simple_sub.png" scale=50>
+        </imageobject>
+        </mediaobject>
+
+</section>
+
+<section id="opalGUI-advancedsub" xreflabel="Advanced Submission Form">
+<title>Advanced Submission Form</title>
+
+<para>
+One can add an optional element <emphasis>types</emphasis> in the 
+application configuration file described at <xref linkend="deploy">.
+This element contains a description of the command line input arguments 
+accepted by the application.  The Opal dashboard will render an advanced 
+submission form with the customized inputs arguments.</para>
+
+<section id="opalGUI-typesec" xreflabel="The 'types' section">
+<title>The &lt;types&gt; section</title>
+<para>The &lt;types&gt; section of the application configuration file can be composed of four optional elements.
+Each element, when present, has one or more nested elements.</para>
+
+<orderedlist>
+    <listitem><para>
+      <emphasis role="strong">&lt;flags&gt;</emphasis>: optional, contain a set of &lt;flag&gt; elements. The flags are not ordered.
+      <itemizedlist>
+        <listitem><para>
+        <emphasis role="strong">&lt;flag&gt;</emphasis>: is used to define an input argument (or a flag) for the application. 
+        These arguments are passed using one or more characters prefixed with one 
+        or more dashes.  Usually they are used to activate or deactivate some application functionality,
+        for example  <emphasis>--verbose</emphasis>.
+        The following elements can be nested inside &lt;flag&gt;:
+        <itemizedlist>
+          <listitem><para >
+          <emphasis role="strong">&lt;id&gt;</emphasis>: required element, contains an internal unique identifier which
+          represents this flag.
+          </para></listitem>
+          <listitem><para >
+          <emphasis role="strong">&lt;tag&gt;</emphasis>: required element, contains a string that is used as a tag for this
+          argument.</para></listitem>
+          <listitem><para >
+          <emphasis role="strong">&lt;default&gt;</emphasis>: optional element, 
+          specifies if this flag should be automatically selected or not.
+          Can be only <emphasis>true</emphasis> or <emphasis>false</emphasis>. 
+          </para></listitem>
+          <listitem><para >
+          <emphasis role="strong">&lt;textDesc&gt;</emphasis>: optional element, contain an explanation of the flag's
+          functionality.</para></listitem>
+        </itemizedlist>
+        </para></listitem>
+      </itemizedlist>
+      <screen>
+        &lt;types&gt; 
+              &lt;!-- list of flags --&gt; 
+              &lt;flags&gt; 
+                  &lt;flag&gt; 
+                      &lt;id&gt;verbose&lt;/id&gt; 
+                      &lt;tag&gt;--verbose&lt;/tag&gt; 
+                      &lt;textDesc&gt;Provide verbose output&lt;/textDesc&gt; 
+                      &lt;default&gt;true&lt;/default&gt; 
+                  &lt;/flag&gt; 
+                  
+                  ... 
+              &lt;/flags&gt;
+      </screen>
+    </para></listitem>
+
+    <listitem><para>
+      <emphasis role="strong">&lt;taggedParams&gt;</emphasis>: optional, contains a set of &lt;parameter&gt; elements.
+      They can appear in any order on the command line. 
+
+      <itemizedlist>
+        <listitem><para>
+        <emphasis role="strong">&lt;param&gt;</emphasis>: these elements are usually formed by a prefix (tag), 
+        a separator, and an input value.  The 'separator' is a character used to separate the tag from the 
+        input value.  For example, for <emphasis>-input=&lt;FileName1&gt;</emphasis> the separator is '=', for
+        <emphasis>-input &lt;FileName2&gt;</emphasis> the separator is ' '. 
+        The following elements can be nested inside  &lt;param&gt;:</para>
+
+        <itemizedlist>
+          <listitem><para>
+          <emphasis role="strong">&lt;id&gt;</emphasis>: required, contains an internal unique identifier which
+          represents this parameter
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;tag&gt;</emphasis>: required, contains the string that is used as 
+          a tag for this argument. NOTE: do not use this element if a parent element &lt;param&gt; is inside &lt;untaggedParams&gt;
+          element.
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;default&gt;</emphasis>: optional element, contains
+          the default value for a given parameter. When present, the default value is copied into the corresponding input box
+          on the application form. 
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;paramType&gt;</emphasis>: required,  specifies the type for this
+          parameter. Its values can be: INT, BOOL, FLOAT, STRING, FILE and URL.
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;ioType&gt;</emphasis>: required to be present when the
+          paramType tag is FILE; specifies if the file is an input or an output. Possible values
+          are: INPUT, OUTPUT and INOUT
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;required&gt;</emphasis>: optional, specifies if a parameter is mandatory. 
+          When not present, the default is false.  Can contain values <emphasis>true</emphasis> or <emphasis>false</emphasis>.
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;value&gt;</emphasis>: optional, can be repeated multiple times. 
+          If present it means that this parameter can assume only the values enumerated in these tags.
+          </para></listitem>
+<!--
+          <listitem><para>
+          <emphasis role="strong">&lt;semanticType&gt;</emphasis>: currently ignored, it will be used 
+          in future for sematic validation.
+          </para></listitem>
+-->
+          <listitem><para>
+          <emphasis role="strong">&lt;textDesc&gt;</emphasis>: optional, contains
+          an explanation of the argument functionality.
+          </para></listitem>
+        </itemizedlist>
+
+        <screen>
+              &lt;!-- list of tagged parameters --&gt; 
+              &lt;taggedParams&gt; 
+                  &lt;separator&gt;=&lt;/separator&gt; 
+                  &lt;param&gt; 
+                      &lt;id&gt;forcefield&lt;/id&gt; 
+                      &lt;tag&gt;--ff&lt;/tag&gt; 
+                      &lt;paramType&gt;STRING&lt;/paramType&gt; 
+                      &lt;required&gt;true&lt;/required&gt; 
+                      &lt;value&gt;AMBER&lt;/value&gt; 
+                      &lt;value&gt;CHARMM&lt;/value&gt; 
+                      &lt;value&gt;PARSE&lt;/value&gt; 
+                      &lt;value&gt;TYL06&lt;/value&gt; 
+                      &lt;default&gt;AMBER&lt;/default&gt; 
+                      &lt;textDesc&gt;The forcefield to use -- 
+		                      currently AMBER, CHARMM, PARSE, and TYL06 are supported.
+                      &lt;/textDesc&gt; 
+                  &lt;/param&gt; 
+                        ...
+              &lt;/taggedParams&gt; 
+        </screen>
+      </listitem>
+
+    </itemizedlist>
+
+    </para></listitem>
+
+    <listitem><para>
+    <emphasis role="strong">&lt;untaggedParams&gt;</emphasis>: optional, contains a set of &lt;parameter&gt; elements.
+    Each  &lt;parameter&gt; element defines an input argument when its order on the command line is
+    relevant. Hence, the oder of specified parameters  in the application configuration file must follow the order
+    of the arguments expected by the application. 
+    Each &lt;parameter&gt; element has the same set of nested elements as the &lt;parameter&gt; for &lt;taggedParams&gt;
+    element, accept &lt;tag&gt;, see NOTE above.
+    <screen>
+              &lt;!-- list of untagged parameters, in order --&gt; 
+              &lt;untaggedParams&gt; 
+                  &lt;param&gt; 
+                      &lt;id&gt;inFile&lt;/id&gt; 
+                      &lt;paramType&gt;FILE&lt;/paramType&gt; 
+                      &lt;ioType&gt;INPUT&lt;/ioType&gt; 
+                      &lt;!--  &lt;required&gt;true&lt;/required&gt;   --&gt; 
+                      &lt;textDesc&gt;The PDB input file.&lt;/textDesc&gt; 
+                  &lt;/param&gt; 
+                        ...
+              &lt;/untaggedParams&gt; 
+    </screen>
+    </para></listitem>
+
+    <listitem><para>
+      <emphasis role="strong">&lt;groups&gt;</emphasis>: optional, contains a set of &lt;group&gt; elements. 
+      <itemizedlist>
+      <listitem><para>
+      <emphasis role="strong">&lt;group&gt;</emphasis>: optional, defines groups of
+        several parameters that have a similar functionality.  Each defined group will be displayed 
+        together on the submission form.  It contains the following nested elements:</para>
+        <itemizedlist>
+          <listitem><para>
+          <emphasis role="strong">&lt;name&gt;</emphasis>: required, contains the internal name for this group
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;elements&gt;</emphasis>: required, 
+          contains the list of parameters and flags that are part of this group
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;required&gt;</emphasis>: optional. 
+          Can be only <emphasis>true</emphasis> or <emphasis>false</emphasis>. 
+          If this element is true, it means that all the elements 
+          within this group are mandatory. When absent, the default is false.
+          </para></listitem>
+
+          <listitem><para>
+          <emphasis role="strong">&lt;exclusive&gt;</emphasis>: optional, specifies that
+          parameters in this group are mutually exclusive. Default is false. 
+          Can be only <emphasis>true</emphasis> or <emphasis>false</emphasis>. 
+          </para></listitem>
+<!--
+          <listitem><para>
+          <emphasis role="strong">&lt;semanticType&gt;</emphasis>: this element is currently ignored, it will be used 
+          in future for sematic validation.
+          </para></listitem>
+-->
+          <listitem><para>
+          <emphasis role="strong">&lt;textDesc&gt;</emphasis>: olptional,
+          contains a description that will be rendered on the submission form
+          as a header for this group of parameters.
+          </para></listitem>
+      </itemizedlist>
+      <screen>
+              &lt;groups&gt; 
+                &lt;group&gt; 
+                  &lt;name&gt;inputParam&lt;/name&gt; 
+                  &lt;elements&gt;inFile inId&lt;/elements&gt; 
+                   &lt;required&gt;true&lt;/required&gt; 
+                   &lt;exclusive&gt;true&lt;/exclusive&gt; 
+                   &lt;textDesc&gt;Input file to be used (choose one of the two options)&lt;/textDesc&gt; 
+                &lt;/group&gt; 
+                       ...
+              &lt;/groups&gt; 
+      </screen>
+        </listitem>
+    </itemizedlist>
+
+    </para></listitem>
+</orderedlist>
+
+<para>
+For the Opal application configuration described in <xref linkend="sample-appconfig">,
+the following advanced submission form is generated:
+</para>
+
+        <mediaobject>
+        <imageobject>
+                <imagedata fileref="images/advanced_sub1.png" scale=40>
+        </imageobject>
+        </mediaobject>
+        <mediaobject>
+        <imageobject>
+                <imagedata fileref="images/advanced_sub2.png" scale=40>
+        </imageobject>
+        </mediaobject>
+</section>
+</section>
+
+</chapter>

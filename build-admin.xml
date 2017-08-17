@@ -1,0 +1,145 @@
+<!-- ===================================================================
+<description>
+The build file for the Opal Application Wrapper Web service admin tasks
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+
+   Modify build.properties
+
+   To create source distribution
+        ant dist
+
+   To create documentation from docbook sources
+        ant docs
+
+Author:
+   Sriram Krishnan [sriram@sdsc.edu]
+</description>
+==================================================================== -->
+
+<project default="usage">
+
+  <property file="build.properties" />
+  <property name="name" value="opal-ws" />
+  <property name="project.home" location="." />
+  <property name="build" location="${project.home}/build"/>
+  <property name="build.dist" location="${build}/dist" />
+  <property name="build.dist.base" location="${build.dist}/${name}-${version}"/>
+  <property name="doc.src" location="${project.home}/docbook"/>
+  <property name="doc.dsl" location="${doc.src}/etc"/>
+  <property name="doc.dest" location="${project.home}/docs"/>
+  <property name="debug" value="on"/>
+  <property name="fork" value="true"/>
+
+  <!-- print usage -->
+  <target name="usage">
+    <echo message="Usage: ant -f build-admin.xml [usage|dist|docs]"/>
+  </target>
+
+  <!-- Create a source distribution -->
+  <target name="dist" depends="docs">
+  
+    <!-- create a fresh dist directory -->
+    <mkdir dir="${build}" />
+    <delete dir="${build.dist}" />
+    <mkdir dir="${build.dist.base}" />
+
+    <!-- copy over the relevant sources -->
+    <copy todir="${build.dist.base}">
+      <fileset dir="${project.home}">
+
+	  <!-- exclude certain directories -->
+	  <exclude name="**/build/**"/>
+	  <exclude name="TODO"/>
+	  <exclude name="docbook/**"/>
+	  <exclude name="build-admin.xml"/>
+	  <exclude name="**/python/**"/>
+	  <exclude name="data/**"/>
+      </fileset>
+    </copy>
+
+    <!-- Moving the template file  -->
+    <move file="${build.dist.base}/etc/opal.properties.template" tofile="${build.dist.base}/etc/opal.properties"/>
+    <move file="${build.dist.base}/build.properties.template" tofile="${build.dist.base}/build.properties"/>
+    <move file="${build.dist.base}/etc/hibernate-opal.cfg.xml.template" tofile="${build.dist.base}/etc/hibernate-opal.cfg.xml"/>
+
+
+    <!-- adjusting text files to local conventions -->
+    <fixcrlf srcdir="${build.dist.base}"
+       eol="lf" eof="remove"
+       includes="**/*.html,**/*.txt,**/*.sh,**/*.bat,**/*.properties,**/*.xml" />
+
+    <!-- make all shell scripts executable -->
+    <chmod perm="a+x" dir="${build.dist.base}"
+       includes="**/*.*sh" />
+
+    <!-- tar everything up -->
+    <tar tarfile="${build.dist.base}.tar" longfile="gnu">
+      <tarfileset dir="${build.dist}" mode="755">
+        <include name="**/*.*sh"/>
+      </tarfileset>
+      <tarfileset dir="${build.dist}" group="nbcr">
+        <include name="**"/>
+        <exclude name="**/*.*sh"/>
+      </tarfileset>
+    </tar>
+
+    <!-- zip the tarfile -->
+    <gzip zipfile="${build.dist.base}.tar.gz" src="${build.dist.base}.tar" />
+    <delete file="${build.dist.base}.tar" />
+    <delete dir="${build.dist.base}" />
+  </target>
+
+  <!-- creation the documentation using docbook -->
+  <target name="docs">
+    <!-- delete old docs directory, and create it again -->
+    <delete dir="${doc.dest}"/>
+    <mkdir dir="${doc.dest}"/>
+
+    <!-- generate the html version of the docs -->
+    <exec executable="jw">
+      <arg value="--backend"/>
+      <arg value="html"/>
+      <arg value="--dsl"/>
+      <arg value="${doc.dsl}/rocks.dsl#html"/>
+      <arg value="--output"/>
+      <arg value="${doc.dest}"/>
+      <arg value="${doc.src}/index.sgml"/>
+    </exec>
+
+    <!-- generate the pdf version of the docs -->
+    <exec executable="jw">
+      <arg value="--backend"/>
+      <arg value="pdf"/>
+      <arg value="--dsl"/>
+      <arg value="${doc.dsl}/rocks.dsl#print"/>
+      <arg value="--output"/>
+      <arg value="${doc.dest}"/>
+      <arg value="${doc.src}/index.sgml"/>
+    </exec>
+
+    <!-- finish up -->
+    <move file="${doc.dest}/index.pdf"
+	  tofile="${doc.dest}/opal-referenceguide.pdf"/>
+    <mkdir dir="${doc.dest}/images"/>
+    <copy todir="${doc.dest}/images">
+      <fileset dir="${doc.src}/images">
+	  <!-- include everything -->
+<!--	  <exclude name="**"/> -->
+      </fileset>
+    </copy>
+    <copy todir="${doc.dest}">
+      <fileset dir="${doc.src}">
+	  <!-- include rocks.css -->
+	  <include name="rocks.css"/>
+      </fileset>
+    </copy>
+  </target>
+</project>

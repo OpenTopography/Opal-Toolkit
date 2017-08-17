@@ -1,0 +1,57 @@
+Q. Why use Opal, and not just Globus GRAM to launch remote jobs?
+
+A: This is a question that has been asked several times (with good reason).
+   However, using Opal has the following advantages over using a command
+   line Globus GRAM job submit -
+
+   1. Deploying an application as an Opal service is very easy, and can be
+      achieved under a couple of hours. It can often be done much faster
+      than that, once the first Opal service has already been deployed.
+      After the necessary software has been downloaded and installed,
+      adding a new service is a matter of modifying a few configuration
+      files and using an Ant script to deploy the service.
+
+   2. Every user doesn't have to deploy the application. From our
+      experience, we have learnt that deploying a scientific application can
+      be quite complicated if it has to be done by every user. If Opal is
+      used, the service provider deploys this application once which can then
+      be used by any client via a SOAP API.
+
+   3. Every user would typically need an account on the cluster if they use
+      the traditional Globus GRAM approach. In theory, multiple client DN's
+      could be mapped to a generic group user account - but this means that
+      all the users have to ensure that they don't interfere with others
+      who may be logged on to the same account. The Opal approach is much
+      cleaner - only authorized users are allowed to run jobs using
+      GSI-based transport level mechanisms. However, since they are not
+      allowed to run *any* arbitrary command, they don't interfere with one
+      another. Furthermore, it is easier to keep track of user requests
+      this way because every single user can be accounted for (unlike the
+      former where only the users are only accounted for as a single
+      group).
+
+   4. Users don't have to do their own data management. Using the
+      traditional method, every user would have to stage input and output
+      files manually. Furthermore, they would have to create new working
+      directories for every single run (so that output files from older
+      runs are not overwritten). On the other hand, Opal performs the data
+      management for the user. It creates new working directories
+      automatically for every run, and returns URLs to the user to retrieve
+      the outputs when the execution is complete.
+
+   5. Users don't have to be concerned with the schedulers being used at
+      the back-end. The service is configured to use a scheduler supported
+      by Globus (e.g. Condor, SGE) - the users are oblivious to this. In
+      the traditional approach, users would have to submit to a particular
+      scheduler using an appropriate URL.
+
+   6. Since the applications are exposed via a SOAP API, clients can be
+      easily written in a variety of languages, and accessed from different
+      platforms. Clients are shielded from any changes that happen at the
+      backend (upgrades, etc) as long as the SOAP APIs and the URLs for
+      connecting to the services stay the same. Currently, we have Java
+      clients used in Gridsphere-based portals, Javascript clients used in
+      the Mozilla-based Gemstone framework, and Python clients used in the
+      PMV toolkit. Furthermore, workflow toolkits like Kepler can be used
+      to orchestrate complex scientific pipelines based on Opal Web
+      services.

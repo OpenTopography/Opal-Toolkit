@@ -1,0 +1,437 @@
+<!-- ===================================================================
+<description>
+The build file for the Opal Application Wrapper Web service
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+
+   Modify build.properties (only for server install)
+
+   To generate stubs from WSDL
+        ant generateStubs
+   To compile
+        ant compile
+   To create jars
+        ant jar
+   To clean compiled jars
+        ant clean
+   To install inside tomcat
+        ant install
+   To uninstall only opal jars (e.g. during upgrade)
+        ant uninstall-minimal
+   To uninstall opal and all helper jars (for a fresh install)
+       ant uninstall-all
+   To upgrade Opal installation inside Tomcat
+       ant upgrade
+   To deploy a service (locally)
+	ant deploy -DserviceName=serviceName -DappConfig=appConfig
+   To undeploy a service (locally)
+	ant undeploy -DserviceName=serviceName
+   To create javadocs
+        ant api-docs
+
+Author:
+   Sriram Krishnan [sriram@sdsc.edu]
+</description>
+==================================================================== -->
+
+<project name="opal2" default="jar">
+
+  <property file="build.properties" />
+  <property name="name" value="opal-ws" />
+  <property name="project.home" location="." />
+  <property name="lib" location="${project.home}/lib" />
+  <property name="etc" location="${project.home}/etc" />
+  <property name="opal.webapp" value="opal2" />
+  <property name="opal.WEB-INF" location="${project.home}/webapps/${opal.webapp}/WEB-INF" />  
+  <property name="build" location="${project.home}/build" />
+  <property name="build.classes" location="${build}/classes" />
+  <property name="docs" location="${project.home}/docs" />
+  <property name="build.generated" location="${build}/gen" />
+  <property name="build.jar" location="${build}/jar" />
+  <property name="build.dist" location="${build}/dist" />
+  <property name="build.dist.base" location="${build.dist}/${name}-${version}"/>
+  <property name="tomcat.WEB-INF" 
+            location="${catalina.home}/webapps/${opal.webapp}/WEB-INF" />
+  <property name="debug" value="on"/>
+  <property name="fork" value="true"/>
+
+  <path id="classpath">
+    <pathelement path="${lib}" />
+    <pathelement path="${etc}" />
+    <fileset dir="${lib}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${opal.WEB-INF}/lib">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${lib}/struts">
+      <include name="*.jar" />
+    </fileset>
+    <pathelement path="${build.classes}" />
+  </path>
+
+  <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask">
+    <classpath refid="classpath" />
+  </taskdef>
+
+  <!-- Set up some prerequisites for compilation -->
+  <target name="setenv">
+    <mkdir dir="${build}" />
+    <mkdir dir="${build.classes}" />
+    <available file="${build.generated}"
+               type="dir" 
+               property="stubs.present" />
+    <condition property="typedservices.present">
+      <isset property="typedservices.dir"/>
+    </condition>
+  </target>
+
+  <!-- Clean build directory -->
+  <target name="clean">
+    <delete dir="${build}"/>
+  </target>
+
+  <!-- Generate stubs if necessary -->
+  <target name="generateStubs" depends="setenv" unless="stubs.present">
+    <!-- Create a new directory to generate stubs -->
+    <mkdir dir="${build.generated}" />
+
+    <!-- Create java files for the opal service -->
+    <wsdl2java url="${project.home}/wsdl/opal.wsdl"
+               output="${build.generated}"
+               deployscope="Application"
+	       implementationClassName="edu.sdsc.nbcr.opal.AppServiceImpl"
+               serverSide="no"
+               noimports="no"
+               verbose="no"
+               typeMappingVersion="1.1"
+               testcase="no">
+        <mapping namespace="http://nbcr.sdsc.edu/opal"
+                 package="edu.sdsc.nbcr.opal" />
+        <mapping namespace="http://nbcr.sdsc.edu/opal/types"
+                 package="edu.sdsc.nbcr.opal" />
+    </wsdl2java>
+  </target>
+
+  <!-- Compile sources -->
+  <target name="compile" depends="setenv">
+    <!-- Generate stubs if necessary -->
+    <antcall target="generateStubs" />
+
+    <!-- Compile the opal service generated java files -->
+    <javac srcdir="${build.generated}" 
+           destdir="${build.classes}" 
+	   debug="${debug}"
+	   fork="${javac.fork}">
+      <classpath refid="classpath" />
+      <include name="edu/sdsc/nbcr/opal/*.java" />
+    </javac>
+
+    <!-- Compile the opal service handwritten java files -->
+    <javac srcdir="${project.home}/src" 
+           destdir="${build.classes}" 
+	   debug="${debug}"
+	   fork="${javac.fork}">
+      <classpath refid="classpath" />
+      <include name="edu/sdsc/nbcr/opal/**/*.java" />
+      <include name="edu/sdsc/nbcr/common/*.java" />
+      <include name="org/inria/genouest/opal/tools/**/*.java" />
+    </javac>
+
+    <!-- Copy over the xslt files as well -->
+    <copy todir="${build.classes}">
+      <fileset dir="${project.home}/src/">
+        <include name="xslt/**" />
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- Create an opal jar file -->
+  <target name="jar" depends="compile">
+    <mkdir dir="${build.jar}"/>
+    <jar basedir="${build.classes}" destfile="${build.jar}/${name}-${version}.jar">
+        <include name="edu/sdsc/nbcr/opal/**/*.class" />
+        <include name="edu/sdsc/nbcr/common/*.class" />
+        <include name="org/inria/genouest/opal/tools/**/*.class" />
+	<include name="xslt/**" />
+    </jar>
+  </target>
+
+  <!-- Run junit tests -->
+  <target name="tests" depends="clean, jar">
+
+    <copy file="${project.home}/etc/hibernate-opal.cfg.xml" tofile="${project.home}/etc/hibernate-opal.cfg.tests.xml" />
+    <!-- let's modify hibernate-opal.cfg.xml to use in memory db -->
+    <replace file="${project.home}/etc/hibernate-opal.cfg.tests.xml" token="jdbc:hsqldb:file:data/opaldb" value="jdbc:hsqldb:mem:opaldb"/>
+
+    <java classname="edu.sdsc.nbcr.opal.util.Tests"
+	  fork="${javac.fork}">
+      <classpath refid="classpath" />
+    </java>
+  </target>
+
+  <!-- Install opal inside the axis webapp -->
+  <!-- This assumes that axis has been deployed inside tomcat, and there -->
+  <!-- exists a WEB-INF directory inside it -->
+  <target name="install" depends="jar">
+
+    <!-- make sure that the catalina.home property exists -->
+    <available file="${catalina.home}"
+               type="dir" 
+               property="catalina.present" />
+    <fail message="Make sure that catalina.home points to a valid Tomcat installation" 
+          unless="catalina.present"/>
+
+    <!-- copy the opal webapp to the Tomcat webapps directory -->
+    <copy todir="${catalina.home}/webapps">
+      <fileset dir="${project.home}/webapps/">
+        <include name="${opal.webapp}/**" />
+      </fileset>
+    </copy>
+
+    <!-- copy over the opal jar -->
+    <copy todir="${tomcat.WEB-INF}/lib">
+      <fileset dir="${build.jar}">
+        <include name="${name}-${version}.jar" />
+      </fileset>
+    </copy>
+
+    <!-- copy over the hibernate related jars -->
+    <copy todir="${tomcat.WEB-INF}/lib">
+      <fileset dir="${lib}">
+        <!-- hibernate specific jars -->
+        <include name="antlr-2.7.6.jar"/>
+        <include name="javassist-3.4.GA.jar"/>
+        <include name="slf4j-api-1.5.2.jar"/>
+        <include name="slf4j-log4j12-1.5.2.jar"/>
+        <include name="javassist-3.4.GA.jar"/>
+        <include name="hibernate3.jar"/>
+        <include name="jta-1.1.jar"/>
+        <!--  hibernate specific END -->
+        <include name="cglib-2.1.3.jar"/>
+        <include name="commons-cli-2.0.jar"/>
+        <!-- common collecion updated for hibernat 3.3 -->
+        <include name="commons-collections-3.1.jar"/>
+        <include name="dom4j-1.6.1.jar"/>
+        <include name="hsqldb.jar"/>
+        <include name="c3p0-0.9.1.2.jar"/>
+        <include name="commons-io-2.2.jar"/>
+      </fileset>
+    </copy>
+
+    <copy tofile="${project.home}/etc/hibernate-opal.cfg.xml.tmp" file="${project.home}/etc/hibernate-opal.cfg.xml" />
+    <!-- let's modify hibernate-opal.cfg.xml before moving it to tomcat -->
+    <replace file="${project.home}/etc/hibernate-opal.cfg.xml.tmp" token="jdbc:hsqldb:file:data/opaldb" value="jdbc:hsqldb:file:${tomcat.WEB-INF}/data/opaldb"/>
+    <copy file="${project.home}/etc/hibernate-opal.cfg.xml.tmp" tofile="${project.home}/etc/hibernate-opal.cfg.xml"/>
+    <move file="${project.home}/etc/hibernate-opal.cfg.xml.tmp" tofile="${tomcat.WEB-INF}/classes/hibernate-opal.cfg.xml"/>
+
+    <copy todir="${tomcat.WEB-INF}/classes">
+      <fileset dir="${project.home}/etc/">
+        <!-- hibernate configs -->
+        <include name="OpalState.hbm.xml"/>
+      </fileset>
+    </copy>
+
+
+    <!-- copy over other jar files required into WEB-INF/lib -->
+    <copy todir="${tomcat.WEB-INF}/lib">
+      <fileset dir="${lib}">
+        <!-- postgres jdbc jar -->
+        <include name="postgresql-8.2-506.jdbc3.jar" />
+
+        <!-- mysql jdbc jar -->
+        <include name="mysql-connector-java-5.1.8-bin.jar" />
+
+        <!-- db2 jdbc jar -->
+        <include name="db2jcc.jar" />
+
+        <!-- drmaa jar -->
+        <include name="drmaa.jar" />
+
+        <!-- ant jar -->
+        <include name="ant-1.7.0.jar" />
+
+	<!-- mail jars -->
+        <include name="mailapi-1_3_1.jar" />
+	<include name="javamail-1.4.3.jar"/>
+
+	<!-- activation jar -->
+        <include name="activation-1_0_2.jar" />
+
+	<!-- jFreeChart libraries -->
+        <include name="jfreechart-1.0.8.jar" />
+        <include name="jcommon-1.0.12.jar" />
+
+        <!-- ROMA for Atom and RSS -->
+        <include name="rome-1.0RC1.jar" />
+        <include name="jdom-1.1.jar" />
+       
+	<!-- condor ClassAd jar -->
+	<include name="classad.jar" />
+      </fileset>
+    </copy>
+
+    <!-- copy over the struts jar files -->
+    <copy todir="${tomcat.WEB-INF}/lib">
+      <fileset dir="${lib}/struts">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+    <!-- copy over the struts jar files -->
+
+  
+    <!-- copy over the jar files required into common/lib -->
+    <copy todir="${catalina.home}/lib">
+      <fileset dir="${lib}">
+        <!-- cog jars and helpers -->
+        <include name="cog-jglobus.jar" />
+        <include name="cog-axis.jar" />
+        <include name="cryptix-asn1.jar" />
+        <include name="cryptix32.jar" />
+        <include name="cryptix.jar" />
+        <include name="jce-jdk13-125.jar" />
+        <include name="puretls.jar" />
+	<include name="jgss.jar" />
+
+        <!-- log4j jar -->
+        <include name="log4j-1.2.15.jar" />
+      </fileset>
+    </copy>
+
+    <!-- copy over the jar files required into lib -->
+    <copy todir="${catalina.home}/lib">
+      <fileset dir="${lib}">
+        <!-- cog-tomcat jar -->
+        <include name="cog-tomcat.jar" />
+      </fileset>
+    </copy>
+
+    <!-- copy over the jar files required into common/endorsed -->
+    <!-- <copy todir="${catalina.home}/common/endorsed">  -->
+    <copy todir="${catalina.home}/lib">
+      <fileset dir="${lib}">
+        <!-- cog-tomcat jar -->
+        <include name="xalan-2.7.0.jar" />
+      </fileset>
+    </copy>
+
+    <!-- copy over the opal.properties file -->
+    <copy file="${project.home}/etc/opal.properties" 
+          todir="${tomcat.WEB-INF}/classes" />
+
+    <!-- copy over the log4j.properties file -->
+    <copy file="${project.home}/lib/log4j.properties" 
+          todir="${tomcat.WEB-INF}/classes" />
+
+  </target>
+
+  <!-- Uninstall opal-specific stuff from inside the webapp -->
+  <target name="uninstall-minimal">
+    <!-- make sure that the catalina.home property exists -->
+    <available file="${catalina.home}"
+               type="dir" 
+               property="catalina.present" />
+    <fail message="Make sure that catalina.home points to a valid Tomcat installation" 
+          unless="catalina.present"/>
+
+    <!-- make sure that the tomcat.WEB-INF property exists -->
+    <available file="${tomcat.WEB-INF}"
+               type="dir" 
+               property="opal.present" />
+    <fail message="Make sure that opal webapp is actually installed inside Tomcat" 
+          unless="opal.present"/>
+
+    <!-- delete all opal specific stuff -->
+    <delete verbose="true">
+      <fileset dir="${tomcat.WEB-INF}">
+        <include name="lib/opal*"/>
+      </fileset>
+    </delete>
+
+    <!-- delete the log4j.properties file -->
+    <delete file="${tomcat.WEB-INF}/classes/log4j.properties" />
+  </target>
+
+  <!-- Uninstall opal-specific stuff and all other prerequisites -->
+  <target name="uninstall-all">
+    <!-- make sure that the catalina.home property exists -->
+    <available file="${catalina.home}"
+               type="dir" 
+               property="catalina.present" />
+    <fail message="Make sure that catalina.home points to a valid Tomcat installation" 
+          unless="catalina.present"/>
+	       
+    <!-- delete the opal webapp -->
+    <delete verbose="true" dir="${catalina.home}/webapps/${opal.webapp}"/>
+  
+    <!-- delete jars required from /lib -->
+    <delete verbose="true">
+      <fileset dir="${catalina.home}/lib">
+        <!-- cog jars and helpers -->
+        <include name="cog*" />
+        <include name="cryptix*" />
+        <include name="jce*" />
+        <include name="puretls*" />
+	<include name="jgss*" />
+
+      </fileset>
+    </delete>
+
+    <!-- delete jars required from server/lconfigurationib -->
+    <delete verbose="true">
+      <fileset dir="${catalina.home}/lib">
+        <!-- cog-tomcat jar -->
+        <include name="cog*" />
+      </fileset>
+    </delete>
+  </target>
+
+
+  <!-- Upgrade the Opal jars without re-installing the webapp -->
+  <target name="upgrade">
+    <antcall target="uninstall-minimal"/>
+    <antcall target="install"/>
+  </target>
+
+  <!-- Build the javadocs for the Opal classes -->
+  <path id="src.path.list">
+    <pathelement path="src"/>
+    <pathelement path="${build.generated}"/>
+  </path>
+  <target name="api-docs" depends="compile">
+    <mkdir dir="${docs}" />
+    <delete dir="${docs}/api"/>
+    <mkdir dir="${docs}/api"/>
+    <javadoc packagenames="edu.sdsc.nbcr.*,org.inria.genouest.*"
+	     sourcepathref="src.path.list"
+	     defaultexcludes="yes"
+	     destdir="${docs}/api"
+	     author="true"
+	     version="true"
+	     use="true"
+	     windowtitle="Opal API">
+      <classpath refid="classpath" />
+      <doctitle><![CDATA[<h1>The Opal Toolkit</h1>]]></doctitle>
+    </javadoc>
+  </target>
+
+  <!-- Deploy an opal service -->
+  <target name="deploy" depends="install">
+	  <echo message="Dployment of services is now done simply copying config file in a floder."/>
+	  <echo message="Please read the documentation."/>
+  </target>
+
+
+  <!-- Undeploy an opal service -->
+  <target name="undeploy" depends="jar">
+	  <echo message="Undeployment of services is now done simply copying file in a floder."/>
+          <echo message="Please read the documentation."/>
+  </target>
+</project>

@@ -1,0 +1,45 @@
+
+* fix the statistic page (it does not work with service name containing a _)
+
+* Addition of system statistics to Opal Dashboard
+
+* Bug fix for destroy() operation using the DRMAA job manager
+  * session.wait() apparently never terminates after a job is destroyed
+* Support for Tomcat 6 and 7
+
+* User-based accounting for jobs
+  * Specification of limits
+  * Job history per user
+
+* Updated Ajax-based automatic interface generation
+
+* Security enhancements
+  * FacebookConnect or OpenID
+
+* REST support - and upgrade to Axis2
+
+* Plug-ins
+  * Hadoop/EC2 MapReduce plugin
+
+* Performance improvements
+  * Improved fault tolerance on server restarts - being able to bind to
+    already running jobs
+
+* WSDL additions/improvements
+  * Add GridFTP support
+  * Twitter, RSS access to job metadata
+  * launchJob should allow the user to specify the wallclock time
+  * Support for array jobs
+
+* Additional Features
+  * Conditional display of parameters (a group of parameters are displayed only
+    if a flag is checked) (reuqested by the PDB guys)
+    * Will need addition of relations to parameter types
+  * Addition of version number in the application configuration
+  * Dashboard should be able to connect to multiple Opal servers
+  * Get the version of the Opal server
+    * And applications as well
+  * Parameterize port numbers for dashboard
+  * Addition of implicit files to dashboard 
+
+

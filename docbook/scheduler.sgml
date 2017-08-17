@@ -1,0 +1,388 @@
+<chapter id="scheduler" xreflabel="Scheduler Support Using Job Managers">
+<title>Scheduler Support Using Job Managers</title>
+
+<para>In this chapter, we describe how to configure Opal to
+submit jobs to a batch job scheduler using the provided job managers. 
+We also give a brief introduction how to write your own job
+manager.</para>
+
+<para><emphasis role="strong">Prerequisite:</emphasis> a scheduler such as Condor, PBS or SGE installed on 
+your compute cluster.  Please consult the appropriate documentation for the installation.</para>
+<para>Access to schedulers is
+provided in a number of ways - in particular, via the DRMAA API, and via 
+the various scheduler plugins. Starting with release 2.1, we support Condor 
+natively without using DRMAA or Globus. In release 2.3, we introduced 
+direct support for TORQUE/PBS. </para>
+
+<section id="drmaa-scheduler" xreflabel="DRMAA Setup">
+<title>Using DRMAA</title>
+
+<para> We have only tested job submissions for SGE 6.x.</para>
+<orderedlist>
+<listitem><para>Ensure that your scheduler supports job submission via the DRMAA API, consult your scheduelr documentation.
+Ensure that <emphasis role="italics">libdrmaa.so</emphasis> is in your library path (set
+ the LD_LIBRARY_PATH environment variable). 
+</para></listitem>
+
+<listitem><para>Set the following properties inside the opal.properties file:</para>
+  <itemizedlist>
+    <listitem><para>
+      Set job manager to SGE
+      <screen>  opal.jobmanager=edu.sdsc.nbcr.opal.manager.DRMAAJobManager</screen>
+    </para></listitem>
+
+    <listitem><para>
+      Optional: set the  name of the parallel environment (PE) to be used for parallel jobs. 
+      PE must be defined in your scheduelr queue. 
+      You can ignore drmaa.pe if you do not plan on supporting parallel jobs. 
+      <screen>  drmaa.pe=mpich</screen>
+    </para></listitem>
+
+    <listitem><para>
+      Optional: set an SGE queue for job submission.
+      <screen>  drmaa.queue=all.q</screen>
+    </para></listitem>
+
+  </itemizedlist>
+
+  <para>Note that the <filename>drmaa.pe</filename> and the
+  <filename>drmaa.queue</filename> can be overridden on a per-application basis within 
+  the application configuration file, for example:
+  <screen>
+   &lt;appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
+       xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+     &lt;metadata appName=...
+         ...
+     &lt;/metadata&gt;
+     &lt;drmaaQueue&gt;si&lt;/drmaaQueue&gt;
+     &lt;drmaaPE&gt;orte&lt;/drmaaPE&gt;
+     &lt;parallel&gt;true&lt;/parallel&gt;
+   &lt;/appConfig&gt;
+  </screen>
+
+  </para>
+
+</listitem>
+
+<listitem><para>Reinstall Opal by running the following command:
+<screen>
+    ant install
+</screen>
+</para>
+
+</listitem>
+
+<listitem><para>Restart Tomcat for the changes to take effect.</para></listitem>
+
+<listitem><para>Notes:</para>
+  <itemizedlist>
+    <listitem><para>
+      When using DRMAA job manager we do not stage input and output files from the Opal server to the submit host.
+      The machines should use a shared file system for the job manager to work correctly.
+    </para></listitem>
+
+    <listitem><para>
+      DRMAA support will not work correctly if you have another version of the drmaa.jar inside 
+      Tomcat's <emphasis role="italics">common/lib</emphasis> or <emphasis role="italics">server/lib</emphasis> 
+      directories, since these vers ions will be loaded first by Tomcat's class loader.
+    </para></listitem>
+  </itemizedlist>
+
+</listitem>
+</orderedlist>
+</section>
+
+<section id="condor-scheduler" xreflabel="Condor Setup">
+<title>Using Condor</title>
+
+<orderedlist>
+<listitem><para>Ensure that you have a working Condor pool by following the
+<ulink type="http" url="http://research.cs.wisc.edu/htcondor/manual/v7.6.2/">Condor manual</ulink>. 
+We have tested with version &condor;, but we expect that it will work with most recent
+Condor versions. In particular, verify that you can submit and monitor jobs
+from the command-line with commands such as <emphasis>condor_submit</emphasis>, 
+<emphasis>condor_status</emphasis>, etc., and that these commands are in the Opal user's PATH.
+</para></listitem>
+
+<listitem><para>Set the following properties inside the opal.properties file: </para>
+  <itemizedlist>
+    <listitem><para>
+       Set job manager to Condor
+       <screen>opal.jobmanager=edu.sdsc.nbcr.opal.manager.CondorJobManager</screen> 
+     </para></listitem>
+
+     <listitem><para>
+       Set the script used by Condor to submit parallel jobs. 
+       You can ignore <filename>mpi.script</filename> if you do not plan to support parallel jobs. 
+       <screen>mpi.script=/opt/condor/etc/examples/mp1script</screen> 
+     </para></listitem>
+
+     <listitem><para>
+       To enable server-specific condor expressions put them in a file. 
+       Use a regular condor submit file syntax (key = value).
+       <screen>condor.expr.file=/opt/opal/etc/condor.expr</screen> 
+     </para></listitem>
+
+  </itemizedlist>
+</listitem>
+
+<listitem><para>Reinstall Opal by running the following command:
+  <screen>
+    ant install
+  </screen>
+</para>
+</listitem>
+
+<listitem><para>Restart Tomcat for the changes to take effect.</para></listitem>
+
+<listitem><para>Notes:</para>
+  <itemizedlist>
+     <listitem><para>
+       We have not tested advanced Condor features such as flocking and Condor-G.
+     </para></listitem>
+     <listitem><para>
+       Job directory does not have to be on NFS-mounted filesystem.
+     </para></listitem>
+  </itemizedlist>
+
+</listitem>
+</orderedlist>
+
+</section>
+
+<section id="pbs-scheduler" xreflabel="TORQUE/PBS Setup">
+<title>Using TORQUE/PBS</title>
+
+<orderedlist>
+<listitem><para>Ensure that you have a working TORQUE/PBS installation, 
+    by following the instructions on the 
+    <ulink type="http" url="http://www.clusterresources.com/products/torque-resource-manager.php">TORQUE website</ulink>. 
+    In particular, verify that you can submit and monitor jobs from the command-line with commands such as 
+    <emphasis>qsub</emphasis> and <emphasis>qstat</emphasis>. Note that we have only tested with TORQUE v.&torque;
+    and PBS v.&pbs;.
+</para></listitem>
+
+<listitem><para>Set the following properties inside the opal.properties file:</para>
+
+  <itemizedlist>
+    <listitem><para>
+      Set job manager to PBS.
+      <screen>opal.jobmanager=edu.sdsc.nbcr.opal.manager.PBSJobManager</screen> 
+    </para></listitem>
+
+    <listitem><para>
+      To enable server-specific PBS 
+      expressions put them in a file (use regular PBS submit syntax in a file).
+      <screen>pbs.expr.file=/opt/opal/etc/pbs.expr</screen> 
+    </para></listitem>
+
+    <listitem><para>Limit jobName length:</para>
+      <screen>pbs.name.limit=15</screen> 
+      <para>
+      Opal creates long jobs names (longer than 15 characters).
+      As a result, need to set default job name limit per your server configuration.
+      Job submit files will have <emphasis>#PBS -N jobName</emphasis> line and the 
+      jobName will have a specified by limit length. 
+    </para></listitem>
+
+  </itemizedlist>
+</listitem>
+
+<listitem><para>Reinstall Opal by running the following command:
+<screen>
+    ant install
+</screen>
+</para>
+</listitem>
+
+<listitem><para>Make sure that all the PBS binaries such as
+<emphasis role="italics">qsub</emphasis> and <emphasis role="italics">qstat</emphasis> are in your
+PATH.</para></listitem>
+
+<listitem><para>Restart Tomcat for the changes to take effect.</para></listitem>
+
+</orderedlist>
+
+</section>
+
+
+<section id="meta-service-scheduler" xreflabel="Meta Service Scheduler Setup">
+<title>Using Meta Service</title>
+
+<para>
+The Opal meta service plugin can be used to send jobs to remote 
+Opal services.  You can define several remote hosts for a particular
+web service, and the web service will run on a random host chosen from this 
+set of remote hosts.  In a future Opal release, we may enhance the 
+meta scheduling algorithm.
+</para>
+
+<para>
+The <emphasis>&lt;metaServiceConfig&gt;</emphasis> tag in the application configuration file
+is used to define the location of the meta service configuration file
+for the particular service.  For example, 
+</para>
+<screen>
+&lt;metaServiceConfig&gt;/home/opaluser/meta/pdb2pqr.txt&lt;/metaServiceConfig&gt;
+</screen>
+<para>
+The meta service configuration file contains one or more lines, where each
+line lists a remote Opal service URL followed by the number of processors on 
+that remote Opal service (separated by a space).  Please use 1 as the 
+number of processors for serial services.  The sample file below defines
+the remote hosts for the Pdb2pqr meta service.
+</para>
+<screen>
+http://kryptonite.nbcr.net/opal2/services/pdb2pqr_1.7 1
+http://ws.nbcr.net/opal2/services/Pdb2pqrOpalService 1
+</screen>
+
+</section>
+
+<section id="jobmanager-howto" xreflabel="Writing Your Own Job Manager">
+<title>Writing Your Own Job Manager</title>
+
+<para>If the job managers provided by the Opal toolkit are not sufficient
+for your purposes, you can write your own job manager to submit jobs to
+your favorite scheduler. 
+</para>
+
+<para>To write your own Opal job manager, you must implement the
+<emphasis>edu.sdsc.nbcr.opal.manager.OpalJobManager</emphasis> interface.
+One job manager is instantiated per job instance - i.e. for every run of an
+application, a new job manager is created. The OpalJobManager interface
+has 6 methods that must be implemented:</para>
+
+<orderedlist>
+
+<listitem><para>
+<emphasis role="strong">initialize</emphasis>: initialize the
+job manager by setting a list of properties (key/value pairs), application
+configuration, and an optional handle. All job manager specific properties
+should be put inside <emphasis>$OPAL_HOME/etc/opal.properties</emphasis>.
+Opal will parse all the properties from opal.properties and make them
+available to the job manager.</para>
+
+<screen>
+    /**
+     * @param props the properties file containing the value to configure this plugin
+     * @param config the opal configuration for this application
+     * @param handle manager specific handle to bind to, if this is a resumption. 
+     *               NULL,if this manager is being initialized for the first time.
+     * 
+     * @throws JobManagerException if there is an error during initialization
+     */
+    public void initialize(Properties props,
+			   AppConfigType config,
+			   String handle)
+	throws JobManagerException;
+</screen>
+</listitem>
+
+<listitem><para>
+<emphasis role="strong">destroyJobManager</emphasis>: cleanup
+when the job manager is destroyed - all resources held should be freed
+here.</para>
+
+<screen>
+    /**
+     * @throws JobManagerException if there is an error during destruction
+     */
+    public void destroyJobManager()
+	throws JobManagerException;
+</screen>
+</listitem>
+
+<listitem><para>
+<emphasis role="strong">launchJob</emphasis>: launch
+a job with given arguments. The input files are already staged in by
+the service implementation, and the job manager implementation can assume
+that they are already in the right location.</para>
+
+<screen>
+    /**
+     * Launch a job with the given arguments. 
+     *
+     * @param argList a string containing the command line used to launch the application
+     * @param numproc the number of processors requested. Null, if it is a serial job
+     * @param workingDir String representing the working dir of this job on the local system
+     * 
+     * @return a plugin specific job handle to be persisted by the service implementation
+     * @throws JobManagerException if there is an error during job launch
+     */
+    public String launchJob(String argList, 
+			    Integer numproc, 
+			    String workingDir)
+	throws JobManagerException;
+</screen>
+</listitem>
+
+<listitem><para>
+<emphasis role="strong">waitForActivation</emphasis>: 
+block until the job has begun execution. Opal uses this information to
+collect job statistics.</para>
+
+<screen>
+    /**
+     * @return status for this job after blocking
+     * @throws JobManagerException if there is an error while waiting for the job to be ACTIVE
+     */
+    public StatusOutputType waitForActivation() 
+	throws JobManagerException;
+</screen>
+</listitem>
+
+<listitem><para>
+<emphasis role="strong">waitForCompletion</emphasis>: 
+block until the application has finished execution.</para>
+
+<screen>
+    /**
+     * @return final job status
+     * @throws JobManagerException if there is an error while waiting for the job to finish
+     */
+    public StatusOutputType waitForCompletion() 
+	throws JobManagerException;
+</screen>
+</listitem>
+
+<listitem><para>
+<emphasis role="strong">destroyJob</emphasis>: destroy an
+executing job.</para>
+
+<screen>
+    /**
+     * @return final job status
+     * @throws JobManagerException if there is an error during job destruction
+     */
+    public StatusOutputType destroyJob()
+	throws JobManagerException;
+</screen>
+</listitem>
+</orderedlist>
+
+<para>More information about the Java classes can be obtained from the Javadocs, which you can generate from $OPAL_HOME as follows:</para>
+
+<screen>
+    ant api-docs
+</screen>
+
+<para>This will generate documentation of the Opal API, which will be
+available in HTML from at
+<emphasis>$OPAL_HOME/docs/api/index.html</emphasis>.</para>
+
+<para>We recommend that you implement your particular job manager inside
+the directory
+<emphasis>$OPAL_HOME/src/edu/sdsc/nbcr/opal/manager</emphasis>. There you
+will find other job managers that are available by default - you might want
+to look at the <emphasis>ForkJobManager</emphasis> as an example. You can
+compile your job manager with the rest of Opal, and install it within
+Tomcat by running the following commands:</para>
+
+<screen>
+    ant compile
+    ant install
+</screen>
+</section>
+</chapter>
+
