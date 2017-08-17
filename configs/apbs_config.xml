@@ -1,8 +1,0 @@
-<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
-           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <metadata appName="APBS">
-    <usage><![CDATA[apbs <apbs.in>]]></usage>
-  </metadata>
-  <binaryLocation>/opt/apbs/bin/apbs</binaryLocation>
-  <parallel>true</parallel>
-</appConfig>
