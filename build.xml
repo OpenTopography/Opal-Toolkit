@@ -258,14 +258,14 @@ Author:
         <!-- ant jar -->
         <include name="ant-1.7.0.jar" />
 
-	<!-- mail jars -->
+	    <!-- mail jars -->
         <include name="mailapi-1_3_1.jar" />
-	<include name="javamail-1.4.3.jar"/>
+	    <include name="javamail-1.4.3.jar"/>
 
-	<!-- activation jar -->
+	    <!-- activation jar -->
         <include name="activation-1_0_2.jar" />
 
-	<!-- jFreeChart libraries -->
+	    <!-- jFreeChart libraries -->
         <include name="jfreechart-1.0.8.jar" />
         <include name="jcommon-1.0.12.jar" />
 
@@ -273,8 +273,14 @@ Author:
         <include name="rome-1.0RC1.jar" />
         <include name="jdom-1.1.jar" />
        
-	<!-- condor ClassAd jar -->
-	<include name="classad.jar" />
+	    <!-- condor ClassAd jar -->
+	    <include name="classad.jar" />
+
+        <!-- log4j jar -->
+        <include name="log4j-1.2.15.jar" />
+
+        <!-- ssh2 utility -->
+        <include name="jsch-0.1.54.jar"/>
       </fileset>
     </copy>
 
@@ -288,9 +294,12 @@ Author:
 
   
     <!-- copy over the jar files required into common/lib -->
+      <!--
     <copy todir="${catalina.home}/lib">
       <fileset dir="${lib}">
+      -->
         <!-- cog jars and helpers -->
+      <!--
         <include name="cog-jglobus.jar" />
         <include name="cog-axis.jar" />
         <include name="cryptix-asn1.jar" />
@@ -298,29 +307,39 @@ Author:
         <include name="cryptix.jar" />
         <include name="jce-jdk13-125.jar" />
         <include name="puretls.jar" />
-	<include name="jgss.jar" />
-
+	    <include name="jgss.jar" />
+      -->
         <!-- log4j jar -->
+      <!--
         <include name="log4j-1.2.15.jar" />
       </fileset>
     </copy>
+    -->
 
     <!-- copy over the jar files required into lib -->
+      <!--
     <copy todir="${catalina.home}/lib">
       <fileset dir="${lib}">
+      -->
         <!-- cog-tomcat jar -->
+      <!--
         <include name="cog-tomcat.jar" />
       </fileset>
     </copy>
+    -->
 
     <!-- copy over the jar files required into common/endorsed -->
     <!-- <copy todir="${catalina.home}/common/endorsed">  -->
+      <!--
     <copy todir="${catalina.home}/lib">
       <fileset dir="${lib}">
+      -->
         <!-- cog-tomcat jar -->
+      <!--
         <include name="xalan-2.7.0.jar" />
       </fileset>
     </copy>
+    -->
 
     <!-- copy over the opal.properties file -->
     <copy file="${project.home}/etc/opal.properties" 
