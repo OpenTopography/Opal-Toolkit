@@ -9,7 +9,7 @@
 
         <!-- Database connection settings for HSQL -->
         <property name="connection.driver_class">org.hsqldb.jdbcDriver</property>
-        <property name="connection.url">jdbc:hsqldb:file:/Users/cyoun/tomcat/apache-tomcat-8.5.28/webapps/opal2/WEB-INF/data/opaldb</property>
+        <property name="connection.url">jdbc:hsqldb:file:data/opaldb</property>
         <property name="connection.username">sa</property>
         <property name="connection.password"></property>
         <property name="dialect">org.hibernate.dialect.HSQLDialect</property>
