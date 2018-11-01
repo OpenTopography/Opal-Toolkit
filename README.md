@@ -20,21 +20,21 @@ file looks similar to the following:
 ...
 
 # Slurm scheduler for submitting the job
-slurm.num.procs=<number of cpu, for exmple, 24>
-slurm.run=<MPI launcher command, for example, ibrun>
-slurm.job.scriptdir=<the script directory for your scripts to be run in a cluster, for example, /home/opentopo/ot-taudem/scripts>
+slurm.num.procs=<number of cpu, for exmple, 24 >
+slurm.run=<MPI launcher command, for example, ibrun >
+slurm.job.scriptdir=<the script directory for your scripts to be run in a cluster, for example, /home/opentopo/ot-taudem/scripts >
 slurm.job.account=<the account for XSEDE allocation, for example, sds000> 
-slurm.job.wdir=<working directory in a cluster, for example, /oasis/scratch/comet/opentopo/temp_project>
-slurm.job.queue=<the queue type in a cluster, for example, shared>
-slurm.job.ppn=<the number of cores per node, for example, 24>
-slurm.job.walltime=<the execution time, for example, 00:30:00>
+slurm.job.wdir=<working directory in a cluster, for example, /oasis/scratch/comet/opentopo/temp_project >
+slurm.job.queue=<the queue type in a cluster, for example, shared >
+slurm.job.ppn=<the number of cores per node, for example, 24 >
+slurm.job.walltime=<the execution time, for example, 00:30:00 >
 
 #ssh connection to XSEDE Comet
-slurm.host=<the front end in a cluster, for example, comet.sdsc.edu>
-slurm.port=<ssh port number, for example, 22>
+slurm.host=<the front end in a cluster, for example, comet.sdsc.edu >
+slurm.port=<ssh port number, for example, 22 >
 slurm.user=<community account or user account>
 slurm.password=<password>
-slurm.key.file=<ssh credentials for a user, for example, /Users/cyoun/.ssh/id_rsa>
+slurm.key.file=<ssh credentials for a user, for example, /Users/cyoun/.ssh/id_rsa >
 
 # gateway attribute submission
 gateway.attribute=true
