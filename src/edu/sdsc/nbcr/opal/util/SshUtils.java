@@ -63,7 +63,7 @@ public class SshUtils {
         int numoftrials = 0;
         String error_msg = "";
 
-        while (numoftrials != 3) {
+        while (numoftrials < 6) {
             try {
                 JSch jsch = new JSch();
                 jsch.addIdentity(keyFilePath, keyPassword);
@@ -88,17 +88,25 @@ public class SshUtils {
                     numoftrials++;
                     logger.info("Retry to authenticate..." + numoftrials);
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(10000);
                     } catch (Exception ex) {
                         logger.info(ex.getMessage());
                     }
+		} else if (e.toString().contains("Connection refused")) {
+		    numoftrials++;
+		    logger.info("Retry to authenticate..." + numoftrials);
+		    try {
+			Thread.sleep(10000);
+		    } catch (Exception ex) {
+			logger.info(ex.getMessage());
+		    }
                 } else {
                     throw new JobManagerException(error_msg);
                 }
             }
         }
 
-        if(numoftrials == 3) throw new JobManagerException(error_msg);
+        if(numoftrials == 6) throw new JobManagerException(error_msg);
 
         return session;
     }
