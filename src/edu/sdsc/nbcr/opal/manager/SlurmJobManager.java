@@ -198,7 +198,34 @@ public class SlurmJobManager implements OpalJobManager {
             boolean gatewayAttr = Boolean.valueOf(props.getProperty("gateway.attribute"));
             if (gatewayAttr) {
                 logger.info("gateway attribute submission is enabled.");
-                job.run_gateway_attribute_submission(handle);
+		String gateway_api_key_file = props.getProperty("gateway.attribute.api.key.file");
+		if (gateway_api_key_file != null && gateway_api_key_file.trim().length() > 0) {
+		    logger.info("the api key file for gateway attribute submission: "+gateway_api_key_file);
+
+		    String api_url = props.getProperty("gateway.attribute.url");
+                    if (api_url == null || api_url.trim().length() == 0)
+                        api_url = "https://xsede-xdcdb-api.xsede.org/gateway/v2/job_attributes"; // as the default
+		    
+		    String resource_name = props.getProperty("gateway.attribute.xsede.resource.name");
+		    if (resource_name == null || resource_name.trim().length() == 0)
+			resource_name = "comet.sdsc.xsede"; // as the default
+		    String gateway_user = props.getProperty("gateway.attribute.user");
+		    if (gateway_user == null || gateway_user.trim().length() == 0)
+			gateway_user = "OpenTopography User"; //as the default
+
+		    String servicename = app_jobid.split("Service")[0] + "Service";
+		    logger.info("Service name: "+servicename);
+		    String targeted_sw = props.getProperty("gateway.attribute.sw."+servicename);
+		    logger.info("Software name: "+targeted_sw);
+		    
+		    //job.run_gateway_attribute_submission(handle);
+		    job.run_gateway_attribute_submission_local(handle,
+							       gateway_api_key_file,
+							       api_url,
+							       resource_name,
+							       gateway_user,
+							       targeted_sw);
+		}
             }
 
         } catch (Exception e) {
@@ -483,6 +510,7 @@ public class SlurmJobManager implements OpalJobManager {
         pw.println("#SBATCH -A " + props.getProperty("slurm.job.account"));
         pw.println("#SBATCH -J " + config.getBinaryLocation());
         if (queue_type != null) pw.println("#SBATCH -p " + queue_type);
+	pw.println("#SBATCH --mem=" + props.getProperty("slurm.job.memory_size"));
         if (walltime != null) pw.println("#SBATCH -t " + walltime);
         pw.println("#SBATCH --nodes=" + nodes);
         pw.println("#SBATCH --ntasks-per-node=" + numprocs);
