@@ -1,0 +1,84 @@
+<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="AreaDinf">
+        <usage>Calculates a grid of specific catchment area which is the contributing area per unit contour length using
+            the multiple flow direction D-infinity approach.
+        </usage>
+        <info>
+            <![CDATA[
+*****************************************************
+Usage: 
+
+% ./areadinf -a <data_file_name> [-w <data_file_name>] -o <outputfilename>
+
+1. -a <data_file_name>:
+        - must be zipped file and is the D-infinity flow direction input file. (*.tar.gz)
+2. -w <data_file_name>:
+        - must be zipped file and is the optional weight grid input file. (*.tar.gz)
+3. -o <outputfilename>:
+        - specify the output filename
+
+	]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+            <!-- list of tagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>ademURL</id>
+                    <tag>-a</tag>
+                    <paramType>STRING</paramType>
+                    <textDesc>D-infinity flow direction input file (*.tar.gz)</textDesc>
+                </param>
+
+                <param>
+                    <id>wdemURL</id>
+                    <tag>-w</tag>
+                    <paramType>STRING</paramType>
+                    <textDesc>Optional weight grid input file (*.tar.gz)</textDesc>
+                </param>
+
+                <param>
+                    <id>outputfilename</id>
+                    <tag>-o</tag>
+                    <paramType>STRING</paramType>
+                    <textDesc>Name of D-infinity contributing area file</textDesc>
+                </param>
+
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>files</name>
+                    <elements>ademURL wdemURL</elements>
+                    <required>false</required>
+                    <exclusive>false</exclusive>
+                    <textDesc>File Inputs</textDesc>
+                </group>
+
+                <group>
+                    <name>params</name>
+                    <elements>outputfilename</elements>
+                    <required>true</required>
+                    <textDesc>Other parameters</textDesc>
+                </group>
+            </groups>
+        </types>
+
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>./scripts/taudemAreadinf.sh</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.SlurmJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>true</parallel>
+</appConfig>

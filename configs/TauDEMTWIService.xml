@@ -1,0 +1,81 @@
+<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="TWI">
+        <usage>Topographic Wetness Index(TWI)</usage>
+        <info>
+            <![CDATA[
+*****************************************************
+Usage: 
+
+% ./taudemTWI.sh -n <number of procs> -a <dinf_area_data_file_url> -s <dinf_slope_data_file_url> -o <outputfilename>
+
+1. -a <dinf_area_data_file_url>:
+        - specify the input URL for D-infinity area
+2. -s <dinf_slope_data_file_url>:
+        - specify the input URL for D-infinity slope
+3. -o <outputfilename>:
+        - specify the output filename for TWI
+	]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+            <!-- list of tagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>DinfAreaDemURL</id>
+                    <tag>-a</tag>
+                    <paramType>STRING</paramType>
+                    <textDesc>D infinity contributing area file. (*.tar.gz)</textDesc>
+                </param>
+
+                <param>
+                    <id>DinfSlopeDemURL</id>
+                    <tag>-s</tag>
+                    <paramType>STRING</paramType>
+                    <textDesc>D infinity slope file. (*.tar.gz)</textDesc>
+                </param>
+
+                <param>
+                    <id>outputfilename</id>
+                    <tag>-o</tag>
+                    <paramType>STRING</paramType>
+                    <textDesc>Name of the output</textDesc>
+                </param>
+
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>files</name>
+                    <elements>DinfAreaDemURL DinfSlopeDemURL</elements>
+                    <required>true</required>
+                    <exclusive>false</exclusive>
+                    <textDesc>File Inputs</textDesc>
+                </group>
+
+                <group>
+                    <name>params</name>
+                    <elements>outputfilename</elements>
+                    <required>true</required>
+                    <textDesc>Other parameters</textDesc>
+                </group>
+            </groups>
+        </types>
+
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>./scripts/taudemTWI.sh</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.SlurmJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>true</parallel>
+</appConfig>

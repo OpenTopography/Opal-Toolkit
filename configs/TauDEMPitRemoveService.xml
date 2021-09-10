@@ -1,0 +1,84 @@
+<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="PitRemove">
+        <usage>This function takes as input an elevation data grid and outputs a hydrologically correct elevation grid
+            file with pits filled, using the flooding algorithm. The specified stream flow direction grid is an optional
+            input, and if input, pits will be filled consistent with drainage along specified streams.
+        </usage>
+        <info>
+            <![CDATA[
+*****************************************************
+Usage: 
+
+% ./pitRemove [-i <data_file_name> | -l <data_file_url>] -o <outputfilename>
+
+1. -i <data_file_name> | -l <data_file_url>:
+        - must be zipped file (*.tar.gz)
+2. -o <outputfilename>:
+        - specify the output filename
+
+	]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+            <!-- list of tagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>demfile</id>
+                    <tag>-i</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <textDesc>Input elevation grid file (*.tar.gz)</textDesc>
+                </param>
+
+                <param>
+                    <id>demURL</id>
+                    <tag>-l</tag>
+                    <paramType>STRING</paramType>
+                    <textDesc>Input elevation grid file (*.tar.gz)</textDesc>
+                </param>
+
+                <param>
+                    <id>outputfilename</id>
+                    <tag>-o</tag>
+                    <paramType>STRING</paramType>
+                    <textDesc>Name of the output elevation grid with pits filled</textDesc>
+                </param>
+
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>files</name>
+                    <elements>demfile demURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>File Inputs (choose one of the following)</textDesc>
+                </group>
+
+                <group>
+                    <name>params</name>
+                    <elements>outputfilename</elements>
+                    <required>true</required>
+                    <textDesc>Other parameters</textDesc>
+                </group>
+            </groups>
+        </types>
+
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>./scripts/taudemPitremove.sh</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.SlurmJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>true</parallel>
+</appConfig>
