@@ -37,7 +37,7 @@ Build Instructions:
         ant api-docs
 
 Author:
-   Sriram Krishnan [sriram@sdsc.edu]
+   Sriram Krishnan [sriram@sdsc.edu], Choonhan Youn [cyoun@sdsc.edu]
 </description>
 ==================================================================== -->
 
@@ -61,6 +61,7 @@ Author:
             location="${catalina.home}/webapps/${opal.webapp}/WEB-INF" />
   <property name="debug" value="on"/>
   <property name="fork" value="true"/>
+  <property value="" name="jars.ok"/>
 
   <path id="classpath">
     <pathelement path="${lib}" />
@@ -74,20 +75,29 @@ Author:
     <fileset dir="${lib}/struts">
       <include name="*.jar" />
     </fileset>
+    <fileset dir="${lib}/endorsed">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${lib}/opal2">
+      <include name="*.jar" />
+    </fileset>
     <pathelement path="${build.classes}" />
   </path>
 
-  <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask">
-    <classpath refid="classpath" />
-  </taskdef>
+  <taskdef name="wsdl2java"
+           classname="org.apache.axis2.tool.ant.AntCodegenTask"
+           classpathref="classpath"/>
 
   <!-- Set up some prerequisites for compilation -->
   <target name="setenv">
     <mkdir dir="${build}" />
     <mkdir dir="${build.classes}" />
-    <available file="${build.generated}"
-               type="dir" 
+    <available file="${build.generated}/client"
+               type="dir"
                property="stubs.present" />
+    <available file="${build.generated}"
+               type="dir"
+               property="skeleton.present" />
     <condition property="typedservices.present">
       <isset property="typedservices.dir"/>
     </condition>
@@ -96,6 +106,42 @@ Author:
   <!-- Clean build directory -->
   <target name="clean">
     <delete dir="${build}"/>
+    <delete dir="${docs}"/>
+  </target>
+
+  <target depends="setenv" name="pre.compile.test">
+    <!--Test the classpath for the availability of necesary classes-->
+    <available classpathref="classpath" property="stax.available" classname="javax.xml.stream.XMLStreamReader"/>
+    <available classpathref="classpath" property="axis2.available" classname="org.apache.axis2.engine.AxisEngine"/>
+    <condition property="jars.ok">
+      <and>
+        <isset property="stax.available"/>
+        <isset property="axis2.available"/>
+      </and>
+    </condition>
+    <!--Print out the availabilities-->
+    <echo message="Stax Availability= ${stax.available}"/>
+    <echo message="Axis2 Availability= ${axis2.available}"/>
+  </target>
+
+  <!-- Generate Skeleton(Server Side) if necessary -->
+  <target name="generateSkeleton" depends="setenv" unless="skeleton.present">
+    <!-- Create a new directory to generate stubs -->
+    <mkdir dir="${build.generated}/server" />
+
+    <!-- Create java files for the opal service -->
+    <wsdl2java wsdlfilename="${project.home}/wsdl/opal.wsdl"
+               output="${build.generated}/server"
+               syncOnly="true"
+               wsdlVersion="1.1"
+               serverSide="true"
+               generateServiceXml="true"
+               generateAllClasses="'true"
+               unpackClasses="false"
+               serverSideInterface="true"
+               packageName="edu.sdsc.nbcr.opal"
+               testcase="false">
+    </wsdl2java>
   </target>
 
   <!-- Generate stubs if necessary -->
@@ -104,44 +150,62 @@ Author:
     <mkdir dir="${build.generated}" />
 
     <!-- Create java files for the opal service -->
-    <wsdl2java url="${project.home}/wsdl/opal.wsdl"
+    <wsdl2java wsdlfilename="${project.home}/wsdl/opal.wsdl"
                output="${build.generated}"
-               deployscope="Application"
-	       implementationClassName="edu.sdsc.nbcr.opal.AppServiceImpl"
-               serverSide="no"
-               noimports="no"
-               verbose="no"
-               typeMappingVersion="1.1"
-               testcase="no">
-        <mapping namespace="http://nbcr.sdsc.edu/opal"
-                 package="edu.sdsc.nbcr.opal" />
-        <mapping namespace="http://nbcr.sdsc.edu/opal/types"
-                 package="edu.sdsc.nbcr.opal" />
+               syncOnly="true"
+               wsdlVersion="1.1"
+               serverSide="true"
+               generateServiceXml="false"
+               generateAllClasses="true"
+               unpackClasses="false"
+               serverSideInterface="false"
+               packageName="edu.sdsc.nbcr.opal"
+               testcase="false">
     </wsdl2java>
   </target>
 
+  <target name="axis2client">
+    <javac srcdir="${project.home}/src"
+           destdir="${build.classes}"
+           debug="${debug}"
+           fork="${fork}">
+      <classpath refid="classpath" />
+      <include name="axis2clients/*.java" />
+    </javac>
+
+    <java classname="axis2clients.Axis2Client">
+      <classpath refid="classpath" />
+    </java>
+  </target>
+
   <!-- Compile sources -->
-  <target name="compile" depends="setenv">
+  <target name="compile" depends="setenv,pre.compile.test">
     <!-- Generate stubs if necessary -->
     <antcall target="generateStubs" />
 
     <!-- Compile the opal service generated java files -->
-    <javac srcdir="${build.generated}" 
-           destdir="${build.classes}" 
-	   debug="${debug}"
-	   fork="${javac.fork}">
+    <javac srcdir="${build.generated}/src"
+           destdir="${build.classes}"
+           debug="${debug}"
+           memoryMaximumSize="256m"
+           memoryInitialSize="256m"
+           fork="true">
       <classpath refid="classpath" />
       <include name="edu/sdsc/nbcr/opal/*.java" />
+      <include name="edu/sdsc/nbcr/opal/types/*.java" />
+      <include name="org.w3.www._2005._05.xmlmime/*.java" />
     </javac>
 
+    <delete file="${build.classes}/edu/sdsc/nbcr/opal/AppServiceSkeleton.class"/>
+
     <!-- Compile the opal service handwritten java files -->
-    <javac srcdir="${project.home}/src" 
-           destdir="${build.classes}" 
-	   debug="${debug}"
-	   fork="${javac.fork}">
+    <javac srcdir="${project.home}/src"
+           destdir="${build.classes}"
+           debug="${debug}"
+           fork="true">
       <classpath refid="classpath" />
-      <include name="edu/sdsc/nbcr/opal/**/*.java" />
       <include name="edu/sdsc/nbcr/common/*.java" />
+      <include name="edu/sdsc/nbcr/opal/**/*.java" />
       <include name="org/inria/genouest/opal/tools/**/*.java" />
     </javac>
 
@@ -157,10 +221,10 @@ Author:
   <target name="jar" depends="compile">
     <mkdir dir="${build.jar}"/>
     <jar basedir="${build.classes}" destfile="${build.jar}/${name}-${version}.jar">
-        <include name="edu/sdsc/nbcr/opal/**/*.class" />
-        <include name="edu/sdsc/nbcr/common/*.class" />
-        <include name="org/inria/genouest/opal/tools/**/*.class" />
-	<include name="xslt/**" />
+      <include name="edu/sdsc/nbcr/opal/**/*.class" />
+      <include name="edu/sdsc/nbcr/common/*.class" />
+      <include name="org/inria/genouest/opal/tools/**/*.class" />
+      <include name="xslt/**" />
     </jar>
   </target>
 
@@ -172,7 +236,7 @@ Author:
     <replace file="${project.home}/etc/hibernate-opal.cfg.tests.xml" token="jdbc:hsqldb:file:data/opaldb" value="jdbc:hsqldb:mem:opaldb"/>
 
     <java classname="edu.sdsc.nbcr.opal.util.Tests"
-	  fork="${javac.fork}">
+          fork="${fork}">
       <classpath refid="classpath" />
     </java>
   </target>
@@ -205,24 +269,14 @@ Author:
 
     <!-- copy over the hibernate related jars -->
     <copy todir="${tomcat.WEB-INF}/lib">
+      <fileset dir="${lib}/opal2">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${tomcat.WEB-INF}/lib">
       <fileset dir="${lib}">
-        <!-- hibernate specific jars -->
-        <include name="antlr-2.7.6.jar"/>
-        <include name="javassist-3.4.GA.jar"/>
-        <include name="slf4j-api-1.5.2.jar"/>
-        <include name="slf4j-log4j12-1.5.2.jar"/>
-        <include name="javassist-3.4.GA.jar"/>
-        <include name="hibernate3.jar"/>
-        <include name="jta-1.1.jar"/>
-        <!--  hibernate specific END -->
-        <include name="cglib-2.1.3.jar"/>
-        <include name="commons-cli-2.0.jar"/>
-        <!-- common collecion updated for hibernat 3.3 -->
-        <include name="commons-collections-3.1.jar"/>
-        <include name="dom4j-1.6.1.jar"/>
-        <include name="hsqldb.jar"/>
-        <include name="c3p0-0.9.1.2.jar"/>
-        <include name="commons-io-2.2.jar"/>
+        <include name="*.jar"/>
       </fileset>
     </copy>
 
@@ -239,51 +293,6 @@ Author:
       </fileset>
     </copy>
 
-
-    <!-- copy over other jar files required into WEB-INF/lib -->
-    <copy todir="${tomcat.WEB-INF}/lib">
-      <fileset dir="${lib}">
-        <!-- postgres jdbc jar -->
-        <include name="postgresql-8.2-506.jdbc3.jar" />
-
-        <!-- mysql jdbc jar -->
-        <include name="mysql-connector-java-5.1.8-bin.jar" />
-
-        <!-- db2 jdbc jar -->
-        <include name="db2jcc.jar" />
-
-        <!-- drmaa jar -->
-        <include name="drmaa.jar" />
-
-        <!-- ant jar -->
-        <include name="ant-1.7.0.jar" />
-
-	    <!-- mail jars -->
-        <include name="mailapi-1_3_1.jar" />
-	    <include name="javamail-1.4.3.jar"/>
-
-	    <!-- activation jar -->
-        <include name="activation-1_0_2.jar" />
-
-	    <!-- jFreeChart libraries -->
-        <include name="jfreechart-1.0.8.jar" />
-        <include name="jcommon-1.0.12.jar" />
-
-        <!-- ROMA for Atom and RSS -->
-        <include name="rome-1.0RC1.jar" />
-        <include name="jdom-1.1.jar" />
-       
-	    <!-- condor ClassAd jar -->
-	    <include name="classad.jar" />
-
-        <!-- log4j jar -->
-        <include name="log4j-1.2.15.jar" />
-
-        <!-- ssh2 utility -->
-        <include name="jsch-0.1.54.jar"/>
-      </fileset>
-    </copy>
-
     <!-- copy over the struts jar files -->
     <copy todir="${tomcat.WEB-INF}/lib">
       <fileset dir="${lib}/struts">
@@ -291,55 +300,11 @@ Author:
       </fileset>
     </copy>
     <!-- copy over the struts jar files -->
-
-  
-    <!-- copy over the jar files required into common/lib -->
-      <!--
-    <copy todir="${catalina.home}/lib">
-      <fileset dir="${lib}">
-      -->
-        <!-- cog jars and helpers -->
-      <!--
-        <include name="cog-jglobus.jar" />
-        <include name="cog-axis.jar" />
-        <include name="cryptix-asn1.jar" />
-        <include name="cryptix32.jar" />
-        <include name="cryptix.jar" />
-        <include name="jce-jdk13-125.jar" />
-        <include name="puretls.jar" />
-	    <include name="jgss.jar" />
-      -->
-        <!-- log4j jar -->
-      <!--
-        <include name="log4j-1.2.15.jar" />
+    <copy todir="${tomcat.WEB-INF}/lib">
+      <fileset dir="${lib}/endorsed">
+        <include name="*.jar"/>
       </fileset>
     </copy>
-    -->
-
-    <!-- copy over the jar files required into lib -->
-      <!--
-    <copy todir="${catalina.home}/lib">
-      <fileset dir="${lib}">
-      -->
-        <!-- cog-tomcat jar -->
-      <!--
-        <include name="cog-tomcat.jar" />
-      </fileset>
-    </copy>
-    -->
-
-    <!-- copy over the jar files required into common/endorsed -->
-    <!-- <copy todir="${catalina.home}/common/endorsed">  -->
-      <!--
-    <copy todir="${catalina.home}/lib">
-      <fileset dir="${lib}">
-      -->
-        <!-- cog-tomcat jar -->
-      <!--
-        <include name="xalan-2.7.0.jar" />
-      </fileset>
-    </copy>
-    -->
 
     <!-- copy over the opal.properties file -->
     <copy file="${project.home}/etc/opal.properties" 
@@ -398,8 +363,7 @@ Author:
         <include name="cryptix*" />
         <include name="jce*" />
         <include name="puretls*" />
-	<include name="jgss*" />
-
+	    <include name="jgss*" />
       </fileset>
     </delete>
 
@@ -447,10 +411,10 @@ Author:
 	  <echo message="Please read the documentation."/>
   </target>
 
-
   <!-- Undeploy an opal service -->
   <target name="undeploy" depends="jar">
 	  <echo message="Undeployment of services is now done simply copying file in a floder."/>
           <echo message="Please read the documentation."/>
   </target>
+
 </project>
