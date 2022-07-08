@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file was auto-generated from WSDL -->
+<!-- by the Apache Axis2 version: 1.7.7  Built on : Nov 20, 2017 (11:41:20 GMT) -->
+<serviceGroup>
+    <service name="@SERVICE_NAME@">
+        <messageReceivers>
+            <messageReceiver mep="http://www.w3.org/ns/wsdl/in-out" class="edu.sdsc.nbcr.opal.AppServiceMessageReceiverInOut"/>
+        </messageReceivers>
+        <parameter name="appConfig">@CONFIG_LOCATION@</parameter>
+        <parameter name="ServiceClass">edu.sdsc.nbcr.opal.AppServiceSkeleton</parameter>
+        <parameter name="useOriginalwsdl">false</parameter>
+        <parameter name="modifyUserWSDLPortAddress">true</parameter>
+        <operation name="getAppConfig" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/getAppConfig</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/getAppConfigResponse</outputActionMapping>
+            <faultActionMapping faultName="getAppConfigFault">http://nbcr.sdsc.edu/opal/AppServicePortType/getAppConfig/Fault/getAppConfigFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/getAppConfig/Fault/getAppConfigFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/getAppConfig/Fault/getAppConfigFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:getAppConfigopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="queryStatus" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/queryStatus</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/queryStatusResponse</outputActionMapping>
+            <faultActionMapping faultName="queryStatusFault">http://nbcr.sdsc.edu/opal/AppServicePortType/queryStatus/Fault/queryStatusFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/queryStatus/Fault/queryStatusFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/queryStatus/Fault/queryStatusFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:queryStatusopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="getOutputAsBase64ByName" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/getOutputAsBase64ByName</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/getOutputAsBase64ByNameResponse</outputActionMapping>
+            <faultActionMapping faultName="getOutputAsBase64ByNameFault">http://nbcr.sdsc.edu/opal/AppServicePortType/getOutputAsBase64ByName/Fault/getOutputAsBase64ByNameFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/getOutputAsBase64ByName/Fault/getOutputAsBase64ByNameFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/getOutputAsBase64ByName/Fault/getOutputAsBase64ByNameFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:getOutputAsBase64ByNameopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="getOutputs" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/getOutputs</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/getOutputsResponse</outputActionMapping>
+            <faultActionMapping faultName="getOutputsFault">http://nbcr.sdsc.edu/opal/AppServicePortType/getOutputs/Fault/getOutputsFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/getOutputs/Fault/getOutputsFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/getOutputs/Fault/getOutputsFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:getOutputsopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="launchJobBlocking" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/launchJobBlocking</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/launchJobBlockingResponse</outputActionMapping>
+            <faultActionMapping faultName="launchJobBlockingFault">http://nbcr.sdsc.edu/opal/AppServicePortType/launchJobBlocking/Fault/launchJobBlockingFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/launchJobBlocking/Fault/launchJobBlockingFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/launchJobBlocking/Fault/launchJobBlockingFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:launchJobBlockingopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="destroy" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/destroy</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/destroyResponse</outputActionMapping>
+            <faultActionMapping faultName="destroyFault">http://nbcr.sdsc.edu/opal/AppServicePortType/destroy/Fault/destroyFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/destroy/Fault/destroyFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/destroy/Fault/destroyFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:destroyopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="launchJob" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/launchJob</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/launchJobResponse</outputActionMapping>
+            <faultActionMapping faultName="launchJobFault">http://nbcr.sdsc.edu/opal/AppServicePortType/launchJob/Fault/launchJobFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/launchJob/Fault/launchJobFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/launchJob/Fault/launchJobFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:launchJobopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="getJobStatistics" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/getJobStatistics</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/getJobStatisticsResponse</outputActionMapping>
+            <faultActionMapping faultName="getJobStatisticsFault">http://nbcr.sdsc.edu/opal/AppServicePortType/getJobStatistics/Fault/getJobStatisticsFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/getJobStatistics/Fault/getJobStatisticsFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/getJobStatistics/Fault/getJobStatisticsFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:getJobStatisticsopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="getAppMetadata" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/getAppMetadata</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/getAppMetadataResponse</outputActionMapping>
+            <faultActionMapping faultName="getAppMetadataFault">http://nbcr.sdsc.edu/opal/AppServicePortType/getAppMetadata/Fault/getAppMetadataFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/getAppMetadata/Fault/getAppMetadataFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/getAppMetadata/Fault/getAppMetadataFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:getAppMetadataopalFaultResponse</faultActionMapping>
+        </operation>
+        <operation name="getSystemInfo" mep="http://www.w3.org/ns/wsdl/in-out" namespace="http://nbcr.sdsc.edu/opal">
+            <actionMapping>http://nbcr.sdsc.edu/opal/getSystemInfo</actionMapping>
+            <outputActionMapping>http://nbcr.sdsc.edu/opal/AppServicePortType/getSystemInfoResponse</outputActionMapping>
+            <faultActionMapping faultName="getSystemInfoFault">http://nbcr.sdsc.edu/opal/AppServicePortType/getSystemInfo/Fault/getSystemInfoFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse">http://nbcr.sdsc.edu/opal/AppServicePortType/getSystemInfo/Fault/getSystemInfoFault</faultActionMapping>
+            <faultActionMapping faultName="OpalFaultResponse_Exception">http://nbcr.sdsc.edu/opal/AppServicePortType/getSystemInfo/Fault/getSystemInfoFault</faultActionMapping>
+            <faultActionMapping faultName="opalFaultResponse">urn:getSystemInfoopalFaultResponse</faultActionMapping>
+        </operation>
+    </service>
+</serviceGroup>
