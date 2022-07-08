@@ -8,8 +8,8 @@
 <%@ taglib uri="http://struts.apache.org/tags-nested" prefix="nested" %>
 
 <%@page import="java.util.Enumeration"%>
-<%@page import="edu.sdsc.nbcr.opal.JobSubOutputType"%>
-<%@page import="edu.sdsc.nbcr.opal.StatusOutputType"%>
+<%@page import="edu.sdsc.nbcr.opal.types.JobSubOutputType"%>
+<%@page import="edu.sdsc.nbcr.opal.types.StatusOutputType"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

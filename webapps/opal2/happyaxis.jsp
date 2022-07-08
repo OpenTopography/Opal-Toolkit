@@ -1,39 +1,71 @@
+<%--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  --%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-<%@ page contentType="text/html; charset=utf-8"
-         import="java.io.InputStream,
-                 java.io.IOException,
+<%@ page import="org.apache.axis2.AxisFault,
+                 org.apache.axis2.Constants,
+                 org.apache.axis2.addressing.EndpointReference,
+                 org.apache.axis2.client.Options,
+                 org.apache.axis2.client.ServiceClient,
+                 org.apache.axis2.context.ConfigurationContext,
+                 org.apache.axis2.context.ConfigurationContextFactory,
                  javax.xml.parsers.SAXParser,
-                 java.lang.reflect.*,
-                 javax.xml.parsers.SAXParserFactory"
-   session="false" %>
-<%
-/*
- * Copyright 2002,2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-%>
+                 javax.xml.parsers.SAXParserFactory,
+                 java.io.IOException,
+                 java.io.InputStream,
+                 java.io.StringWriter,
+                 org.apache.axiom.om.OMElement,
+                 org.apache.axiom.om.OMFactory,
+                 org.apache.axiom.om.OMNamespace,
+                 org.apache.axiom.om.OMAbstractFactory,
+                 javax.xml.stream.XMLOutputFactory,
+                 javax.xml.stream.XMLStreamException"
+         session="false" %>
+<head>
+    <jsp:include page="/WEB-INF/include/httpbase.jsp"/>
+    <title>Axis2 Happiness Page</title>
+    <link href="css/axis-style.css" rel="stylesheet" type="text/css">
+</head>
 
+<body>
+<jsp:include page="/WEB-INF/include/header.inc"/>
+<jsp:include page="/WEB-INF/include/link-footer.jsp"/>
+<%IP = request.getRequestURL().toString();%>
 <%!
     /*
-     * Happiness tests for axis. These look at the classpath and warn if things
-     * are missing. Normally addng this much code in a JSP page is mad
-     * but here we want to validate JSP compilation too, and have a drop-in
-     * page for easy re-use
-     * @author Steve 'configuration problems' Loughran
-     * @author dims
-     * @author Brian Ewins
+    * Happiness tests for axis2. These look at the classpath and warn if things
+    * are missing. Normally addng this much code in a JSP page is mad
+    * but here we want to validate JSP compilation too, and have a drop-in
+    * page for easy re-use
+    */
+    String IP;
+
+    /**
+     * Get a string providing install information.
+     * TODO: make this platform aware and give specific hints
      */
+    public String getInstallHints(HttpServletRequest request) {
+
+        return "<B><I>Note:</I></B> On Tomcat 4.x and Java1.4, you may need to put libraries that contain "
+                + "java.* or javax.* packages into CATALINA_HOME/common/lib"
+                + "<br>jaxrpc.jar and saaj.jar are two such libraries.";
+    }
 
     /**
      * test for a class existing
@@ -55,9 +87,9 @@
      */
     boolean resourceExists(String resource) {
         boolean found;
-        InputStream instream=this.getClass().getResourceAsStream(resource);
-        found=instream!=null;
-        if(instream!=null) {
+        InputStream instream = this.getClass().getResourceAsStream(resource);
+        found = instream != null;
+        if (instream != null) {
             try {
                 instream.close();
             } catch (IOException e) {
@@ -81,36 +113,46 @@
                    String category,
                    String classname,
                    String jarFile,
-                   String description,
+                   String axisOperation,
                    String errorText,
                    String homePage) throws IOException {
         try {
             Class clazz = classExists(classname);
-            if(clazz == null)  {
-               String url="";
-               if(homePage!=null) {
-                  url=getMessage("seeHomepage",homePage,homePage);
-               }
-               out.write(getMessage("couldNotFound",category,classname,jarFile,errorText,url));
-               return 1;
+            if (clazz == null) {
+                String url = "";
+                if (homePage != null) {
+                    url = "<br>  See <a href=" + homePage + ">" + homePage + "</a>";
+                }
+                out.write("<p>" + category + ": could not find class " + classname
+                        + " from file <b>" + jarFile
+                        + "</b><br>  " + errorText
+                        + url
+                        + "<p>");
+                return 1;
             } else {
-               String location = getLocation(out, clazz);
-
-               if(location == null) {
-                  out.write("<li>"+getMessage("foundClass00",description,classname)+"</li><br>");
-               }
-               else {
-                  out.write("<li>"+getMessage("foundClass01",description,classname,location)+"</li><br>");
-               }
-               return 0;
+                String location = getLocation(out, clazz);
+                if (location == null) {
+                    out.write("Found " + axisOperation + " (" + classname + ")<br>");
+                } else {
+                    out.write("Found " + axisOperation + " (" + classname + ") <br> &nbsp;&nbsp;at " + location + "<br/>");
+                }
+                return 0;
             }
-        } catch(NoClassDefFoundError ncdfe) {
-            String url="";
-            if(homePage!=null) {
-                url=getMessage("seeHomepage",homePage,homePage);
+        } catch (NoClassDefFoundError ncdfe) {
+            String url = "";
+            if (homePage != null) {
+                url = "<br>  See <a href=" + homePage + ">" + homePage + "</a>";
             }
-            out.write(getMessage("couldNotFoundDep",category, classname, errorText, url));
-            out.write(getMessage("theRootCause",ncdfe.getMessage(), classname));
+            out.write("<p>" + category + ": could not find a dependency"
+                    + " of class " + classname
+                    + " from file <b>" + jarFile
+                    + "</b><br> " + errorText
+                    + url
+                    + "<br>The root cause was: " + ncdfe.getMessage()
+                    + "<br>This can happen e.g. if " + classname + " is in"
+                    + " the 'common' classpath, but a dependency like "
+                    + " activation.jar is only in the webapp classpath."
+                    + "<p>");
             return 1;
         }
     }
@@ -127,20 +169,20 @@
         try {
             java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
             String location = url.toString();
-            if(location.startsWith("jar")) {
-                url = ((java.net.JarURLConnection)url.openConnection()).getJarFileURL();
+            if (location.startsWith("jar")) {
+                url = ((java.net.JarURLConnection) url.openConnection()).getJarFileURL();
                 location = url.toString();
             }
 
-            if(location.startsWith("file")) {
+            if (location.startsWith("file")) {
                 java.io.File file = new java.io.File(url.getFile());
                 return file.getAbsolutePath();
             } else {
                 return url.toString();
             }
-        } catch (Throwable t){
+        } catch (Throwable t) {
         }
-        return getMessage("classFoundError");
+        return "an unknown location";
     }
 
     /**
@@ -154,16 +196,16 @@
      * @return the number of missing libraries (0 or 1)
      */
     int needClass(JspWriter out,
-                   String classname,
-                   String jarFile,
-                   String description,
-                   String errorText,
-                   String homePage) throws IOException {
+                  String classname,
+                  String jarFile,
+                  String axisOperation,
+                  String errorText,
+                  String homePage) throws IOException {
         return probeClass(out,
-                "<b>"+getMessage("error")+"</b>",
+                "<b>Error</b>",
                 classname,
                 jarFile,
-                description,
+                axisOperation,
                 errorText,
                 homePage);
     }
@@ -179,19 +221,41 @@
      * @return the number of missing libraries (0 or 1)
      */
     int wantClass(JspWriter out,
-                   String classname,
-                   String jarFile,
-                   String description,
-                   String errorText,
-                   String homePage) throws IOException {
+                  String classname,
+                  String jarFile,
+                  String axisOperation,
+                  String errorText,
+                  String homePage) throws IOException {
         return probeClass(out,
-                "<b>"+getMessage("warning")+"</b>",
+                "<b>Warning</b>",
                 classname,
                 jarFile,
-                description,
+                axisOperation,
                 errorText,
                 homePage);
     }
+
+    /**
+     * probe for a resource existing,
+     * @param out
+     * @param resource
+     * @param errorText
+     * @throws Exception
+     */
+    int wantResource(JspWriter out,
+                     String resource,
+                     String errorText) throws Exception {
+        if (!resourceExists(resource)) {
+            out.write("<p><b>Warning</b>: could not find resource " + resource
+                    + "<br>"
+                    + errorText);
+            return 0;
+        } else {
+            out.write("found " + resource + "<br>");
+            return 1;
+        }
+    }
+
 
     /**
      *  get servlet version string
@@ -199,11 +263,12 @@
      */
 
     public String getServletVersion() {
-        ServletContext context=getServletConfig().getServletContext();
+        ServletContext context = getServletConfig().getServletContext();
         int major = context.getMajorVersion();
         int minor = context.getMinorVersion();
         return Integer.toString(major) + '.' + Integer.toString(minor);
     }
+
 
     /**
      * what parser are we using.
@@ -212,12 +277,11 @@
     private String getParserName() {
         SAXParser saxParser = getSAXParser();
         if (saxParser == null) {
-            return getMessage("couldNotCreateParser");
+            return "Could not create an XML Parser";
         }
 
         // check to what is in the classname
-        String saxParserName = saxParser.getClass().getName();
-        return saxParserName;
+        return saxParser.getClass().getName();
     }
 
     /**
@@ -247,245 +311,200 @@
         if (saxParser == null) {
             return null;
         }
-        String location = getLocation(out,saxParser.getClass());
-        return location;
+        return getLocation(out, saxParser.getClass());
     }
 
-    /**
-     * Check if class implements specified interface.
-     * @param Class clazz
-     * @param String interface name
-     * @return boolean
-     */
-    private boolean implementsInterface(Class clazz, String interfaceName) {
-        if (clazz == null) {
+    private String value;
+
+    private OMElement createEnvelope() {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace omNs = fac.createOMNamespace("http://axisversion.sample", "ns1");
+        OMElement method = fac.createOMElement("getVersion", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        method.addChild(value);
+        return method;
+    }
+
+    public boolean invokeTheService() {
+        try {
+            // since this one is an internal request we do not use public frontendHostUrl
+            // for it
+            int lastindex = IP.lastIndexOf('/');
+            IP = IP.substring(0, lastindex+1);
+            ///axis2/axis2-web/services/version
+            // IP = IP.replaceAll("axis2-web", "");
+
+            OMElement payload = createEnvelope();
+            ConfigurationContext configctx =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+            ServiceClient client = new ServiceClient(configctx, null);
+            EndpointReference targetEPR = new EndpointReference(IP + configctx.getServicePath() + "/Version");
+            System.out.println("End point service = "+targetEPR.toString());
+            Options options = new Options();
+            client.setOptions(options);
+            options.setTo(targetEPR);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+            OMElement result = client.sendReceive(payload);
+            StringWriter writer = new StringWriter();
+            result.serialize(XMLOutputFactory.newInstance().createXMLStreamWriter(writer));
+            writer.flush();
+            value = writer.toString();
+            value = value.replaceAll("<", "&lt;");
+            value = value.replaceAll(">", "&gt;");
+            return true;
+        } catch (AxisFault axisFault) {
+            System.out.println(value);
+            return false;
+        } catch (XMLStreamException e) {
+            value = e.getMessage();
             return false;
         }
-        Class[] interfaces = clazz.getInterfaces();
-        if (interfaces.length != 0) {
-            for (int i = 0; i < interfaces.length; i++) {
-                if (interfaces[i].getName().equals(interfaceName)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
-    %>
-
-<%@ include file="i18nLib.jsp" %>
-
-<%
-    // initialize a private HttpServletRequest
-    setRequest(request);
-
-    // set a resouce base
-    setResouceBase("i18n");
+    
+    public String getFormatedSystemProperty(String systemProperty){
+        if (systemProperty == null)
+            return "";
+    	return  systemProperty.replaceAll(":", ": ");
+    }
 %>
 
-<head>
-<title><%= getMessage("pageTitle") %></title>
-</head>
-<body bgcolor='#ffffff'>
+<h1>Axis2 Happiness Page</h1>
+
+<h2>Examining webapp configuration</h2>
+
+
+
+<h4>Essential Components</h4>
 
 <%
-    out.print("<h1>"+ getMessage("pageTitle") +"</h1>");
-    out.print("<h2>"+ getMessage("pageRole") +"</h2><p/>");
-%>
-
-<%= getLocaleChoice() %>
-
-<%
-    out.print("<h3>"+ getMessage("neededComponents") +"</h3>");
-%>
-
-<UL>
-<%
-    int needed=0,wanted=0;
+    int needed = 0,wanted = 0;
 
     /**
      * the essentials, without these Axis is not going to work
      */
-
-    // need to check if the available version of SAAJ API meets requirements
-    String className = "javax.xml.soap.SOAPPart";
-    String interfaceName = "org.w3c.dom.Document";
-    Class clazz = classExists(className);
-    if (clazz == null || implementsInterface(clazz, interfaceName)) {
-        needed = needClass(out, "javax.xml.soap.SOAPMessage",
-        	"saaj.jar",
-                "SAAJ API",
-                getMessage("criticalErrorMessage"),
-                "http://ws.apache.org/axis/");
-    } else {
-        String location = getLocation(out, clazz);
-
-        out.print(getMessage("invalidSAAJ",location));
-        out.print(getMessage("criticalErrorMessage"));
-        out.print(getMessage("seeHomepage","http://ws.apache.org/axis/java/install.html",getMessage("axisInstallation")));
-        out.print("<br>");
-    }
-
-    needed+=needClass(out, "javax.xml.rpc.Service",
-            "jaxrpc.jar",
-            "JAX-RPC API",
-            getMessage("criticalErrorMessage"),
-            "http://ws.apache.org/axis/");
-
-    needed+=needClass(out, "org.apache.axis.transport.http.AxisServlet",
-            "axis.jar",
+    needed = needClass(out, "org.apache.axis2.transport.http.AxisServlet",
+            "axis2-1.0.jar",
             "Apache-Axis",
-            getMessage("criticalErrorMessage"),
-            "http://ws.apache.org/axis/");
-
-    needed+=needClass(out, "org.apache.commons.discovery.Resource",
-            "commons-discovery.jar",
-            "Jakarta-Commons Discovery",
-            getMessage("criticalErrorMessage"),
-            "http://jakarta.apache.org/commons/discovery/");
-
-    needed+=needClass(out, "org.apache.commons.logging.Log",
+            "Axis2 will not work",
+            "http://xml.apache.org/axis2/");
+    needed += needClass(out, "org.apache.commons.logging.Log",
             "commons-logging.jar",
             "Jakarta-Commons Logging",
-            getMessage("criticalErrorMessage"),
-            "http://jakarta.apache.org/commons/logging/");
+            "Axis2 will not work",
+            "http://jakarta.apache.org/commons/logging.html");
+    needed += needClass(out, "javax.xml.stream.XMLStreamReader",
+            "stax-api-1.0.1.jar",
+            "Streaming API for XML",
+            "Axis2 will not work",
+            "http://dist.codehaus.org/stax/jars/");
+    needed += needClass(out, "org.codehaus.stax2.XMLStreamWriter2",
+            "wstx-asl-3.0.1.jar",
+            "Streaming API for XML implementation",
+            "Axis2 will not work",
+            "http://dist.codehaus.org/stax/jars/");
 
-    needed+=needClass(out, "org.apache.log4j.Layout",
-            "log4j-1.2.8.jar",
-            "Log4j",
-            getMessage("uncertainErrorMessage"),
-            "http://jakarta.apache.org/log4j");
-
-    //should we search for a javax.wsdl file here, to hint that it needs
-    //to go into an approved directory? because we dont seem to need to do that.
-    needed+=needClass(out, "com.ibm.wsdl.factory.WSDLFactoryImpl",
-            "wsdl4j.jar",
-            "IBM's WSDL4Java",
-            getMessage("criticalErrorMessage"),
-            null);
-
-    needed+=needClass(out, "javax.xml.parsers.SAXParserFactory",
-            "xerces.jar",
-            "JAXP implementation",
-            getMessage("criticalErrorMessage"),
-            "http://xml.apache.org/xerces-j/");
-
-    needed+=needClass(out,"javax.activation.DataHandler",
-            "activation.jar",
-            "Activation API",
-            getMessage("criticalErrorMessage"),
-            "http://java.sun.com/products/javabeans/glasgow/jaf.html");
 %>
-</UL>
-<%
-    out.print("<h3>"+ getMessage("optionalComponents") +"</h3>");
-%>
-<UL>
 <%
     /*
-     * now the stuff we can live without
-     */
-    wanted+=wantClass(out,"javax.mail.internet.MimeMessage",
-            "mail.jar",
-            "Mail API",
-            getMessage("attachmentsError"),
-            "http://java.sun.com/products/javamail/");
-
-    wanted+=wantClass(out,"org.apache.xml.security.Init",
-            "xmlsec.jar",
-            "XML Security API",
-            getMessage("xmlSecurityError"),
-            "http://xml.apache.org/security/");
-
-    wanted += wantClass(out, "javax.net.ssl.SSLSocketFactory",
-            "jsse.jar or java1.4+ runtime",
-            "Java Secure Socket Extension",
-            getMessage("httpsError"),
-            "http://java.sun.com/products/jsse/");
-    /*
-     * resources on the classpath path
-     */
+    * resources on the classpath path
+    */
+    /* broken; this is a file, not a resource
+    wantResource(out,"/server-config.wsdd",
+    "There is no server configuration file;"
+    +"run AdminClient to create one");
+    */
     /* add more libraries here */
 
-%>
-</UL>
-<%
-    out.write("<h3>");
-    //is everythng we need here
-    if(needed==0) {
-       //yes, be happy
-        out.write(getMessage("happyResult00"));
+    //is everything we need here
+    if (needed == 0) {
+        //yes, be happy
+        out.write("<p style=\"color:green; font-style:bold\">The core axis2 libraries are present.</p>");
     } else {
         //no, be very unhappy
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        out.write(getMessage("unhappyResult00",Integer.toString(needed)));
+        out.write("<p style=\"color:red; font-style:italic\">"
+                + needed
+                + " core axis2 librar"
+                + (needed == 1 ? "y is" : "ies are")
+                + " missing</p>");
     }
     //now look at wanted stuff
-    if(wanted>0) {
-        out.write(getMessage("unhappyResult01",Integer.toString(wanted)));
-    } else {
-        out.write(getMessage("happyResult01"));
-    }
-    out.write("</h3>");
 %>
-<UL>
+<p>
+    <span style="font-style:bold italic">Note:</span> Even if everything this page probes for is present,
+    there is no guarantee your Axis Service will work, because there are many configuration options
+    that we do not check for. These tests are <span style="font-style:italic">necessary</span> but not <span style="font-style:italic">sufficient</span>
+</p>
+
+<h2>Examining Version Service</h2>
 <%
-
-    //hint if anything is missing
-    if(needed>0 || wanted>0 ) {
-        out.write(getMessage("hintString"));
-    }
-
-    out.write(getMessage("noteString"));
+    boolean serviceStatus = invokeTheService();
+    if (serviceStatus) {
 %>
-</UL>
-
-    <h2><%= getMessage("apsExamining") %></h2>
-
-<UL>
-    <%
-        String servletVersion=getServletVersion();
-        String xmlParser=getParserName();
-        String xmlParserLocation = getParserLocation(out);
-    %>
-    <table border="1" cellpadding="10">
-        <tr><td>Servlet version</td><td><%= servletVersion %></td></tr>
-        <tr><td>XML Parser</td><td><%= xmlParser %></td></tr>
-        <tr><td>XML ParserLocation</td><td><%= xmlParserLocation %></td></tr>
-    </table>
-</UL>
-
-<% if(xmlParser.indexOf("crimson")>=0) { %>
-    <p>
-    <%= getMessage("recommendedParser") %>
+<div>
+    <p style="color:green; font-style:bold">
+        Found Axis2 default Version service and Axis2 is working
+        properly.
     </p>
-<%    } %>
+        
+    <p>Now you can drop a service archive in axis2/WEB-INF/services.
+        Following output was produced while invoking Axis2 version service
+    </p>
+    <p><%= value%></p>
+</div>
 
-    <h2><%= getMessage("sysExamining") %></h2>
-<UL>
+<%
+} else {
+%>
+<p style="color:brown">
+    There was a problem in Axis2 version service , may be
+        the service not available or some thing has gone wrong. But this does
+        not mean system is not working !
+        Try to upload some other service and check to see whether it is
+        working.
+</p>
+
+<%
+    }
+%>
+<h2>Examining Application Server</h2>
+<blockquote>
+<table summary="main content table">
+    <tr><td>Servlet version</td><td><%=getServletVersion()%></td></tr>
+    <tr><td>Platform</td>
+        <td><%=getServletConfig().getServletContext().getServerInfo()%></td>
+    </tr>
+</table>
+</blockquote>
+<h2>Examining System Properties</h2>
 <%
     /**
      * Dump the system properties
      */
-    java.util.Enumeration e=null;
+    java.util.Enumeration e = null;
     try {
-        e= System.getProperties().propertyNames();
+        e = System.getProperties().propertyNames();
     } catch (SecurityException se) {
     }
-    if(e!=null) {
-        out.write("<pre>");
-        for (;e.hasMoreElements();) {
+    if (e != null) {
+        out.write("<table summary=\"main content table\" cellpadding=\"5\" cellspacing=\"0\" style=\"border: .5 blue solid;\">");
+        for (; e.hasMoreElements();) {
+            out.write("<tr>");
             String key = (String) e.nextElement();
-            out.write(key + "=" + System.getProperty(key)+"\n");
+            out.write("<th style='border: .5px #A3BBFF solid;'>" + key + "</th>");
+            out.write("<td style='border: .5px #A3BBFF solid;'>" + getFormatedSystemProperty(System.getProperty(key)) + "&nbsp;</td>");
+            out.write("</tr>");
         }
-        out.write("</pre><p>");
+        out.write("</table>");
+        out.write("<p>");
     } else {
-        out.write(getMessage("sysPropError"));
+        out.write("System properties are not accessible<p>");
     }
 %>
-</UL>
-    <hr>
-    <%= getMessage("apsPlatform") %>:
-    <%= getServletConfig().getServletContext().getServerInfo() %>
+
+<jsp:include page="/WEB-INF/include/footer.inc"/>
 </body>
 </html>
+
+

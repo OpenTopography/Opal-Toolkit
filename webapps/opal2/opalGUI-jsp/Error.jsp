@@ -19,7 +19,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 <%@ page import="org.apache.struts.Globals" %>
-<%@ page import="edu.sdsc.nbcr.opal.gui.common.Constants;" %>
+<%@ page import="edu.sdsc.nbcr.opal.gui.common.Constants" %>
 <html>
   <head>
     <title>Opal2: Job submission unexpected error</title>

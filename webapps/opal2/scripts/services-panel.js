@@ -75,7 +75,7 @@ Ext.onReady(function(){
     //Format Web Service URL
     function formatURL(value, p, record) {
         return String.format(
-            '<div class="serviceLink"><a href="{0}">{0}</a></div>', record.data.link);
+            '<div class="serviceLink"><a href="{0}">{0}</a></div>', record.data.link+"?wsdl");
     }
 
     //Format Web Service Docs

@@ -1,34 +1,51 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web
-Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements. See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership. The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License. You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 
-<web-app>
-  <display-name>Opal Toolkit</display-name>
-    
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                             http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+    <display-name>Opal Toolkit</display-name>
     <listener>
-        <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
+        <listener-class>org.apache.axis2.transport.http.AxisServletListener</listener-class>
     </listener>
-   
 
-  <!-- Dashboard configuaration parameters...  -->
+    <!-- Dashboard configuaration parameters...  -->
     <servlet>
-      <servlet-name>dashboard</servlet-name>
-      <servlet-class>edu.sdsc.nbcr.opal.dashboard.servlet.OpalInfoServlet</servlet-class>
-      <!-- this servlet must be loaded before the plotchart servlet!!! -->
-      <load-on-startup>5</load-on-startup>
+        <servlet-name>dashboard</servlet-name>
+        <servlet-class>edu.sdsc.nbcr.opal.dashboard.servlet.OpalInfoServlet</servlet-class>
+        <!-- this servlet must be loaded before the plotchart servlet!!! -->
+        <load-on-startup>5</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-       <servlet-name>dashboard</servlet-name>
-       <url-pattern>/dashboard</url-pattern>
-      <load-on-startup>1</load-on-startup>
+        <servlet-name>dashboard</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
     </servlet-mapping>
 
     <servlet>
         <servlet-name>plotchart</servlet-name>
         <servlet-class>edu.sdsc.nbcr.opal.dashboard.servlet.PlotterServlet</servlet-class>
-      <load-on-startup>6</load-on-startup>
+        <load-on-startup>6</load-on-startup>
     </servlet>
 
     <servlet-mapping>
@@ -69,18 +86,18 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
        <param-name>OPAL_DOC</param-name>
        <param-value>http://nbcr.ucsd.edu/data/docs/opal</param-value>
     </context-param>
-  <!-- Dashboard configuaration parameters...  -->
+    <!-- Dashboard configuaration parameters...  -->
 
-  <!-- Opal GUI config param... update if Tomcat is run on another port -->
-   <context-param>
+    <!-- Opal GUI config param... update if Tomcat is run on another port -->
+    <context-param>
         <!-- insert the URL of the opal service that you want to use -->
         <param-name>OPAL_URL</param-name>
         <param-value>http://localhost:8080/opal2/services</param-value>
     </context-param>
-  <!-- Opal GUI config param... do not touch this -->
+    <!-- Opal GUI config param... do not touch this -->
 
 
-  <!-- Struts configurations... do not touch it  -->
+    <!-- Struts configurations... do not touch it  -->
     <servlet>
       <servlet-name>action</servlet-name>
       <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
@@ -99,105 +116,131 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
       <servlet-name>action</servlet-name>
       <url-pattern>*.do</url-pattern>
     </servlet-mapping>
-  <!-- Struts configurations... do not touch it  -->
+    <!-- Struts configurations... do not touch it  -->
  
-  <!-- Filter for SOAP request of typed services -->
-  <!-- Uncomment the following to turn on the Opal SOAP filter for typed services -->
-  <!--
-  <filter> 
-    <filter-name>OpalSOAPRequestFilter</filter-name> 
-    <filter-class>org.inria.genouest.opal.tools.soaprequest.filter.OpalSOAPRequestFilter</filter-class> 
-  </filter> 
-  <filter-mapping> 
-    <filter-name>OpalSOAPRequestFilter</filter-name> 
-    <servlet-name>AxisServlet</servlet-name> 
-  </filter-mapping> 
-  -->
+    <!-- Filter for SOAP request of typed services -->
+    <!-- Uncomment the following to turn on the Opal SOAP filter for typed services -->
+    <!--
+    <filter>
+        <filter-name>OpalSOAPRequestFilter</filter-name>
+        <filter-class>org.inria.genouest.opal.tools.soaprequest.filter.OpalSOAPRequestFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>OpalSOAPRequestFilter</filter-name>
+        <servlet-name>AxisServlet</servlet-name>
+    </filter-mapping>
+    -->
 
-  <!-- Opal automatic deployment serlet. This servelet monitor the 
-  opal.deploy.path and automatically deploy every xml file which finds 
-  in it -->
-  <servlet>
-    <servlet-name>OpalDeployService</servlet-name>
-    <display-name>Opal Deploy Service</display-name>
-    <servlet-class>edu.sdsc.nbcr.opal.util.OpalDeployService</servlet-class>
-    <load-on-startup>250</load-on-startup>
-  </servlet>
+    <!-- Opal automatic deployment serlet. This servelet monitor the
+    opal.deploy.path and automatically deploy every xml file which finds
+    in it -->
+    <servlet>
+        <display-name>Opal Deploy Service</display-name>
+        <servlet-name>OpalDeployService</servlet-name>
+        <servlet-class>edu.sdsc.nbcr.opal.util.OpalDeployService</servlet-class>
+        <load-on-startup>250</load-on-startup>
+    </servlet>
 
+    <!-- Axis configuration parameters... do not touch this part!! -->
+    <servlet>
+        <display-name>Apache-Axis Servlet</display-name>
+        <servlet-name>AxisServlet</servlet-name>
+        <servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
+        <!--<init-param>-->
+        <!--<param-name>axis2.xml.path</param-name>-->
+        <!--<param-value>/WEB-INF/conf/axis2.xml</param-value>-->
+        <!--<param-name>axis2.xml.url</param-name>-->
+        <!--<param-value>http://localhost/myrepo/axis2.xml</param-value>-->
+        <!--<param-name>axis2.repository.path</param-name>-->
+        <!--<param-value>/WEB-INF</param-value>-->
+        <!--<param-name>axis2.repository.url</param-name>-->
+        <!--<param-value>http://localhost/myrepo</param-value>-->
+        <!--</init-param>-->
+        <load-on-startup>100</load-on-startup>
+    </servlet>
+    <servlet>
+        <display-name>Apache-Axis AxisAdmin Servlet (Web Admin)</display-name>
+        <servlet-name>AxisAdminServlet</servlet-name>
+        <servlet-class>org.apache.axis2.webapp.AxisAdminServlet</servlet-class>
+    </servlet>
 
+    <!-- servlet>
+        <display-name>SOAPMonitorService</display-name>
+        <servlet-name>SOAPMonitorService</servlet-name>
+        <servlet-class>org.apache.axis2.soapmonitor.servlet.SOAPMonitorService</servlet-class>
+        <init-param>
+            <param-name>SOAPMonitorPort</param-name>
+            <param-value>5001</param-value>
+        </init-param>
+        <init-param>
+            <param-name>SOAPMonitorHostName</param-name>
+            <param-value>localhost</param-value>
+        </init-param>
+        <load-on-startup>100</load-on-startup>
+    </servlet -->
 
-  <!-- Axis configuration parameters... do not touch this part!! -->
-  <servlet>
-    <servlet-name>AxisServlet</servlet-name>
-    <display-name>Apache-Axis Servlet</display-name>
-    <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
-    <load-on-startup>100</load-on-startup>
-  </servlet>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/servlet/AxisServlet</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>AdminServlet</servlet-name>
-    <display-name>Axis Admin Servlet</display-name>
-    <servlet-class>org.apache.axis.transport.http.AdminServlet</servlet-class>
-    <load-on-startup>100</load-on-startup>
-  </servlet>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>*.jws</url-pattern>
+    </servlet-mapping>
 
-  <servlet>
-    <servlet-name>SOAPMonitorService</servlet-name>
-    <display-name>SOAPMonitorService</display-name>
-    <servlet-class>org.apache.axis.monitor.SOAPMonitorService</servlet-class>
-    <init-param>
-      <param-name>SOAPMonitorPort</param-name>
-      <param-value>5001</param-value>
-    </init-param>
-    <load-on-startup>100</load-on-startup>
-  </servlet>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>/servlet/AxisServlet</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisAdminServlet</servlet-name>
+        <url-pattern>/axis2-admin/*</url-pattern>
+    </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>*.jws</url-pattern>
-  </servlet-mapping>
+    <!-- servlet-mapping>
+        <servlet-name>SOAPMonitorService</servlet-name>
+        <url-pattern>/SOAPMonitor</url-pattern>
+    </servlet-mapping -->
 
-  <servlet-mapping>
-    <servlet-name>AxisServlet</servlet-name>
-    <url-pattern>/services/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>SOAPMonitorService</servlet-name>
-    <url-pattern>/SOAPMonitor</url-pattern>
-  </servlet-mapping>
+    <mime-mapping>
+        <extension>inc</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
 
     <!-- currently the W3C havent settled on a media type for WSDL;
-    http://www.w3.org/TR/2003/WD-wsdl12-20030303/#ietf-draft
-    for now we go with the basic 'it's XML' response -->
-  <mime-mapping>
-    <extension>wsdl</extension>
-     <mime-type>text/xml</mime-type>
-  </mime-mapping>
+	 http://www.w3.org/TR/2003/WD-wsdl12-20030303/#ietf-draft
+	 for now we go with the basic 'it's XML' response -->
+    <mime-mapping>
+        <extension>wsdl</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
 
-  <mime-mapping>
-    <extension>xsd</extension>
-    <mime-type>text/xml</mime-type>
-  </mime-mapping>
-  <!-- End Axis configuaration parameters...  -->
+    <mime-mapping>
+        <extension>xsd</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
 
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>/axis2-web/index.jsp</welcome-file>
+    </welcome-file-list>
 
-  <!-- general configuration parameters  -->
-  <welcome-file-list id="WelcomeFileList">
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.jws</welcome-file>
-  </welcome-file-list>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/Error/error404.jsp</location>
+    </error-page>
 
-  <session-config>
-      <!-- Default to 30 minute session timeouts -->
-      <session-timeout>30</session-timeout>
-  </session-config>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/Error/error500.jsp</location>
+    </error-page>
 
+    <session-config>
+        <!-- Default to 60 minute session timeouts -->
+        <session-timeout>60</session-timeout>
+    </session-config>
 
 </web-app>
