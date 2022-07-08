@@ -1,5 +1,4 @@
-<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
-           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
     <!-- metadata about the application being wrapped -->
     <metadata appName="AreaD8">
         <usage>Calculates a grid of contributing areas using the single direction D8 flow model.</usage>
@@ -28,19 +27,20 @@ Usage:
                     <id>pdemURL</id>
                     <tag>-p</tag>
                     <paramType>STRING</paramType>
-                    <textDesc>D8 flow direction input file (*.tar.gz)</textDesc>
+                    <textDesc>D8 flow direction input file URL (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>wdemURL</id>
                     <tag>-w</tag>
                     <paramType>STRING</paramType>
-                    <textDesc>Optional weight grid input file (*.tar.gz)</textDesc>
+                    <textDesc>Optional weight grid input file URL (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>outputfilename</id>
                     <tag>-o</tag>
+                    <default>aread8</default>
                     <paramType>STRING</paramType>
                     <textDesc>Name of the D8 area output file</textDesc>
                 </param>

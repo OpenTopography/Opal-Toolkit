@@ -1,15 +1,14 @@
-<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
-           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
     <!-- metadata about the application being wrapped -->
     <metadata appName="PitRemove">
-        <usage>This function takes as input an elevation data grid and outputs a hydrologically correct elevation grid
+        <usage><![CDATA[This function takes as input an elevation data grid and outputs a hydrologically correct elevation grid
             file with pits filled, using the flooding algorithm. The specified stream flow direction grid is an optional
-            input, and if input, pits will be filled consistent with drainage along specified streams.
+            input, and if input, pits will be filled consistent with drainage along specified streams.]]>
         </usage>
         <info>
             <![CDATA[
 *****************************************************
-Usage: 
+Usage:
 
 % ./pitRemove [-i <data_file_name> | -l <data_file_url>] -o <outputfilename>
 
@@ -37,12 +36,13 @@ Usage:
                     <id>demURL</id>
                     <tag>-l</tag>
                     <paramType>STRING</paramType>
-                    <textDesc>Input elevation grid file (*.tar.gz)</textDesc>
+                    <textDesc>Input elevation grid file URL (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>outputfilename</id>
                     <tag>-o</tag>
+                    <default>pitremove</default>
                     <paramType>STRING</paramType>
                     <textDesc>Name of the output elevation grid with pits filled</textDesc>
                 </param>

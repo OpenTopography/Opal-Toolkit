@@ -1,0 +1,107 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="CanopyHeightModelRasterService">
+        <usage>Generation of GeoTiff output of the CHM Raster between DSM and DTM in the same dataset</usage>
+        <info>
+            <![CDATA[
+*****************************************************
+Usage:
+canopy_height.pl
+    -i1 <input DTM file> | -l1 <input DTM url>
+    -i2 <input DSM file> | -l2 <input DSM url>
+    -o <prefix output file>
+*****************************************************
+    ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+
+            <!-- list of untagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>inputDTMFile</id>
+                    <tag>-i1</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <textDesc>Local DTM GeoTiff file upload:</textDesc>
+                </param>
+
+                <param>
+                    <id>inputDTMURL</id>
+                    <tag>-l1</tag>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>DTM data file URL:</textDesc>
+                </param>
+
+                <param>
+                    <id>inputDSMFile</id>
+                    <tag>-i2</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <textDesc>Local DSM GeoTiff file upload:</textDesc>
+                </param>
+
+                <param>
+                    <id>inputDSMURL</id>
+                    <tag>-l2</tag>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>DSM data file URL:</textDesc>
+                </param>
+
+                <param>
+                    <id>outputFile</id>
+                    <tag>-o</tag>
+                    <default>output</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Output file name without extension. Default "output"</textDesc>
+                </param>
+
+                <param>
+                    <id>unit</id>
+                    <tag>-unit</tag>
+                    <default>m</default>
+                    <paramType>STRING</paramType>
+                    <value>m</value>
+                    <value>ft</value>
+                    <textDesc>Unit of dataset in meter (m) or feet (ft)</textDesc>
+                </param>
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>DTM_files</name>
+                    <elements>inputDTMFile inputDTMURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>DTM file inputs (choose one of the following)</textDesc>
+                </group>
+
+                <group>
+                    <name>DSM_files</name>
+                    <elements>inputDSMFile inputDSMURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>DSM file inputs (choose one of the following)</textDesc>
+                </group>
+            </groups>
+        </types>
+
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/home/opentopo/apps/opal2/bin/chm_raster.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.ForkJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>

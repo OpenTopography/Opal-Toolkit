@@ -1,0 +1,121 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="RasterGMRTService">
+        <usage>Global Multi-Resolution Topography (GMRT) Data Synthesis</usage>
+        <info>
+            <![CDATA[
+Usage: [-minlongitude  West [-180, 180]
+        -minlongitude: East [-180, 180]
+        -minlatitude:  South [-85, 85]
+        -minlatitude:  North [-85, 85]
+        -format:       Output format: [geotiff | netcdf | coards | esriascii]
+        -resolution:   Output resolution [low/default | med | high | max]
+        -layer:        Fill null areas with GEBCO: [topo-mask | topo] 
+    ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+
+            <!-- list of untagged parameters -->
+            <taggedParams>
+
+                <param>
+                    <id>minlongitude</id>
+                    <tag>-minlongitude</tag>
+                    <default>-90</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Min longitude, West [-180, 180]</textDesc>
+                </param>
+
+                <param>
+                    <id>maxlongitude</id>
+                    <tag>-maxlongitude</tag>
+                    <default>-69.2578</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Max longitude, East [-180, 180]</textDesc>
+                </param>
+
+                <param>
+                    <id>minlatitude</id>
+                    <tag>-minlatitude</tag>
+                    <default>-19.4825</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Min latitude, South [-85, 85]</textDesc>
+                </param>
+
+                <param>
+                    <id>maxlatitude</id>
+                    <tag>-maxlatitude</tag>
+                    <default>-2.9928</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Max latitude, North [-85, 85]</textDesc>
+                </param>
+
+                <param>
+                    <id>format</id>
+                    <tag>-format</tag>
+                    <default>geotiff</default>
+                    <paramType>STRING</paramType>
+                    <value>geotiff</value>
+                    <value>netcdf</value>
+                    <value>coards</value>
+                    <value>esriascii</value>
+                    <textDesc>Output format</textDesc>
+                </param>
+
+                <param>
+                    <id>resolution</id>
+                    <tag>-resolution</tag>
+                    <default>default</default>
+                    <paramType>STRING</paramType>
+                    <value>default</value>
+                    <value>med</value>
+                    <value>high</value>
+                    <value>max</value>
+                    <textDesc>Output resolution</textDesc>
+                </param>
+
+                <param>
+                    <id>layer</id>
+                    <tag>-layer</tag>
+                    <default>topo</default>
+                    <paramType>STRING</paramType>
+                    <value>topo</value>
+                    <value>topo-mask</value>
+                    <textDesc>Fill null areas with GEBCO</textDesc>
+                </param>
+
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+
+                <group>
+                    <name>params</name>
+                    <elements>minlongitude maxlongitude minlatitude maxlatitude format resolution layer</elements>
+                    <required>true</required>
+                    <textDesc>Input Parameters</textDesc>
+                </group>
+            </groups>
+        </types>
+
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/home/opentopo/apps/opal2/bin/gmrt.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>
+

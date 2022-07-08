@@ -1,5 +1,4 @@
-<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
-           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
     <!-- metadata about the application being wrapped -->
     <metadata appName="D8flowdir">
         <usage>Creates 2 grids. The first contains the flow direction from each grid cell to one of its adjacent or
@@ -31,19 +30,20 @@ Usage:
                     <tag>-i</tag>
                     <paramType>FILE</paramType>
                     <ioType>INPUT</ioType>
-                    <textDesc>carved or pit filled input elevation file. (*.tar.gz)</textDesc>
+                    <textDesc>carved or pit filled input elevation file (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>demURL</id>
                     <tag>-l</tag>
                     <paramType>STRING</paramType>
-                    <textDesc>carved or pit filled input elevation file. (*.tar.gz)</textDesc>
+                    <textDesc>carved or pit filled input elevation file URL (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>outputfilename1</id>
                     <tag>-p</tag>
+                    <default>d8flowdir</default>
                     <paramType>STRING</paramType>
                     <textDesc>Name of output. D8 flow direction output file.</textDesc>
                 </param>
@@ -51,6 +51,7 @@ Usage:
                 <param>
                     <id>outputfilename2</id>
                     <tag>-s</tag>
+                    <default>d8flowslope</default>
                     <paramType>STRING</paramType>
                     <textDesc>Name of the output. D8 slope file (output).</textDesc>
                 </param>

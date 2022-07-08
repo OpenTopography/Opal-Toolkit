@@ -1,0 +1,100 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="UsgsSelectService">
+        <usage>Selection of point cloud data from LAS-based back-end given a bounding box. Uses LASTools with indexing support</usage>
+        <info>
+            <![CDATA[
+usgsSelect Usage:
+usgsSelect
+                -minx <x1>
+                -miny <y1>
+                -maxx <x2>
+                -maxy <y2>
+	-id <USGS_Dataset_ID>
+                -outputCode <epsg>
+        ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+            <!-- list of tagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>id</id>
+                    <tag>-id</tag>
+                    <default>AK_BrooksCamp_2012</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>USGS Dataset ID</textDesc>
+                </param>
+
+                <param>
+                    <id>outputCode</id>
+                    <tag>-outputCode</tag>
+                    <default>3857</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Reproject output EPSG Code</textDesc>
+                </param>
+
+                <param>
+                    <id>minx</id>
+                    <tag>-minx</tag>
+                    <default>-17344440.7</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Min X for the bounding box</textDesc>
+                </param>
+
+                <param>
+                    <id>miny</id>
+                    <tag>-miny</tag>
+                    <default>8087572.6</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Min Y for the bounding box</textDesc>
+                </param>
+
+                <param>
+                    <id>maxx</id>
+                    <tag>-maxx</tag>
+                    <default>-17343676.3</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Max X for the bounding box</textDesc>
+                </param>
+
+                <param>
+                    <id>maxy</id>
+                    <tag>-maxy</tag>
+                    <default>8088260.5</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Max Y for the bounding box</textDesc>
+                </param>
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>box</name>
+                    <elements>minx miny maxx maxy</elements>
+                    <required>true</required>
+                    <textDesc>Bounding Box Selection</textDesc>
+                </group>
+            </groups>
+        </types>
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/data/apps/opal2/bin/usgsSelect.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>

@@ -1,33 +1,32 @@
-<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
-           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <metadata  appName="cat">
-    <usage><![CDATA[Concatenate files and print on the standard output ]]></usage>
-    <info xsd:type="xsd:string"> <![CDATA[ cat [-n] [filename] ]]> </info>
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <metadata appName="cat">
+        <usage><![CDATA[Concatenate files and print on the standard output ]]></usage>
+        <info> <![CDATA[ cat [-n] [filename] ]]> </info>
 
-    <types>
+        <types>
 
-        <flags>
-            <flag>
-                <id>number</id>
-                <tag>-n</tag>
-                <textDesc>print line number</textDesc>
-                <default>false</default>
-            </flag>
-    </flags>
+            <flags>
+                <flag>
+                    <id>number</id>
+                    <tag>-n</tag>
+                    <default>false</default>
+                    <textDesc>print line number</textDesc>
+                </flag>
+            </flags>
 
-        <untaggedParams>
-            <param>
-                <id>inFile</id>
-                <paramType>FILE</paramType>
-                <ioType>INPUT</ioType>
-                <required>true</required>
-                <textDesc><![CDATA[Input file to cat.]]></textDesc>
-            </param>
-        </untaggedParams>
+            <untaggedParams>
+                <param>
+                    <id>inFile</id>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <required>true</required>
+                    <textDesc><![CDATA[Input file to cat.]]></textDesc>
+                </param>
+            </untaggedParams>
 
-    </types>
+        </types>
 
-  </metadata>
-  <binaryLocation>/bin/cat</binaryLocation>
-  <parallel>false</parallel>
+    </metadata>
+    <binaryLocation>/bin/cat</binaryLocation>
+    <parallel>false</parallel>
 </appConfig>

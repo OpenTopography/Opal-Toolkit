@@ -1,0 +1,110 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="VerticalDifferencingService">
+        <usage>Generation of GeoTiff output of the vertical differencing between 2 datasets in the same location at
+            different time
+        </usage>
+        <info>
+            <![CDATA[
+*****************************************************
+Usage: 
+vertical_differencing.pl
+    -i1 <input reference file> | -l1 <input reference url> 
+    -i2 <input compared file> | -l2 <input compared url> 
+    -o <prefix output file> 
+*****************************************************
+    ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+
+            <!-- list of untagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>inputRefFile</id>
+                    <tag>-i1</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <textDesc>Local reference GeoTiff file upload:</textDesc>
+                </param>
+
+                <param>
+                    <id>inputRefURL</id>
+                    <tag>-l1</tag>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Reference data file URL:</textDesc>
+                </param>
+
+                <param>
+                    <id>inputCmpFile</id>
+                    <tag>-i2</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <textDesc>Local compared GeoTiff file upload:</textDesc>
+                </param>
+
+                <param>
+                    <id>inputCmpURL</id>
+                    <tag>-l2</tag>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Compared data file URL:</textDesc>
+                </param>
+
+                <param>
+                    <id>outputFile</id>
+                    <tag>-o</tag>
+                    <default>output</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Output file name without extension. Default "output"</textDesc>
+                </param>
+
+                <param>
+                    <id>unit</id>
+                    <tag>-unit</tag>
+                    <default>m</default>
+                    <paramType>STRING</paramType>
+                    <value>m</value>
+                    <value>ft</value>
+                    <textDesc>Unit of dataset in meter (m) or feet (ft)</textDesc>
+                </param>
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>ref_files</name>
+                    <elements>inputRefFile inputRefURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>Reference file inputs (choose one of the following)</textDesc>
+                </group>
+
+                <group>
+                    <name>cmp_files</name>
+                    <elements>inputCmpFile inputCmpURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>Compared file inputs (choose one of the following)</textDesc>
+                </group>
+            </groups>
+        </types>
+
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/home/opentopo/apps/opal2/bin/vertical_differencing.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>
+

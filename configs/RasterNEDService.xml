@@ -1,0 +1,116 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="RasterNEDService">
+        <usage>Selection of raster DEM data from raster-based back-end given a bounding box. Uses the GDAL software</usage>
+        <info>
+            <![CDATA[
+    RasterNEDService Usage:
+    RasterNEDService
+            -minlon <minlon>
+            -minlat <minlat>
+            -maxlon <maxlon>
+            -maxlat <maxlat>
+            -output <output> Output file name without extension
+            -opentopoID <NED_opentopoID> NED opentopoID
+            -of <outputFormat> include GTiff for GeoTiff, AAIGrid for Arch Info Grid, HFA for Erdas Imagine
+    ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+            <!-- list of tagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>opentopoID</id>
+                    <tag>-opentopoID</tag>
+                    <default>OTNED.012021.4269.2</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>opentopoID for this NED dataset</textDesc>
+                </param>
+
+                <param>
+                    <id>of</id>
+                    <tag>-of</tag>
+                    <default>GTiff</default>
+                    <paramType>STRING</paramType>
+                    <required>false</required>
+                    <textDesc>Output Format(GTiff for GeoTiff (default), AAIGrid for Arch Info Grid, HFA for Erdas Imagine)</textDesc>
+                </param>
+
+                <param>
+                    <id>output</id>
+                    <tag>-output</tag>
+                    <default>output</default>
+                    <paramType>STRING</paramType>
+                    <required>false</required>
+                    <textDesc>Output file name without extension, default: "output"</textDesc>
+                </param>
+
+                <param>
+                    <id>minlon</id>
+                    <tag>-minlon</tag>
+                    <default>-124</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Min Longitude for the bounding box</textDesc>
+                </param>
+
+                <param>
+                    <id>minlat</id>
+                    <tag>-minlat</tag>
+                    <default>45</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Min Latitude for the bounding box</textDesc>
+                </param>
+
+                <param>
+                    <id>maxlon</id>
+                    <tag>-maxlon</tag>
+                    <default>-121</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Max Longitude for the bounding box</textDesc>
+                </param>
+
+                <param>
+                    <id>maxlat</id>
+                    <tag>-maxlat</tag>
+                    <default>46</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Max Latitude for the bounding box</textDesc>
+                </param>
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>params</name>
+                    <elements>opentopoID of output</elements>
+                    <textDesc>Dataset Information</textDesc>
+                </group>
+
+                <group>
+                    <name>box</name>
+                    <elements>minlon minlat maxlon maxlat</elements>
+                    <required>true</required>
+                    <textDesc>Bounding Box Selection</textDesc>
+                </group>
+            </groups>
+        </types>
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/home/opentopo/apps/opal2/bin/RasterNEDService.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.ForkJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>

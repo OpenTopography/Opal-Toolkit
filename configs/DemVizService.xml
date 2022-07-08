@@ -1,0 +1,100 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+  <!-- metadata about the application being wrapped -->
+  <metadata appName="DemVizService">
+    <usage>Generation of rasters and KMLs using GDAL</usage>
+    <info>
+    <![CDATA[
+Usage: [-al altitude][-az azimuth][-c yes|no] -e epsg_code -i input_url
+        -al:    Altitude of the light, in degrees. Default: 45
+        -az:    Azimuth of the light, in degrees. Default: 315
+        -e:     EPSG code for input data
+        -i:     URL for DEM file in arcGIS (.asc) format
+        -c:     Generate color-reliefs and merged color-relief/hillshades
+    ]]>
+    </info>
+
+    <!-- information about command-line arguments -->
+    <types>
+
+        <!-- list of untagged parameters -->
+        <taggedParams>
+
+            <param>
+                <id>altitude</id>
+                <tag>-al</tag>
+                <paramType>FLOAT</paramType>
+                <required>false</required>
+                <textDesc>Altitude of the light, in degrees</textDesc>
+            </param>
+
+            <param>
+                <id>azimuth</id>
+                <tag>-az</tag>
+                <paramType>FLOAT</paramType>
+                <required>false</required>
+                <textDesc>Azimuth of the light, in degrees</textDesc>
+            </param>
+
+            <param>
+                <id>code</id>
+		        <tag>-e</tag>
+                <paramType>STRING</paramType>
+                <required>true</required>
+                <textDesc>EPSG code for input</textDesc>
+            </param>
+
+            <param>
+                <id>inputURL</id>
+		        <tag>-i</tag>
+                <paramType>STRING</paramType>
+                <required>false</required>
+                <textDesc>URL for DEM file in arcGIS format</textDesc>
+            </param>
+
+            <param>
+               	<id>inColor</id>
+                <tag>-c</tag>
+                <default>no</default>
+                <paramType>STRING</paramType>
+                <value>yes</value>
+                <value>no</value>
+                <textDesc>Generate additional color-relief and colored hillshades</textDesc>
+            </param>
+
+        </taggedParams>
+
+        <!-- grouping of parameters -->
+        <groups>
+
+          <group>
+            <name>params</name>
+            <elements>inputURL code</elements>
+            <required>true</required>
+            <textDesc>Input Parameters</textDesc>
+          </group>
+
+          <group>
+            <name>params2</name>
+            <elements>altitude azimuth inColor</elements>
+            <required>false</required>
+            <textDesc>Optional Parameters</textDesc>
+          </group>
+
+        </groups>
+    </types>
+
+  </metadata>
+
+  <!-- location of execution on the server -->
+  <binaryLocation>/home/opentopo/apps/opal2/bin/dem_viz.pl</binaryLocation>
+
+  <!-- do not validate arguments for now -->
+  <validateArgs>false</validateArgs>
+
+  <!-- overrule default job manager, if need be -->
+  <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+  <!-- whether this application is serial or parallel -->
+  <parallel>false</parallel>
+</appConfig>
+

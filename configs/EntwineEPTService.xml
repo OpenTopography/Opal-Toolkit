@@ -1,0 +1,86 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="EntwineEPTService">
+        <usage>Entwine is a data organization library for massive point clouds, designed to conquer datasets of hundreds of billions of
+            points as well as desktop-scale point clouds. Entwine can index anything that is PDAL-readable, and can read/write to a variety of sourc
+            es like S3 or Dropbox. Builds are completely lossless, so no points will be discarded even for terabyte-scale datasets.
+
+            EntwineEPTService is a software code that wrap the entwine library and build the index for OpenTopography data and make the outp
+            ut ready for Greyhound streaming server
+        </usage>
+        <info>
+            <![CDATA[
+*****************************************************
+Usage:
+EntwineEPTService.pl
+    -i <input file> | -l <input url>
+    -o <prefix output ID>
+
+All parameters are presented in any order.
+Either -i or -l must be specified, but not both at the same time.
+*****************************************************
+    ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+            <!-- list of flags -->
+            <!-- list of tagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>inputFile</id>
+                    <tag>-i</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <textDesc>Local file upload (Laz or Las):</textDesc>
+                </param>
+
+                <param>
+                    <id>inputURL</id>
+                    <tag>-l</tag>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Data file URL:</textDesc>
+                </param>
+
+                <param>
+                    <id>outputID</id>
+                    <tag>-o</tag>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Output ID for Greyhound server.</textDesc>
+                </param>
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>Input</name>
+                    <elements>inputFile inputURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>Inputs (One of the following). Files must be in LAS or LAZ format</textDesc>
+                </group>
+                <group>
+                    <name>Output</name>
+                    <elements>outputID</elements>
+                    <required>true</required>
+                    <textDesc>Output ID</textDesc>
+                </group>
+
+            </groups>
+        </types>
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/home/opentopo/apps/opal2/bin/EntwineEPTService.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>

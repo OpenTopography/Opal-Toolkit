@@ -1,0 +1,143 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="Las2DemService">
+        <usage>Las2Dem is a software code that performs generation of Digital Elevation Models (DEMs) for point cloud
+            data LAS/LAZ format, triangulates them temporarily into a TIN, and then rasters the TIN onto a DEM.
+        </usage>
+        <info>
+            <![CDATA[
+*****************************************************
+Usage:
+Las2DemService.pl 
+    -i <input file> | -l <input url> 
+    -o <prefix output file> 
+    -f <output format: asc | bil | img | png, optional, default: asc >
+    -kill <kill triangles of n size, optional, default: 100> 
+    -step <raster with stepsize, optional, default: 1> 
+
+All parameters are presented in any order.
+Either -i or -l must be specified, but not both at the same time.
+*****************************************************
+    ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+            <!-- list of flags -->
+            <!-- list of tagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>inputFile</id>
+                    <tag>-i</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <textDesc>Local file upload:</textDesc>
+                </param>
+
+                <param>
+                    <id>inputURL</id>
+                    <tag>-l</tag>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Data file URL:</textDesc>
+                </param>
+
+                <param>
+                    <id>outputFile</id>
+                    <tag>-o</tag>
+                    <default>output</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>Output file name without extension. Default "output"</textDesc>
+                </param>
+
+                <param>
+                    <id>outputFormat</id>
+                    <tag>-f</tag>
+                    <default>tif</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <value>asc</value>
+                    <value>bil</value>
+                    <value>img</value>
+                    <value>flt</value>
+                    <value>xyz</value>
+                    <value>dtm</value>
+                    <value>tif</value>
+                    <value>png</value>
+                    <value>jpg</value>
+                    <textDesc>Output type</textDesc>
+                </param>
+                <!--
+                            <param>
+                                <id>resolution</id>
+                                <tag>-g</tag>
+                                <paramType>FLOAT</paramType>
+                                <default>1</default>
+                                <textDesc>The resolution is set to the specified value. Uses square grids</textDesc>
+                            </param>
+                -->
+                <param>
+                    <id>step</id>
+                    <tag>-step</tag>
+                    <default>1</default>
+                    <paramType>FLOAT</paramType>
+                    <textDesc>raster with stepsize. Default 1</textDesc>
+                </param>
+
+                <param>
+                    <id>kill</id>
+                    <tag>-kill</tag>
+                    <default>100</default>
+                    <paramType>FLOAT</paramType>
+                    <textDesc>Kills triangles with at least one side of length greater than value. Default 100
+                    </textDesc>
+                </param>
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>inputfiles</name>
+                    <elements>inputFile inputURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>Inputs (One of the following). Files must be in LAS or LAZ format</textDesc>
+                </group>
+                <group>
+                    <name>outputfiles</name>
+                    <elements>outputFile outputFormat</elements>
+                    <required>true</required>
+                    <textDesc>Output File</textDesc>
+                </group>
+
+                <group>
+                    <name>Parameters</name>
+                    <elements>kill step</elements>
+                    <textDesc>Parameters</textDesc>
+                </group>
+                <!--
+                                <group>
+                                   <name>params</name>
+                                    <elements>resolution killt outputFormat</elements>
+                                    <required>true</required>
+                                    <textDesc>Parameters</textDesc>
+                                </group>
+                -->
+            </groups>
+        </types>
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/home/opentopo/apps/opal2/bin/las2dem.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>
+

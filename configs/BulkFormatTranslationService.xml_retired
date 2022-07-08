@@ -1,0 +1,100 @@
+<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
+           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- metadata about the application being wrapped -->
+  <metadata appName="BulkFormatTranslationService">
+    <usage>Bulk translation of ARC Grid files to GeoTIFF and HFA formats</usage>
+    <info>
+    <![CDATA[
+Usage: -f [GTiff|HFA|all] -e EPSG_CODE -l input_url -j jobID -k
+       -f: output format (GTiff, HFA or all)
+       -e: EPSG code for input file
+       -l: input URL (tar.gz) to download and translate
+       -j: (local) opal jobID for inputs to translate
+       -k: keep original input files, do not delete
+    ]]>
+    </info>
+
+    <!-- information about command-line arguments -->
+    <types> 
+
+      <flags>
+	<flag>
+	  <id>keepInputs</id>
+	  <tag>-k</tag>
+	  <textDesc>Keep original input files</textDesc> 
+	</flag>
+      </flags>
+
+
+        <!-- list of untagged parameters -->
+        <taggedParams>
+            <param>
+                <id>format</id>
+		<tag>-f</tag>
+                <paramType>STRING</paramType>
+                <textDesc>Output format</textDesc> 
+                <required>true</required>
+                <value>GTiff</value>
+                <value>HFA</value>
+                <value>all</value>
+		<default>GTiff</default>
+            </param>
+
+            <param>
+                <id>code</id>
+		<tag>-e</tag>
+                <paramType>STRING</paramType>
+                <textDesc>EPS code for input</textDesc> 
+                <required>true</required>
+		<default>32610</default>
+            </param>
+
+            <param>
+                <id>inputURL</id>
+		<tag>-l</tag>
+                <paramType>STRING</paramType>
+                <textDesc>Input URL (tar.gz) to download and translate</textDesc> 
+                <required>false</required>
+            </param>
+
+            <param>
+                <id>jobID</id>
+		<tag>-j</tag>
+                <paramType>STRING</paramType>
+                <textDesc>Opal jobID for inputs to translate</textDesc> 
+                <required>false</required>
+            </param>
+        </taggedParams>
+    
+        <!-- grouping of parameters -->
+        <groups>
+          <group>
+            <name>files</name>
+            <elements>inputURL jobID</elements>
+            <textDesc>Input Files (Choose one of the following)</textDesc>
+          </group>
+
+          <group>
+            <name>params</name>
+            <elements>format code keepInputs</elements>
+            <required>true</required>
+            <textDesc>Input Parameters</textDesc>
+          </group>
+        </groups>
+    </types>
+
+  </metadata>
+
+  <!-- location of execution on the server -->
+  <binaryLocation>/home/opentopo/apps/opal2/bin/bulk_translation.pl</binaryLocation>
+  
+  <!-- do not validate arguments for now -->
+  <validateArgs>false</validateArgs>
+
+  <!-- overrule default job manager, if need be -->
+  <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+  <!-- whether this application is serial or parallel -->
+  <parallel>false</parallel>
+</appConfig>
+

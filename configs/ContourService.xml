@@ -1,0 +1,129 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="ContourService">
+        <usage>Take in a DEM and perform a gaussian smooth. The smoothed DEM is then used as input to the contour module.</usage>
+        <info>
+            <![CDATA[
+Usage: -i [input_file] | -l [input_url]: DEM file (GTiff or HFA), can be zip, tar, tar.gz or single file
+       -sigma [0 | 1 | 3 | 5 | 7]: The contour sigma
+       -radius [0 | 3 | 5 | 7 | 9 | 11]: The contour radius in meter
+       -interval [contour_Interval]
+       -outputType [Shapefile | DXF | GPKG]
+       -grid: The grid option on/off
+    ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+            <flags>
+                <flag>
+                    <id>grid</id>
+                    <tag>-grid</tag>
+                    <default>true</default>
+                    <textDesc>Output smoothed DEM, that is used to create the contours will also be written out. </textDesc>
+                </flag>
+            </flags>
+
+            <!-- list of tagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>input</id>
+                    <tag>-i</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <required>false</required>
+                    <textDesc>Local upload input file</textDesc>
+                </param>
+
+                <param>
+                    <id>inputURL</id>
+                    <tag>-l</tag>
+                    <paramType>STRING</paramType>
+                    <required>false</required>
+                    <textDesc>URL of input(s) - can be zip, tar, tar.gz or single file</textDesc>
+                </param>
+
+                <param>
+                    <id>sigma</id>
+                    <tag>-sigma</tag>
+                    <default>3</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <value>0</value>
+                    <value>1</value>
+                    <value>3</value>
+                    <value>5</value>
+                    <value>7</value>
+                    <textDesc>DEM gaussian sigma. [Default: 3]</textDesc>
+                </param>
+
+                <param>
+                    <id>radius</id>
+                    <tag>-radius</tag>
+                    <default>7</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <value>0</value>
+                    <value>3</value>
+                    <value>5</value>
+                    <value>7</value>
+                    <value>9</value>
+                    <value>11</value>
+                    <textDesc>DEM gaussian radius (in meter). [Default: 7]</textDesc>
+                </param>
+
+                <param>
+                    <id>interval</id>
+                    <tag>-interval</tag>
+                    <default>2.5</default>
+                    <paramType>FLOAT</paramType>
+                    <required>true</required>
+                    <textDesc>Contour interval. [Default: 2.5]</textDesc>
+                </param>
+
+                <param>
+                    <id>outputType</id>
+                    <tag>-outputType</tag>
+                    <default>Shapefile</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <value>Shapefile</value>
+                    <value>DXF</value>
+                    <value>GPKG</value>
+                    <textDesc>Output file type</textDesc>
+                </param>
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>files</name>
+                    <elements>input inputURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>File Inputs (choose one of the following)</textDesc>
+                </group>
+
+                <group>
+                    <name>params</name>
+                    <elements>sigma radius interval outputType grid</elements>
+                    <required>true</required>
+                    <textDesc>Input Parameters</textDesc>
+                </group>
+            </groups>
+        </types>
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/home/opentopo/apps/opal2/bin/ContourService.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <!-- <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.ForkJobManager</jobManagerFQCN> -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>

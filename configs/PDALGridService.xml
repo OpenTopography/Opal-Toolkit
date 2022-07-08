@@ -1,0 +1,204 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+  <!-- metadata about the application being wrapped -->
+  <metadata appName="PDALGridService">
+    <usage>PDAL - Point Data Abstraction Library — is a library for translating and manipulating point cloud data. PDAL's GDAL writer creates a raster Digital Elevation Model (DEM) from a point cloud using an interpolation algorithm (min, max, mean, idw) as well as raster stats calculations (count, stdev).</usage>
+    <info>
+    <![CDATA[
+*****************************************************
+Usage:
+This replaces the CRELL P2G implementation with a PDAL solution that supports LAS v1.4
+
+% ./pdal-grid.pl [--readers.las.filename=<data_file_name> | —-inputURL=<data_file_url>]
+  [—-outputType=min|max|mean|idw|count|stdev|all] [--filePrefix <output_filename_prefix>] 
+  --writers.gdal.gdaldriver=[GTiff|HFA|ENVI] --writers.gdal.resolution=<value> 
+  [--writers.gdal.radius=<value>] [--writers.gdal.window_size=<value>]
+
+% docker run -v /path/to/working/dir:/data -v /path/to/pipeline/file:/settings 
+  -t pdal/pdal pdal /settings/pdal_grid_defaults.json --readers.las.filename=<data_file_name> 
+  [—-writers.gdal.output_type=min|max|mean|idw|count|stdev|all] --writers.gdal.gdaldriver=[GTiff|HFA|ENVI] 
+  --writers.gdal.resolution=<value> [--writers.gdal.radius=<value>] 
+  [--writers.gdal.window_size=<value>] [--writers.gdal.gdalopts="KEY0=VALUE0,KEY1=VALUE1,..."] 
+  —-writers.gdal.filename=<filename>
+
+ 
+1. --readers.las.filename=<data_file_name> | —-inputURL=<data_file_url>*
+    Must be a las (all versions) or laz (v1.2) file. 
+
+2. —-outputType - Interpolation method
+    min: Give the cell the minimum value of all points within the given radius.
+    max: Give the cell the maximum value of all points within the given radius.
+    mean: Give the cell the mean value of all points within the given radius.
+    idw: Cells are assigned a value based on Shepard’s inverse distance weighting algorithm, 
+         considering all points within the given radius.
+    count: Give the cell the number of points that lie within the given radius.
+    stdev: Give the cell the population standard deviation of the points that lie within the given radius.
+
+3. --filePrefix
+    Prefix to append to output file. E.g. output —-> output_min.img, output_min.aux.xml, etc. [Default: output]
+
+4. --writers.gdal.gdaldriver - Output file type
+    GTiff: GeoTiff, .tif [Default]
+    HFA: Erdas Imagine, .img
+    ENVI: ENVI Labelled Raster, .hdr
+
+5. --writers.gdal.resolution - Resolution
+    Length of raster cell edges in X/Y units. [Default: 1]
+
+6. —-writers.gdal.radius - Radius
+    Radius about cell center bounding points to use to calculate a cell value. [Default: resolution * sqrt(2)]
+
+7. —-writers.gdal.gdalopts
+     A list of key/value options to pass directly to the GDAL driver. 
+     The format is name=value,name=value,... The option may be specified any number of times.
+
+*****************************************************
+    ]]>
+    </info>
+
+    <!-- information about command-line arguments -->
+    <types>
+
+	<!-- list of tagged parameters -->
+        <taggedParams>
+          <separator>=</separator>
+            <param>
+                <id>output_type</id>
+                <tag>--outputType</tag>
+                <default>min max mean</default>
+                <paramType>STRING</paramType>
+                <value>min</value>
+                <value>max</value>
+                <value>mean</value>
+                <value>idw</value>
+                <value>count</value>
+                <value>stdev</value>
+                <value>all</value>
+                <value>min max mean</value>
+                <textDesc><![CDATA[ 'all' generates a multi-layer raster using all gridding algorithms<br> 'min' generates Zmin values<br> 'max' generates Zmax values<br> 'mean' generates Zmean values<br> 'idw' generates idw values<br> 'count' generates count values<br> 'stdev' generates standard deviation values<br>]]></textDesc>
+            </param>
+
+            <param>
+                <id>inputFile</id>
+                <tag>--readers.las.filename</tag>
+                <paramType>FILE</paramType>
+                <ioType>INPUT</ioType>
+                <textDesc><![CDATA[ Data file name: for inputs less than 10MB]]></textDesc>
+            </param>
+
+            <param>
+                <id>inputURL</id>
+                <tag>--inputURL</tag>
+                <paramType>STRING</paramType>
+                <textDesc><![CDATA[ Data file URL: for inputs greater than 10MB]]></textDesc>
+            </param>
+
+            <param>
+                <id>outputFile</id>
+                <tag>--filePrefix</tag>
+                <default>output</default>
+                <paramType>STRING</paramType>
+                <required>true</required>
+                <textDesc>Output file name prefix, i.e. if you want the output file to be test.tif, this parameter shoud be "test"</textDesc>
+            </param>
+
+            <param>
+                <id>output_format</id>
+                <tag>--writers.gdal.gdaldriver</tag>
+                <default>GTiff</default>
+                <paramType>STRING</paramType>
+                <value>GTiff</value>
+                <value>ENVI</value>
+                <value>HFA</value>
+                <textDesc><![CDATA[ 'GTiff' (default) generates a GeoTiff (.tif)<br> 'ENVI' generates an ENVI Labelled Raster (.hdr)<br> 'HFA' generates an Erdas Imagine (.img)<br> The default value is 'GTiff']]></textDesc>
+            </param>
+
+            <param>
+                <id>radius</id>
+                <tag>--writers.gdal.radius</tag>
+                <paramType>FLOAT</paramType>
+                <required>false</required>
+                <textDesc>Radius about cell center bounding points to use to calculate a cell value. [Default: resolution * sqrt(2)]</textDesc>
+            </param>
+
+            <param>
+                <id>resolution</id>
+                <tag>--writers.gdal.resolution</tag>
+                <default>1</default>
+                <paramType>FLOAT</paramType>
+                <required>true</required>
+                <textDesc>Length of raster cell edges in X/Y units. [Required]</textDesc>
+            </param>
+
+            <param>
+                <id>fill_window_size</id>
+                <tag>--writers.gdal.window_size</tag>
+                <default>0</default>
+                <paramType>INT</paramType>
+                <textDesc>The maximum distance from a donor cell to a target cell when applying the fallback interpolation method. [Default: 0]</textDesc>
+            </param>
+
+        </taggedParams>
+
+        <!-- grouping of parameters -->
+        <groups>
+          <group>
+            <name>inputfiles</name>
+            <elements>inputFile inputURL</elements>
+            <required>true</required>
+            <exclusive>true</exclusive>
+            <textDesc>Inputs (One of the following). Files must be in LAS or LAZ format</textDesc>
+          </group>
+
+          <group>
+            <name>outputfiles</name>
+            <elements>outputFile</elements>
+            <required>false</required>
+            <textDesc>Output File</textDesc>
+          </group>
+
+          <group>
+            <name>formatGroup</name>
+            <elements>output_format</elements>
+            <required>false</required>
+            <textDesc>Output Format</textDesc>
+          </group>
+
+          <group>
+            <name>outputs</name>
+            <elements>output_type</elements>
+            <required>false</required>
+            <exclusive>false</exclusive>
+            <textDesc>DEM Gridding Algorithm</textDesc>
+          </group>
+
+          <group>
+            <name>filling</name>
+            <elements>fill_window_size</elements>
+            <required>true</required>
+            <textDesc>Null Filling</textDesc>
+          </group>
+
+          <group>
+            <name>params</name>
+            <elements>radius resolution</elements>
+            <required>false</required>
+            <textDesc>Interp Parameters</textDesc>
+          </group>
+        </groups>
+    </types>
+
+  </metadata>
+
+  <!-- location of execution on the server -->
+  <binaryLocation>/home/opentopo/apps/opal2/bin/pdal_grid.pl</binaryLocation>
+
+  <!-- do not validate arguments for now -->
+  <validateArgs>false</validateArgs>
+
+  <!-- overrule default job manager, if need be -->
+  <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+  <!-- whether this application is serial or parallel -->
+  <parallel>false</parallel>
+</appConfig>
+

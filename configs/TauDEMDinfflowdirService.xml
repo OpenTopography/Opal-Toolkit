@@ -1,5 +1,4 @@
-<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
-           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
     <!-- metadata about the application being wrapped -->
     <metadata appName="Dinfflowdir">
         <usage>Assigns a flow direction based on the D-infinity flow method using the steepest slope of a triangular
@@ -30,19 +29,20 @@ Usage:
                     <tag>-i</tag>
                     <paramType>FILE</paramType>
                     <ioType>INPUT</ioType>
-                    <textDesc>carved or pit filled input elevation file. (*.tar.gz)</textDesc>
+                    <textDesc>carved or pit filled input elevation file (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>demURL</id>
                     <tag>-l</tag>
                     <paramType>STRING</paramType>
-                    <textDesc>carved or pit filled input elevation file. (*.tar.gz)</textDesc>
+                    <textDesc>carved or pit filled input elevation file URL (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>outputfilename1</id>
                     <tag>-a</tag>
+                    <default>dinfflowdir</default>
                     <paramType>STRING</paramType>
                     <textDesc>Name of output. D-infinity flow direction output file</textDesc>
                 </param>
@@ -50,6 +50,7 @@ Usage:
                 <param>
                     <id>outputfilename2</id>
                     <tag>-s</tag>
+                    <default>dinfflowslope</default>
                     <paramType>STRING</paramType>
                     <textDesc>Name of the output. D-infinity slope file (output)</textDesc>
                 </param>

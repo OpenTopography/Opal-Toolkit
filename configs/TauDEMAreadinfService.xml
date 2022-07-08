@@ -1,5 +1,4 @@
-<appConfig xmlns="http://nbcr.sdsc.edu/opal/types"
-           xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
     <!-- metadata about the application being wrapped -->
     <metadata appName="AreaDinf">
         <usage>Calculates a grid of specific catchment area which is the contributing area per unit contour length using
@@ -30,19 +29,20 @@ Usage:
                     <id>ademURL</id>
                     <tag>-a</tag>
                     <paramType>STRING</paramType>
-                    <textDesc>D-infinity flow direction input file (*.tar.gz)</textDesc>
+                    <textDesc>D-infinity flow direction input file URL (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>wdemURL</id>
                     <tag>-w</tag>
                     <paramType>STRING</paramType>
-                    <textDesc>Optional weight grid input file (*.tar.gz)</textDesc>
+                    <textDesc>Optional weight grid input file URL (*.tar.gz)</textDesc>
                 </param>
 
                 <param>
                     <id>outputfilename</id>
                     <tag>-o</tag>
+                    <default>areadinf</default>
                     <paramType>STRING</paramType>
                     <textDesc>Name of D-infinity contributing area file</textDesc>
                 </param>

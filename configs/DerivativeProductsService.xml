@@ -1,0 +1,92 @@
+<appConfig targetNamespace="http://nbcr.sdsc.edu/opal/types">
+    <!-- metadata about the application being wrapped -->
+    <metadata appName="DerivativeProductsService">
+        <usage>Generation of hillshades and slopes for DEMs using GDAL</usage>
+        <info>
+            <![CDATA[
+Usage: -f [GTiff|HFA] -e EPSG_CODE -i input_file -l input_url
+       -f: output format (GTiff or HFA)
+       -e: EPSG code for input file
+       -i: input file to translate
+       -l: url of input(s) to translate - can be zip, tar, tar.gz or single file
+    ]]>
+        </info>
+
+        <!-- information about command-line arguments -->
+        <types>
+
+            <!-- list of untagged parameters -->
+            <taggedParams>
+                <param>
+                    <id>format</id>
+                    <tag>-f</tag>
+                    <default>GTiff</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <value>GTiff</value>
+                    <value>HFA</value>
+                    <textDesc>Output format</textDesc>
+                </param>
+
+                <param>
+                    <id>code</id>
+                    <tag>-e</tag>
+                    <default>32610</default>
+                    <paramType>STRING</paramType>
+                    <required>true</required>
+                    <textDesc>EPS code for input</textDesc>
+                </param>
+
+                <param>
+                    <id>input</id>
+                    <tag>-i</tag>
+                    <paramType>FILE</paramType>
+                    <ioType>INPUT</ioType>
+                    <required>false</required>
+                    <textDesc>Input file to translate</textDesc>
+                </param>
+
+                <param>
+                    <id>inputURL</id>
+                    <tag>-l</tag>
+                    <paramType>STRING</paramType>
+                    <required>false</required>
+                    <textDesc>URL of input(s) to translate - can be zip, tar, tar.gz or single file</textDesc>
+                </param>
+
+            </taggedParams>
+
+            <!-- grouping of parameters -->
+            <groups>
+                <group>
+                    <name>files</name>
+                    <elements>input inputURL</elements>
+                    <required>true</required>
+                    <exclusive>true</exclusive>
+                    <textDesc>File Inputs (choose one of the following)</textDesc>
+                </group>
+
+                <group>
+                    <name>params</name>
+                    <elements>format code</elements>
+                    <required>true</required>
+                    <textDesc>Input Parameters</textDesc>
+                </group>
+            </groups>
+        </types>
+
+    </metadata>
+
+    <!-- location of execution on the server -->
+    <binaryLocation>/home/opentopo/apps/opal2/bin/derivativeProducts.pl</binaryLocation>
+
+    <!-- do not validate arguments for now -->
+    <validateArgs>false</validateArgs>
+
+    <!-- overrule default job manager, if need be -->
+    <jobManagerFQCN>edu.sdsc.nbcr.opal.manager.PBSJobManager</jobManagerFQCN>
+
+    <!-- whether this application is serial or parallel -->
+    <parallel>false</parallel>
+</appConfig>
+
