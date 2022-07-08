@@ -8,26 +8,26 @@ import junit.framework.Test;
 
 import java.util.Date;
 
-import edu.sdsc.nbcr.opal.StatusOutputType;
-import edu.sdsc.nbcr.opal.JobStatisticsType;
-import edu.sdsc.nbcr.opal.JobOutputType;
-import edu.sdsc.nbcr.opal.OutputFileType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.JobStatisticsType;
+import edu.sdsc.nbcr.opal.types.JobOutputType;
+import edu.sdsc.nbcr.opal.types.OutputFileType;
 
-import org.apache.axis.types.URI;
-import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.axis2.databinding.types.URI;
+import org.apache.axis2.databinding.types.URI.MalformedURIException;
 
 import org.apache.log4j.Logger;
 
 /**
  * Tests for the edu.sdsc.nbcr.opal.state package
  *
- * @author Sriram Krishnan
+ * @author Sriram Krishnan, Choonhan Youn
  */
 public class PackageTest extends TestCase {
 
     // get an instance of the log4j Logger
-    private static Logger logger = 
-        Logger.getLogger(PackageTest.class.getName());
+    private static Logger logger =
+            Logger.getLogger(PackageTest.class.getName());
 
     // the hibernate session
     private static Session session = null;
@@ -70,12 +70,12 @@ public class PackageTest extends TestCase {
         info.setMessage("This is a test");
         info.setBaseURL("http://localhost/test");
         Date currentDate = new Date();
-        info.setStartTimeDate(new java.sql.Date( currentDate.getTime() ) );
-        info.setStartTimeTime(new java.sql.Time( currentDate.getTime() ) );
-        info.setActivationTimeDate(new java.sql.Date( currentDate.getTime() ) );
-        info.setActivationTimeTime(new java.sql.Time( currentDate.getTime() ) );
-        info.setCompletionTimeDate(new java.sql.Date( currentDate.getTime() ) );
-        info.setCompletionTimeTime(new java.sql.Time( currentDate.getTime() ) );
+        info.setStartTimeDate(new java.sql.Date(currentDate.getTime()));
+        info.setStartTimeTime(new java.sql.Time(currentDate.getTime()));
+        info.setActivationTimeDate(new java.sql.Date(currentDate.getTime()));
+        info.setActivationTimeTime(new java.sql.Time(currentDate.getTime()));
+        info.setCompletionTimeDate(new java.sql.Date(currentDate.getTime()));
+        info.setCompletionTimeTime(new java.sql.Time(currentDate.getTime()));
         info.setLastUpdateTime(new java.sql.Time(currentDate.getTime()));
         info.setLastUpdateDate(new java.sql.Date(currentDate.getTime()));
         info.setClientDN("CN=Test");
@@ -189,4 +189,3 @@ public class PackageTest extends TestCase {
         }
     }
 }
-

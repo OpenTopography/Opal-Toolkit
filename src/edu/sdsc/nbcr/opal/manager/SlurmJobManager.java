@@ -9,8 +9,8 @@ import org.globus.gram.GramJob;
 import org.apache.log4j.Logger;
 
 import edu.sdsc.nbcr.opal.manager.slurm.Job;
-import edu.sdsc.nbcr.opal.AppConfigType;
-import edu.sdsc.nbcr.opal.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.AppConfigType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -143,7 +143,7 @@ public class SlurmJobManager implements OpalJobManager {
         // launch executable using PBS
         String cmd = null;
 
-        if (config.isParallel()) {
+        if (config.getParallel()) {
             // make sure enough processors are present for the job
             if (numProcs == null) {
                 String msg = "Number of processes unspecified for parallel job";
@@ -369,16 +369,17 @@ public class SlurmJobManager implements OpalJobManager {
 
         while (true) {
             try {
-                // sleep for 3 seconds
-                Thread.sleep(3000);
+                // sleep for 20 seconds
+                Thread.sleep(20000);
 
                 // print job status
                 jobState = job.getJobStatus(handle);
-                logger.debug("Received job status: " + jobState);
+                // logger.debug("Received job status: " + jobState);
+		logger.info("The job ID = " + handle + "  Received job status: " + jobState);
                 if (jobState.equals("CD") || jobState.equals("CG") ||
                         jobState.equals("DONE")) {
                     // execution complete
-                    Thread.sleep(3000);
+                    Thread.sleep(5000);
                     break;
                 }
             } catch (Exception e) {
@@ -421,6 +422,14 @@ public class SlurmJobManager implements OpalJobManager {
                         "final job status is " + jobState);
             }
         }
+
+	/*
+	try {
+            Thread.sleep(30000);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+        }
+	*/
 
         //transfer files from remote to local
         String[] filters = new String[2];

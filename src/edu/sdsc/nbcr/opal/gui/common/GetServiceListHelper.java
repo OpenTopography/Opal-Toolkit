@@ -1,272 +1,168 @@
 package edu.sdsc.nbcr.opal.gui.common;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringReader;
+import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Vector;
 
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.rpc.ServiceException;
+import edu.sdsc.nbcr.opal.AppServiceStub;
+import edu.sdsc.nbcr.opal.types.GetAppMetadataInput;
+import edu.sdsc.nbcr.opal.types.GetAppMetadataOutput;
 
-import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.client.Call;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.deployment.wsdd.WSDDDeployment;
-import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.commons.logging.Log;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import edu.sdsc.nbcr.opal.AppMetadataInputType;
-import edu.sdsc.nbcr.opal.AppMetadataType;
-import edu.sdsc.nbcr.opal.AppServiceLocator;
-import edu.sdsc.nbcr.opal.AppServicePortType;
-
+import org.apache.commons.logging.LogFactory;
+import edu.sdsc.nbcr.opal.types.AppMetadataInputType;
+import edu.sdsc.nbcr.opal.types.AppMetadataType;
 
 /**
  * this class is in charge of getting the list of service from an opal service
  * Just use this code:
- * 
+ *
  * GetServiceListHelper helper = new GetServiceListHelper();
- * helper.setBaseURL(url);
- * SOAPBodyElement list = helper.getServiceList();
- * OPALService [] servicesList = helper.parseServiceList(list.toString());
- * helper.setGetSerivceName(serviceList);
- * 
- * @author clem
+ * helper.setServiceUrl(url);
+ * OPALService [] servicesList = helper.getServiceList();
+ * helper.setSerivceName(serviceList);
+ *
+ * @author Choonhan Youn
  *
  */
+
 public class GetServiceListHelper {
 
     protected static Log log = LogFactory.getLog(GetServiceListHelper.class.getName());
-    protected Call call;
-    private String baseURL;
-    private String basePrivateURL;
-    private String basePublicURL;
-	
+
+    private String serviceUrl;
+
     /**
      * default constructor
      */
-    public GetServiceListHelper(){
-    	org.apache.axis.client.Service service = new org.apache.axis.client.Service();
-    	try { call = (Call) service.createCall(); }
-    	catch (ServiceException e) {
-    		log.error("Unable to instantiate the Call", e);
-    		call = null;
-    	}
-    }
-	
-    /**
-     * process the options then invoke the service
-     */
-    public SOAPBodyElement getServiceList()  {
-    	if (call == null ){
-    		//something went wrong
-    		return null;
-    	}
-        call.setTargetEndpointAddress( basePrivateURL + "/AdminService" );
-        //call.setUsername( "");
-        //call.setPassword( password );
-        //if(transportName != null && !transportName.equals("")) {
-        //call.setProperty( Call.TRANSPORT_NAME, transportName );
-        //}
-        log.debug( "Getting the list of services." );
-        call.setUseSOAPAction( true);
-        call.setSOAPActionURI( "AdminService");
-        
-        
-        String str = "<m:list xmlns:m=\"" + WSDDConstants.URI_WSDD + "\"/>";
-        ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
-        
-
-        Vector result = null ;
-        Object[]  params = new Object[] { new SOAPBodyElement(input) };
-        try { result = (Vector) call.invoke( params ); }
-        catch (Exception e) {
-        	log.error("Unable to invoke the service, maybe the target server is down", e);
-        	return null;
-        }
-        if (result == null || result.isEmpty()) {
-            log.error("The server returned an empty message (maybe you're not ivoking the right axis server???)!!");
-            return null;
-        }
-        SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
-        
-        return body;
-
+    public GetServiceListHelper() {
+        //empty constructor
     }
 
     /**
-     * given the return value of the axis admin service it parses it and 
-     * returns an array of OPALSerivce 
-     * 
+     * given the return value of the axis admin service it parses it and
+     * returns an array of OPALSerivce
      */
-    public OPALService[] parseServiceList(String body) {
+    public OPALService[] getServiceList() {
         try {
-            ArrayList list = new ArrayList();
-            /* this does not work with the wsdd returned by axis, it seems it is incorrect... :-o 
-        	WSDDDeployment deployment = new WSDDDeployment(element);
-        	WSDDService [] services = deployment.getServices();
-        	for (int i = 0; i < services.length; i++ ){
-        		System.out.println("the service :" + services[i].getQName() + " e poi a: " + services[i].getServiceDesc().getName() );
-        	*/
-            
-            DocumentBuilderFactory factory = DocumentBuilderFactory
-                    .newInstance();
-            DocumentBuilder parser = factory.newDocumentBuilder();
-            // let's add the header...
-            body = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" + body;
-            Document response = parser.parse(new InputSource(new StringReader(
-                    body)));
-            NodeList nl = response.getElementsByTagName("service");
-            if ((nl == null) || (nl.getLength() < 1)) {
-                // something went wrong
-                log.error("the deployment descriptor does not have any elements!! Check the server.");
-                return null;
-            }
-            for (int i = 0; i < nl.getLength(); i++) {
-                Node node = nl.item(i);
-                if (isValidService(node)) {
-                    NamedNodeMap attributes = node.getAttributes();
-                    String serviceName = attributes.getNamedItem("name").getNodeValue();
-                    OPALService service = new OPALService();
-                    service.setURL(basePublicURL + "/" + serviceName);
-                    service.setServiceID(serviceName);
-                    service.setServiceName(serviceName);
-                    list.add(service);
-                    log.debug("added -> " + service);
+            ArrayList<OPALService> list = new ArrayList<>();
+
+            URL url = new URL(serviceUrl + "/listServices");
+            System.out.println("service list = " + serviceUrl + "/listServices");
+            URLConnection uc = url.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+            String inputLine;
+            OPALService service = new OPALService();
+            String serviceID = null;
+            String serviceURL = null;
+            while ((inputLine = in.readLine()) != null) {
+                // System.out.println("line = "+inputLine);
+                if (inputLine.contains("Service Description")) {
+                    // System.out.println("service desc = "+inputLine);
+                    try {
+                        serviceID = filterService(inputLine);
+                    } catch (java.lang.ArrayIndexOutOfBoundsException aioutof_ex) {
+                        // System.out.println(aioutof_ex.getMessage());
+                        log.info(aioutof_ex.getMessage());
+                    }
+                    //system.out.println(filterService(inputLine));
+                    continue;
                 }
-            }// for
-            return (OPALService[]) list.toArray(new OPALService[list.size()]);
+                if (inputLine.contains("Service EPR")) {
+                    serviceURL = filterService(inputLine);
+                    //system.out.println(filterService(inputLine));
+                    continue;
+                }
+                if (inputLine.contains("getAppMetadata")) {
+                    service.setServiceID(serviceID);
+                    service.setURL(serviceURL);
+                    list.add(service);
+                    log.info("added -> " + service);
+                    service = new OPALService();
+                }
+            }
+            in.close();
+
+            return list.toArray(new OPALService[list.size()]);
         } catch (Exception e) {
             //log.error("Something happen when parsing the list of services: " + e.getMessage(), e);
             e.printStackTrace();
             return null;
         }
     }
-   
 
-    public OPALService [] getOpalServiceList() {
-        SOAPBodyElement list = this.getServiceList();
-        if ( list == null ) {
-            log.error("Unable to get the list of service.");
-            return null;
-        }
-        return this.parseServiceList(list.toString());
-    }
-    
-    /** 
-     * I  check the the service node is a valid Opal service, to do this I 
-     * just look that between the operations there is a getAppConfing operation
-     * 
-     * @param service
-     * @return true if it is a valid Opal Serivce node
-     */
-    private static boolean isValidService(Node service){
-    	NodeList ns = service.getChildNodes();
-    	boolean isValid = false;
-    	Node node = null;
-    	if ( ns == null ) {
-    		return false;
-    	}
-    	for ( int i = 0 ; i < ns.getLength(); i++ ){
-    		node = ns.item(i);
-    		if ( node.getNodeName().equals("operation") ) {
-    			//I just check that among the service operations there is one called getAppConfig
-        		if ( node.getAttributes().getNamedItem("name").getNodeValue().equals("getAppConfig") )
-        			return true;
-            }//if
-    	}//for
-    	return false;
+    //filter html tags
+    private String filterService(String line) {
+        line = line.replaceAll("\\<[^>]*>", "");
+        line = line.split(" ")[3];
+        return line;
     }
 
     /**
-     * given the service list it check the metadata and if present it set change the service name 
+     * given the service list it check the metadata and if present it set change the service name
      * with value contained appName attribute of the metadata tag
-     * 
+     *
      * @param serviceList
      */
-    public boolean setServiceName(OPALService [] serviceList){
-        AppServiceLocator asl = new AppServiceLocator();
-        AppServicePortType appServicePort;
-        AppMetadataType amt;
-        
-        for (int i = 0; i < serviceList.length; i++ ) {
-            String url = serviceList[i].getURL();
-            
+    public boolean setServiceName(OPALService[] serviceList) {
+        AppServiceStub appMetadata = null;
+        GetAppMetadataOutput amt_output = null;
+        AppMetadataType amt = null;
+        GetAppMetadataInput m_in = new GetAppMetadataInput();
+        AppMetadataInputType m_in_type = new AppMetadataInputType();
+        m_in.setGetAppMetadataInput(m_in_type);
+
+        for (OPALService aServiceList : serviceList) {
+            String url = aServiceList.getURL();
             try {
-                appServicePort = asl.getAppServicePort(new URL(url));
-                amt = appServicePort.getAppMetadata(new AppMetadataInputType());
-            }catch (Exception e){
-                log.error("Error retrieving the Service name for URL: " +  url, e);
+                appMetadata = new AppServiceStub(url);
+                amt_output = appMetadata.getAppMetadata(m_in);
+                amt = amt_output.getGetAppMetadataOutput();
+            } catch (Exception e) {
+                log.error("Error retrieving the Service name", e);
                 return false;
             }
             //setting general info
             String serviceName = amt.getAppName();
             String description = amt.getUsage();
-            serviceList[i].setDescription(description);
-            if ( serviceName != null ) {
-                serviceList[i].setServiceName(serviceName);
-                
-            }else {
+            aServiceList.setDescription(description);
+            if (serviceName != null) {
+                aServiceList.setServiceName(serviceName);
+
+            } else {
                 // if the service name is not specified let's use the service ID
-                serviceList[i].setServiceName(serviceList[i].getServiceID());
+                aServiceList.setServiceName(aServiceList.getServiceID());
             }
-            
-            if ( (amt.getTypes() == null) || ((amt.getTypes().getTaggedParams() == null) && (amt.getTypes().getUntaggedParams() == null)) ) 
-                serviceList[i].setComplexForm(Boolean.FALSE);
-            else 
-                serviceList[i].setComplexForm(Boolean.TRUE);
-            
-            
-        }//for
+
+            if ((amt.getTypes() == null) || ((amt.getTypes().getTaggedParams() == null) && (amt.getTypes().getUntaggedParams() == null)))
+                aServiceList.setComplexForm(Boolean.FALSE);
+            else
+                aServiceList.setComplexForm(Boolean.TRUE);
+
+
+        }
         return true;
     }
-    
+
+    public void setServiceUrl(String url) {
+        this.serviceUrl = url;
+    }
+
     /**
      * Just for testing purpouse. not used
+     *
      * @param argv
      */
-    public static void main(String [] argv){
-    	GetServiceListHelper servicelist = new GetServiceListHelper();
-    	servicelist.setBasePrivateURL("http://localhost:8080/axis/services");
-        servicelist.setBasePublicURL("http://localhost:8080/axis/services");
-    	SOAPBodyElement list = servicelist.getServiceList();
+    public static void main(String[] argv) {
+        GetServiceListHelper servicelist = new GetServiceListHelper();
+        servicelist.setServiceUrl("http://localhost:8080/opal2/services/listServices");
+        OPALService[] serviceList = servicelist.getServiceList();
 
-    	System.out.println("the result was: " + list.toString());
-    	OPALService [] serviceList = servicelist.parseServiceList(list.toString());
-    	
-    	for (int i = 0; i < serviceList.length; i++){
-    		System.out.println("the service " + i + " is: " + serviceList[i]);
-    	}
-    	
-    }
-    
-    /**
-     * This function set the private URL which is the URL used 
-     * to query axis. This has to be localhost or Axis won't 
-     * allow the connection.
-     */
-    public void setBasePrivateURL(String url){
-    	basePrivateURL = url;
+        for (int i = 0; i < serviceList.length; i++) {
+            System.out.println("the service " + i + " is: " + serviceList[i]);
+        }
+
     }
 
-    /**
-     * This function set the Pubblic URL used to create the service 
-     * URL when reporting the list of services.
-     * Here there should be the pubblic IP address
-     */
-    public void setBasePublicURL(String url){
-        basePublicURL = url;
-    }
- 
 }

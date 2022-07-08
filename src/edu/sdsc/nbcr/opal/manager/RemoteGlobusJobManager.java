@@ -14,8 +14,8 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 
-import edu.sdsc.nbcr.opal.AppConfigType;
-import edu.sdsc.nbcr.opal.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.AppConfigType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
 
 /**
  *

@@ -12,8 +12,8 @@ import org.ietf.jgss.GSSCredential;
 
 import org.apache.log4j.Logger;
 
-import edu.sdsc.nbcr.opal.AppConfigType;
-import edu.sdsc.nbcr.opal.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.AppConfigType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
 
 /**
  *
@@ -122,7 +122,7 @@ public class GlobusJobManager implements OpalJobManager, GramJobListener {
 	// launch executable using Globus
 	String rsl = null;
 	
-	if (config.isParallel()) {
+	if (config.getParallel()) {
 	    // make sure enough processors are present for the job
 	    if (numProcs == null) {
 		String msg = "Number of processes unspecified for parallel job";

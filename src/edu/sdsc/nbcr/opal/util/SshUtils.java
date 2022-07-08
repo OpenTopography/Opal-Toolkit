@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Properties;
 import java.util.Vector;
 
-import edu.sdsc.nbcr.opal.InputFileType;
+import edu.sdsc.nbcr.opal.types.InputFileType;
 import edu.sdsc.nbcr.opal.manager.JobManagerException;
 import org.apache.log4j.Logger;
 // import sun.tools.jstat.Jstat;
@@ -57,13 +57,13 @@ public class SshUtils {
         return channelsftp;
     }
 
-    private Session createSession() throws JobManagerException {
+    private Session createSession(String type) throws JobManagerException {
         // logger.info("creating session");
         Session session = null;
         int numoftrials = 0;
         String error_msg = "";
 
-        while (numoftrials < 6) {
+        while (numoftrials < 20) {
             try {
                 JSch jsch = new JSch();
                 jsch.addIdentity(keyFilePath, keyPassword);
@@ -82,31 +82,31 @@ public class SshUtils {
                 break;
             } catch (JSchException e) {
                 //throw new JobManagerException(e.getMessage());
-                error_msg = "Connection error - " + e.getMessage();
+                error_msg = "Calling function type = " + type + " Connection error - " + e.getMessage();
                 logger.info(error_msg);
                 if (e.toString().contains("Auth fail")) {
                     numoftrials++;
-                    logger.info("Retry to authenticate..." + numoftrials);
+                    logger.info("Calling function type = " + type + " Retry to authenticate..." + numoftrials);
                     try {
                         Thread.sleep(10000);
                     } catch (Exception ex) {
-                        logger.info(ex.getMessage());
+                        logger.info("Calling function type = " + type + " " + ex.getMessage());
                     }
-		} else if (e.toString().contains("Connection refused")) {
-		    numoftrials++;
-		    logger.info("Retry to authenticate..." + numoftrials);
-		    try {
-			Thread.sleep(10000);
-		    } catch (Exception ex) {
-			logger.info(ex.getMessage());
-		    }
+                } else if (e.toString().contains("Connection refused")) {
+                    numoftrials++;
+                    logger.info("Calling function type = " + type + " Retry to authenticate..." + numoftrials);
+                    try {
+                        Thread.sleep(10000);
+                    } catch (Exception ex) {
+                        logger.info("Calling function type = " + type + " " + ex.getMessage());
+                    }
                 } else {
                     throw new JobManagerException(error_msg);
                 }
             }
         }
 
-        if(numoftrials == 6) throw new JobManagerException(error_msg);
+        if(numoftrials == 20) throw new JobManagerException(error_msg);
 
         return session;
     }
@@ -129,7 +129,7 @@ public class SshUtils {
 
         try {
             setSessionTimeOut(60000);
-            Session session = createSession();
+            Session session = createSession("sendCommand");
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(cmd);
             InputStream commandOutput = channel.getInputStream();
@@ -188,7 +188,7 @@ public class SshUtils {
             throws JobManagerException {
         logger.info("tranfer file to remote: " + localFile);
         try {
-            Session session = createSession();
+            Session session = createSession("transferFileToRemote");
             ChannelSftp channelsftp = setChannelSFTP(session);
             channelsftp.mkdir(remoteDir);
             channelsftp.cd(remoteDir);
@@ -208,7 +208,7 @@ public class SshUtils {
             throws JobManagerException {
         logger.info("tranfer file to local: " + Arrays.toString(filters));
         try {
-            Session session = createSession();
+            Session session = createSession("transferFilesToLocal");
             ChannelSftp channelsftp = setChannelSFTP(session);
             channelsftp.cd(remoteDir);
 

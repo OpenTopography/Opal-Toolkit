@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 
 import edu.sdsc.nbcr.opal.manager.pbsTorque.Job;
 
-import edu.sdsc.nbcr.opal.AppConfigType;
-import edu.sdsc.nbcr.opal.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.AppConfigType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -127,7 +127,7 @@ public class PBSJobManager implements OpalJobManager {
 	// launch executable using PBS
 	String cmd = null;
 
-	if (config.isParallel()) {
+	if (config.getParallel()) {
 	    // make sure enough processors are present for the job
 	    if (numProcs == null) {
 		String msg = "Number of processes unspecified for parallel job";
@@ -184,7 +184,7 @@ public class PBSJobManager implements OpalJobManager {
 
 	    job = new Job(jobName, script);
 
-	    if (config.isParallel()) {
+	    if (config.getParallel()) {
 		job.setNodes(numProcs.toString());
 	    }
 

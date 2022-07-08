@@ -15,8 +15,8 @@ import org.ggf.drmaa.JobInfo;
 import org.ggf.drmaa.DrmaaException;
 import org.ggf.drmaa.UnsupportedAttributeException;
 
-import edu.sdsc.nbcr.opal.AppConfigType;
-import edu.sdsc.nbcr.opal.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.AppConfigType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
 
 /**
  *
@@ -136,7 +136,7 @@ public class DRMAAJobManager implements OpalJobManager {
 	String cmd = null;
 	String[] argsArray = null;
 
-	if (config.isParallel()) {
+	if (config.getParallel()) {
 	    // make sure enough processors are present for the job
 	    if (numProcs == null) {
 		String msg = "Number of processes unspecified for parallel job";
@@ -191,7 +191,7 @@ public class DRMAAJobManager implements OpalJobManager {
 
 	// get the parallel environment being used
 	String drmaaPE = null;
-	if (config.isParallel()) {
+	if (config.getParallel()) {
 	    String appDrmaaPE = config.getDrmaaPE();
 	    if ((appDrmaaPE != null) && !appDrmaaPE.equals("")) {
 		drmaaPE = appDrmaaPE;
@@ -238,7 +238,7 @@ public class DRMAAJobManager implements OpalJobManager {
 	    if ((drmaaQueue != null) && !drmaaQueue.equals("")) {
 		nativeSpec += "-q " + drmaaQueue + " ";
 	    }
-	    if (config.isParallel()) {
+	    if (config.getParallel()) {
 		nativeSpec += "-pe " + drmaaPE + " " + numProcs;
 	    }
 	    nativeSpec += "-shell yes ";

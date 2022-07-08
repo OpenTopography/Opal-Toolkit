@@ -13,8 +13,8 @@ import org.globus.gram.GramJob;
 
 import org.apache.log4j.Logger;
 
-import edu.sdsc.nbcr.opal.AppConfigType;
-import edu.sdsc.nbcr.opal.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.AppConfigType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
 
 import edu.sdsc.nbcr.opal.state.HibernateUtil;
 
@@ -125,7 +125,7 @@ public class ForkJobManager implements OpalJobManager {
 	// launch executable using process exec
 	String cmd = null;
 	
-	if (config.isParallel()) {
+	if (config.getParallel()) {
 	    // make sure enough processors are present for the job
 	    if (numProcs == null) {
 		String msg = "Number of processes unspecified for parallel job";

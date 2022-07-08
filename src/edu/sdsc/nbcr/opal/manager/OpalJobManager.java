@@ -2,8 +2,8 @@ package edu.sdsc.nbcr.opal.manager;
 
 import java.util.Properties;
 
-import edu.sdsc.nbcr.opal.AppConfigType;
-import edu.sdsc.nbcr.opal.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.AppConfigType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
 
 /**
  * Job Manager interface for Opal 2.x

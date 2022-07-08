@@ -16,8 +16,8 @@ import edu.sdsc.nbcr.opal.manager.condorAPI.Cluster;
 import edu.sdsc.nbcr.opal.manager.condorAPI.JobDescription;
 import edu.sdsc.nbcr.opal.manager.condorAPI.CondorException;
 
-import edu.sdsc.nbcr.opal.AppConfigType;
-import edu.sdsc.nbcr.opal.StatusOutputType;
+import edu.sdsc.nbcr.opal.types.AppConfigType;
+import edu.sdsc.nbcr.opal.types.StatusOutputType;
 
 /**
  *
@@ -129,7 +129,7 @@ public class CondorJobManager implements OpalJobManager {
 	// launch executable using Condor
 	String cmd = null;
 
-	if (config.isParallel()) {
+	if (config.getParallel()) {
 	    // make sure enough processors are present for the job
 	    if (numProcs == null) {
 		String msg = "Number of processes unspecified for parallel job";
@@ -182,7 +182,7 @@ public class CondorJobManager implements OpalJobManager {
 
 	    // create a JobDescription object in the code
 	    JobDescription jd = new JobDescription();
-	    if (config.isParallel()) {
+	    if (config.getParallel()) {
 			jd.addAttribute("universe", "parallel");
 			jd.addAttribute("machine_count", Integer.toString(numProcs));
 	    } else {
