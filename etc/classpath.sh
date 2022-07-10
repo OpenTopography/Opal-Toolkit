@@ -5,8 +5,12 @@
 OPAL_HOME=.
 
 # set the classpath
-CLASSPATH=`echo $OPAL_HOME/lib/*.jar | tr ' ' ':'`
-CLASSPATH=`echo $OPAL_HOME/webapps/opal2/WEB-INF/lib/*.jar | tr ' ' ':'`:$CLASSPATH
-CLASSPATH=$OPAL_HOME:$OPAL_HOME/build/classes:$OPAL_HOME/lib:$OPAL_HOME/etc:$CLASSPATH
+# CLASSPATH=`echo $OPAL_HOME/lib/*.jar | tr ' ' ':'`
+CLASSPATH=`echo $OPAL_HOME/lib/opal2/*.jar | tr ' ' ':'`:$CLASSPATH
+CLASSPATH=`echo $OPAL_HOME/lib/*.jar | tr ' ' ':'`:$CLASSPATH
+# CLASSPATH=`echo $OPAL_HOME/webapps/opal2/WEB-INF/lib/*.jar | tr ' ' ':'`:$CLASSPATH
+# CLASSPATH=$OPAL_HOME:$OPAL_HOME/build/classes:$OPAL_HOME/lib:$OPAL_HOME/etc:
+CLASSPATH=$OPAL_HOME/build/classes:$CLASSPATH
+
 export CLASSPATH
 echo $CLASSPATH
