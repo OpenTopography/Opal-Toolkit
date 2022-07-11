@@ -4,16 +4,19 @@ Opal Toolkit
 
 - Opal provides several features such as job scheduling (using Condor and SGE via Globus or DRMAA), job data and state management as well as security (using GSI-based certificates). The application developer specifies a configuration for a scientific application and deploys the application as a service following a small sequence of steps. 
 
-- In this directory you will find the core Opal package implemented in Java, which includes both client and server sides. Documentation is in the "docs" directory. Tested with Apache Tomcat 7.x asnd Tomcat 8.X.
+- In this directory you will find the core Opal package implemented in Java, which includes both client and server sides. Documentation is in the "docs" directory. Tested with Apache Tomcat 8.X.
 
 - This is the OpenTopography (http://www.opentopography.org) fork of the Opal toolkit originally developed by Sriram Krishnan at the San Diego Supercomputer Center at UC San Diego and later updated by Luca Clementi. 
 
 - This project was originally supported by grants from the National Center for Research Resources (5P41RR008605-19) and the National Institute of General Medical Sciences (8 P41 GM103426-19) from the National Institutes of Health.
 
-#### XSEDE Comet
-
-Edit $OPAL_HOME/etc/opal.properties to configure the static container properties correctly. The template
-file looks similar to the following:
+### OPAL Configuration before the installation
+#### Java SE version:8 Major version:52
+#### Apache Tomcat version: 8.5.64 (apache-tomcat-8.5.64)
+#### Build Configuration: Edit [$OPAL_HOME/build.properties](https://github.com/OpenTopography/Opal-Toolkit/blob/xsede-expanse/build.properties) to configure the tomcat location.
+#### Set up the database: Edit [$OPAL_HOME/etc/hibernate-opal.cfg.xml](https://github.com/OpenTopography/Opal-Toolkit/blob/xsede-expanse/etc/hibernate-opal.cfg.xml) to configure the database.
+#### Set up the OPAL URL: Edit [$OPAL_HOME/webapps/opal2/WEB-INF/web.xml](https://github.com/OpenTopography/Opal-Toolkit/blob/xsede-expanse/webapps/opal2/WEB-INF/web.xml#L95) to configure the OPAL URL.
+#### XSEDE Comet Configuration: Edit [$OPAL_HOME/etc/opal.properties](https://github.com/OpenTopography/Opal-Toolkit/blob/xsede-expanse/etc/opal.properties) to configure the static container properties correctly. The template file looks similar to the following:
 
 ```$xslt
 ...
