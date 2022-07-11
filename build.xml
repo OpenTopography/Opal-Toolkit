@@ -63,6 +63,7 @@ Author:
   <property name="fork" value="true"/>
   <property value="" name="jars.ok"/>
 
+  <mkdir dir="${opal.WEB-INF}/lib"/>
   <path id="classpath">
     <pathelement path="${lib}" />
     <pathelement path="${etc}" />
